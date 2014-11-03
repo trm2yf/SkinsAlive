@@ -23,5 +23,7 @@
 
 +Is there any moderation of who can sign up and what they can upload?
 
++Do the uploaded documents need to be searchable--i.e. a bulletin with a document containing "Zimbabwe" should show up in a search for Zimbabwe even if the bulletin does not contain that keyword
+
 
 
