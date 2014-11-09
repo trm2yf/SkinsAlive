@@ -49,9 +49,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'cs3240_project_team2.urls'
+ROOT_URLCONF = 'cs3240project.urls'
 
-WSGI_APPLICATION = 'cs3240_project_team2.wsgi.application'
+WSGI_APPLICATION = 'cs3240project.wsgi.application'
 
 
 # Database
@@ -64,12 +64,14 @@ DATABASES = {
     }
 }
 
+MEDIA_ROOT = 'C:/Users/Zachary/Desktop/Fall 2014/Advanced Software/cs3240project/media/'
+MEDIA_URL = '/media/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'EST'
 
 USE_I18N = True
 
