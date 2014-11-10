@@ -6,3 +6,9 @@ class DocumentForm(forms.Form):
         label='Select a file',
         help_text='max. 42 megabytes'
     )
+class AccountForm(forms.Form):
+    username=forms.CharField(
+        label='Username'
+    )
+    password=forms.CharField(label='Password',widget=forms.PasswordInput())
+    email=forms.CharField(label='Email',widget=forms.EmailInput())
