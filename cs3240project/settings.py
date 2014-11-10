@@ -64,12 +64,14 @@ DATABASES = {
     }
 }
 
+MEDIA_ROOT = 'C:/Users/Zachary/Desktop/Fall 2014/Advanced Software/cs3240project/media/'
+MEDIA_URL = '/media/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'EST'
 
 USE_I18N = True
 
