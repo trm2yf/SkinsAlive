@@ -1,17 +1,17 @@
 from django.db import models
 
-class Blog(models.Model):
+class Folder(models.Model):
     name = models.CharField(max_length=100)
     tagline = models.TextField()
-
+    #folder_contained=models.ForeignKey(default=None)
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 # Users Model
 class Users(models.Model):
     u_name = models.CharField(max_length=16)
     email = models.EmailField()
-    password = models.CharField()
-    role = models.CharField()
+    password = models.CharField(max_length=2048)
+    role = models.CharField(max_length=2048)
     u_key = models.IntegerField()
     
 
@@ -19,15 +19,15 @@ class Users(models.Model):
         return self.u_name
 # Bulletin Model
 class Bulletin(models.Model):
-    bulletin = models.ForeignKey(Bulletin)
+    bulletin = models.ForeignKey(Folder)
     title = models.CharField(max_length=255)
-    text_description = models.TextField()
+    text_description = models.TextField(max_length=1024)
     pub_date = models.DateField()
     mod_date = models.DateField()
-    authors = models.ManyToManyField(Author)
+    authors = models.ManyToManyField(Users)
     author_id = models.IntegerField()
-    lat = models.DecimalField()
-    long = models.DecimalField()
+    lat = models.DecimalField(decimal_places=2,max_digits=10)
+    long = models.DecimalField(decimal_places=2,max_digits=10)
     
     #n_comments = models.IntegerField()
     #rating = models.IntegerField()

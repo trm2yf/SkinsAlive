@@ -49,9 +49,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'cs3240_project_team2.urls'
+ROOT_URLCONF = 'cs3240project.urls'
 
-WSGI_APPLICATION = 'cs3240_project_team2.wsgi.application'
+WSGI_APPLICATION = 'cs3240project.wsgi.application'
 
 
 # Database
