@@ -8,7 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = patterns('',
     (r'^', include('sprint1.urls')),
 #	(r'^$', RedirectView.as_view(url='/sprint1/list/')), # Just for ease of use.
-    #url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 #
 # urlpatterns = patterns('',

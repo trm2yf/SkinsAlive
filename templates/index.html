@@ -26,42 +26,6 @@
 </form> 
 </section> 
 
-<script>
-	$(document).ready(function() {
-	  $(function() {
-		$( "#datepicker" ).datepicker(); 
-		}); 
-	
-		var hiddenTable = $( ".runData" );
-		var rowcount = 1; 
-		$( "#runData" ).hide(); 
-		$( "#addrun").hide();
-		$( "#hideruns").hide(); 
-      $( "#showruns" ).click(function( event ) {
-          $( "#runData").show();
-		//  $( "#hideruns").show(); 
-		//  $( "#showruns").hide(); 
-	//	  $( "#addrun").show(); 
-		  });
-		  
-	  $( "#hideruns" ).click(function( event ) {
-			$( "#runData" ).hide(); 
-			$( "#hideruns").hide();
-			$( "#showruns").show(); 
-			});  
-			
-//	  $( "#addrun" ).click(function( event ) {
-	//		rowcount = rowcount + 1;
-		//	var row = hiddenTable.insertRow(rowcount);
-		//	var date = row.insertCell(0);
-		//	var mileage = row.insertCell(1); 
-		//	var speed = row.insertCell(2);
-		//	date.innerHTML = "
-		//	}); 
-   
-    });
-		
-</script>
 <br>
 <br>
 <br>
