@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+        <!-- Upload form. Note enctype attribute! -->
+        <form action="bulletin" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>{{ form.non_field_errors }}</p>
+            <p>{{ form.title.label }}<input name="title"> </p>
+            <p>{{ form.text_description.label}} <input name="text_description"></p>
+            <p>{{ form.location.label }} <input name="location"></p>
+            <p>{{ form.encrypted }}<input type="checkbox" name="encrypted"></p>
+            <p><input type="submit" value="Submit" /></p>
+        </form>
+</body>
+</html>
