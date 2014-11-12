@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Log-in</title>  
+<title>Secure Witness</title>
 <link rel="stylesheet" href="index.css"> 
 
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
@@ -14,24 +14,20 @@
   <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 </head>
 <body>
-<header>Log-in to the Secure Witness System</header>
-<h1>Secure Witness Log-in</h1>
+<header>Welcome to the Secure Witness System</header>
+<h1>Secure Witness System</h1>
+{% if user.is_authenticated %}
+<h2>Welcome {{ user.username }}</h2>
+{% else %}
 <h2> Log-in as an Administrator, Reader, or Author </h2>
-<section> 
-<h6>To Log-in to the system, please enter your username and password in the fields below: </h6> 
-<form action="login.php" method="get">  
- username: <input name="username" placeholder="Type username here">
- password: <input name="password" placeholder="Type password here"> 
-  <input type="submit"> 
-</form> 
-</section> 
-
+{% endif %}
+<h6>All users must login before using the Secure Witness System </h6>
+<a href="login.html">Login to the Secure Witness System</a><br>
 <br>
 <br>
 <br>
 <h6>Don't have an account? </h6> 
-<button type="button" class="btn btn-default" id="showruns">Create an account</button>
-<br>
+<a href="register.html">Create an Account</a><br>
 <br>
 <br>
 <h6> Forgot your password?  Enter your username below and hit submit for a password reset: </h6> 
