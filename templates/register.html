@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Witness</title>
+</head>
+<body>
+    <h1>Create a Secure Witness Account</h1>
+
+    {% if registered %}
+    You have created an account with Secure Witness
+    <a href="index.html">Main Page</a>
+    <br/>
+    {% else %}
+    Create an account by filling in the form below:
+
+    <form id="user_form" method="post" action="/register/" accept-charset=""
+            enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {{ user_form.as_p }}
+
+        <input type="submit" name="submit" value="Create Account" />
+
+     </form>
+    {% endif %}
+</body>
+</html>
