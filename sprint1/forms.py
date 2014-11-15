@@ -1,6 +1,8 @@
 __author__ = 'Zachary'
 from django import forms
 from models import Bulletin
+from django.forms.models import modelformset_factory
+
 class DocumentForm(forms.Form):
     docfile = forms.FileField(
         label='Select a file',
@@ -9,11 +11,12 @@ class DocumentForm(forms.Form):
 class BulletinForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
     # text_description=forms.CharField(label='Text Description')
-    # location=forms.CharField(label='City of Interest')
+    location=forms.CharField(label='City of Interest')
     # encrypted = forms.BooleanField()
 
     class Meta:
         model=Bulletin
+        fields=['title','text_description','encrypted']
     # def __init__(self):
     #         self.fields['encrypted'].initial= True
     """

@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from sprint1.models import Document,Users,Bulletin
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm
+from django.forms.formsets import formset_factory
+
 def home(request):
     if request.method == 'POST':
         form =AccountForm(request.POST)
@@ -23,17 +25,24 @@ def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
     return 0,0
 def bulletin(request):
+    DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
         form =BulletinForm(request.POST)
-        if form.is_valid():
+        doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
+        if form.is_valid() and doc_formset.is_valid():
             lat,long=location_lookup(request.location)
             bulletin = Bulletin(title=request.POST.title,lat=lat,long=long,text_description=request.POST.text_description, encrypted=request.POST.encrypted )
             bulletin.save()
+            for doc in doc_formset:
+                cd=doc.cleaned_data
+                newdoc = Document(docfile=cd.get('docfile'))
+                newdoc.save()
             return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
         form=BulletinForm()
+        doc_formset=DocumentFormSet(prefix='documents')
     return render_to_response(
-        'bulletin.html',{'form':form},
+        'bulletin.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
     )
 def list(request):

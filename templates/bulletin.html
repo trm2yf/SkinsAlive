@@ -5,15 +5,27 @@
     <title></title>
 </head>
 <body>
+
         <!-- Upload form. Note enctype attribute! -->
+        <h1>Create a New Bulletin</h1>
         <form action="bulletin" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <p>{{ form.non_field_errors }}</p>
-            <p>{{ form.title.label }}<input name="title"> </p>
-            <p>{{ form.text_description.label}} <input name="text_description"></p>
-            <p>{{ form.location.label }} <input name="location"></p>
-            <p>{{ form.encrypted }}<input type="checkbox" name="encrypted"></p>
+            {{ form.as_p }}
+            {{ doc_formset.management_form }}
+            {{ doc_formset.as_table }}
+            {% for dform in doc_formset%}
+                dorm.as_p
+            <p>{{ dform.non_field_errors }}</p>
+            <p>{{ dform.docfile.label_tag }} {{ dform.docfile.help_text }}</p>
+            <p>
+                {{ dform.docfile.errors }}
+                {{ dform.docfile }}
+            </p>
+            {%  endfor %}
+
+            <button id="add-another">Add another document</button>
             <p><input type="submit" value="Submit" /></p>
         </form>
+
 </body>
 </html>
