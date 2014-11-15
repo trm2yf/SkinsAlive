@@ -30,16 +30,17 @@ def bulletin(request):
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
         form =BulletinForm(request.POST)
-        doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
-        if form.is_valid() and doc_formset.is_valid():
+        if form.is_valid():
             lat,long=location_lookup(request.location)
             bulletin = Bulletin(title=request.POST.title,lat=lat,long=long,text_description=request.POST.text_description, encrypted=request.POST.encrypted )
             bulletin.save()
+        doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
+        if doc_formset.is_valid():
             for doc in doc_formset:
                 cd=doc.cleaned_data
                 newdoc = Document(docfile=cd.get('docfile'))
                 newdoc.save()
-            return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
+        return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
         form=BulletinForm()
         doc_formset=DocumentFormSet(prefix='documents')
@@ -88,7 +89,7 @@ def register(request):
         if user_form.is_valid():
             user = user_form.save()
             #the set_password method will hash the password
-            user.set_password(user.password)
+            #user.set_password(user.password) Django does this to password fields by default.
             user.save()
 
             #update the registered variable to be true

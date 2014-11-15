@@ -1,12 +1,11 @@
 __author__ = 'Zachary'
 from django import forms
-from models import Bulletin
+from models import Bulletin,Users
 from django.forms.models import modelformset_factory
 
 class DocumentForm(forms.Form):
     docfile = forms.FileField(
-        label='Select a file',
-        help_text='max. 42 megabytes'
+        label='Select a file'
     )
 class BulletinForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
@@ -39,8 +38,8 @@ class AccountForm(forms.Form):
     email=forms.CharField(label='Email',widget=forms.EmailInput())
     
 class UserForm(forms.ModelForm):
-    password = forms.CahrField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput())
     #nested Meta class
     class Meta:
-        model = User
+        model = Users
         fields = ('username', 'email', 'password')

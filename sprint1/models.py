@@ -1,5 +1,8 @@
 from django.db import models
 import datetime
+from os import urandom
+from hashlib import sha256
+from base64 import urlsafe_b64encode
 class Folder(models.Model):
     name = models.CharField(max_length=100)
     tagline = models.TextField()
@@ -8,13 +11,16 @@ class Folder(models.Model):
         return self.name
 # Users Model
 class Users(models.Model):
-    u_name = models.CharField(max_length=16)
+    username = models.CharField(max_length=16)
     email = models.EmailField()
     password = models.CharField(max_length=2048)
     role = models.CharField(max_length=2048)
-    u_key = models.IntegerField()
+    p_salt=models.CharField(max_length=16)
+    u_key = models.AutoField(primary_key=True)
     
-
+    def set_password(self,inpass):
+        self.p_salt=urlsafe_b64encode(urandom(16))
+        self.password=sha256(self.p_salt+inpass)
     def __str__(self):              # __unicode__ on Python 2
         return self.u_name
 # Bulletin Model
@@ -29,7 +35,7 @@ class Bulletin(models.Model):
     lat = models.DecimalField(decimal_places=2,max_digits=10)
     long = models.DecimalField(decimal_places=2,max_digits=10)
     encrypted=models.BooleanField(default=True)
-    
+    b_key = models.AutoField(primary_key=True)
     #n_comments = models.IntegerField()
     #rating = models.IntegerField()
     def save(self):
@@ -42,4 +48,5 @@ class Bulletin(models.Model):
 # Create your models here.
 class Document(models.Model):
     docfile = models.FileField(upload_to='documents/%Y/%m/%d')
+    d_key = models.AutoField(primary_key=True)
 

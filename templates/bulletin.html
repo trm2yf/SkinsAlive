@@ -13,15 +13,6 @@
             {{ form.as_p }}
             {{ doc_formset.management_form }}
             {{ doc_formset.as_table }}
-            {% for dform in doc_formset%}
-                dorm.as_p
-            <p>{{ dform.non_field_errors }}</p>
-            <p>{{ dform.docfile.label_tag }} {{ dform.docfile.help_text }}</p>
-            <p>
-                {{ dform.docfile.errors }}
-                {{ dform.docfile }}
-            </p>
-            {%  endfor %}
 
             <button id="add-another">Add another document</button>
             <p><input type="submit" value="Submit" /></p>
