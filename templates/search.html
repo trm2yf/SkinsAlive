@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Bulletin Search Page</title>
+</head>
+<body>
+ <h1>Bulletin Search Page</h1>
+<form action="search" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+    <input name="search_text"/>
+    <button type="button">
+        Search
+    </button>
+
+
+
+</form>
+{% if results %}
+{% for bulletin in results %}
+            <p>{{bulletin}}</p>
+        {% endfor %}
+{% else %}
+        <p>No results found.</p>
+    {% endif %}
+</body>
+</html>
