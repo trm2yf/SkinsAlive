@@ -11,6 +11,7 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 
+
 def home(request):
     if request.method == 'POST':
         form =AccountForm(request.POST)
