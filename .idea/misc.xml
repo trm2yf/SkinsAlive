@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.8 (C:\Python27\python.exe)" project-jdk-type="Python SDK" />
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -9,5 +10,7 @@
     </option>
   </component>
 >>>>>>> a14717b5e70eccffc0e0ad81e17b1f90a4076226
+=======
+>>>>>>> bulletinform
 </project>
 
