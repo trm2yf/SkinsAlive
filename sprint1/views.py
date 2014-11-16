@@ -25,7 +25,7 @@ def home(request):
     )
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
-    return 0,0
+    return (0,0)
 def bulletin(request):
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
