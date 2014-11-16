@@ -153,6 +153,19 @@ def user_login(request):
         #The request is not a POST so it's probably a GET request
         return render_to_response('login.html', {}, context)
 
+#Search Function
+def search(request):
+    context = RequestContext(request)
 
+    if request.method == 'POST':
+        search_text = request.POST['search_text']
+        query = Bulletin.objects.filter(title__icontains=search_text)
+        string = [b.title for b in query]
+        print string
+        return render_to_response('search.html', {'results':string}, context)
+
+    else:
+        #The request is not a POST so it's probably a GET request
+        return render_to_response('search.html', {}, context)
 
 
