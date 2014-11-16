@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Secure Witness System</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
+
     <h1>Log Into Your Secure Witness Account</h1>
 
     <form id="login_form" method="post" action="/user_login/">
@@ -16,7 +14,7 @@
         <input type="submit" value="submit" />
     </form>
 
-</body>
+{% endblock %}
 
 
 
