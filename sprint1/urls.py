@@ -1,5 +1,8 @@
 __author__ = 'Zachary'
 from django.conf.urls import patterns, url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+
 
 urlpatterns = patterns('sprint1.views',
     url(r'^list', 'list', name='list'),
@@ -13,3 +16,6 @@ urlpatterns = patterns('sprint1.views',
     url(r'^search', 'search', name='search')
 
     )
+
+urlpatterns += staticfiles_urlpatterns()
+
