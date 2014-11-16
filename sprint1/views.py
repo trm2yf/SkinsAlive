@@ -135,7 +135,7 @@ def user_login(request):
 
     else:
         #The request is not a POST so it's probably a GET request
-        return render_to_response('login.html', {}, context)
+        return render_to_response('login', {}, context)
 
 
 
