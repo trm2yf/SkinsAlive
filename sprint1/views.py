@@ -25,6 +25,8 @@ def home(request):
         'index.html',{'form':form},
         context_instance=RequestContext(request)
     )
+
+
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
     return (0,0)
@@ -142,10 +144,10 @@ def user_login(request):
 
 
 # Use the login_required() decorator to ensure only those logged in can access the view.
-    def user_logout(request):
-        logout(request)
+def user_logout(request):
+    logout(request)
 
         # Take the user back to the homepage.
-        return HttpResponseRedirect('/index/')
+    return HttpResponseRedirect('/index/')
 
 
