@@ -39,7 +39,7 @@ src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <h6>To Log-in to the system, please enter your username and password 
 
 in the fields below: </h6> 
-<form action="login.php" method="get">  
+<form action="/user_login/" method="post">
  username: <input name="username" placeholder="Type username here">
  password: <input name="password" placeholder="Type password here"> 
   <input type="submit"> 
@@ -48,7 +48,7 @@ in the fields below: </h6>
 
 {% endif %}
 <h6>All users must login before using the Secure Witness System </h6>
-<a href="login.html">Login to the Secure Witness System</a><br>
+<a href="login">Login to the Secure Witness System</a><br>
 <br>
 <br>
 <br>
@@ -57,7 +57,7 @@ in the fields below: </h6>
 
 account</button>
 <br>
-<a href="register.html">Create an Account</a><br>
+<a href="register">Create an Account</a><br>
 <br>
 <br>
 <h6> Forgot your password?  Enter your username below and hit submit 
