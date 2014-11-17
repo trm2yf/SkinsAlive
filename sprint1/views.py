@@ -37,12 +37,14 @@ def location_lookup(citystring):
 def auth_util(passedrequest):
 
     if passedrequest.user.id==None:
-        return 1
+        return -1
     else:
         return passedrequest.user.id
 
 def bulletin(request):
     userid=auth_util(request)
+    print request.user
+    print userid
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
@@ -163,7 +165,7 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect('/index/')
+    return HttpResponseRedirect('/index')
 
 
 
@@ -214,12 +216,7 @@ def search(request):
         #The request is not a POST so it's probably a GET request
         return render_to_response('search.html', {}, context)
 
-# Use the login_required() decorator to ensure only those logged in can access the view.
-def user_logout(request):
-    logout(request)
 
-        # Take the user back to the homepage.
-    return HttpResponseRedirect('/index/')
 
 def profile(request):
     context = RequestContext(request)
