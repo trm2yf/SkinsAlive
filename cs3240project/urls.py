@@ -10,6 +10,8 @@ urlpatterns = patterns('',
 #	(r'^$', RedirectView.as_view(url='/sprint1/list/')), # Just for ease of use.
     url(r'^admin/', include(admin.site.urls)),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += staticfiles_urlpatterns()
 #
 # urlpatterns = patterns('',
 #     # Examples:
