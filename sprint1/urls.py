@@ -7,4 +7,5 @@ urlpatterns = patterns('sprint1.views',
     url(r'^index', 'home',name='home'),
     url(r'^register/$', 'register', name='register'),
     url(r'^login/$', 'user_login', name='login'),
+    url(r'^profile', 'profile', name='profile')
     )

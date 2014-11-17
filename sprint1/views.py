@@ -9,6 +9,8 @@ from sprint1.models import Document,Users,Bulletin
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
+
 
 def home(request):
     if request.method == 'POST':
@@ -23,6 +25,7 @@ def home(request):
         'index.html',{'form':form},
         context_instance=RequestContext(request)
     )
+
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
     return (0,0)
@@ -139,4 +142,13 @@ def user_login(request):
 
 
 
+# Use the login_required() decorator to ensure only those logged in can access the view.
+def user_logout(request):
+    logout(request)
 
+        # Take the user back to the homepage.
+    return HttpResponseRedirect('/index/')
+
+def profile(request):
+    context = RequestContext(request)
+    return render_to_response('profile.html',{},context_instance=RequestContext(request))

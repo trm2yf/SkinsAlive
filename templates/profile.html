@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html = "en">
+
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <title>Profile</title>
+</head>
+
+<body>
+
+{% if user.is_authenticated %}
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <a class="navbar-brand" href="index">Secure Witness System</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="">Welcome {{ user.username }}</a></li>
+       
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="row"> <div class="col-md-10 col-md-offset-1">
+<h3> Submitted Bulletins </h3>
+<table class="table table-bordered">
+  <tr>
+  	<th>Date Created</th>
+  	<th>Date Modified</th>
+  	<th>Title</th>
+  	<th>Encrypted</th>
+  </tr>
+  <tr>
+  	<td>{{ sprint1_bulletin.date_created }}</td>
+  	<td>{{ sprint1_bulletin.date_modified }}</td>
+  	<td>{{ sprint1_bulletin.title }}</td>
+  	<td>{{ sprint1_bulletin.encrypted }}</td>
+  </tr>
+</table>
+</div></div>
+
+<div class="row"> <div class="col-md-10 col-md-offset-1">
+
+<h3> Read Bulletins </h3>
+<table class="table table-bordered">
+  <tr>
+  	<th>Date Created</th>
+  	<th>Date Modified</th>
+  	<th>Title</th>
+  	<th>Encrypted</th>
+  </tr>
+  <tr>
+  	<td>{{ sprint1_bulletin.date_created }}</td>
+  	<td>{{ sprint1_bulletin.date_modified }}</td>
+  	<td>{{ sprint1_bulletin.title }}</td>
+  	<td>{{ sprint1_bulletin.encrypted }}</td>
+  </tr>
+</table>
+</div></div>
+
+{% else %}
+	<h2> Please log in. </h2>
+{% endif %}
+
+</body>
+</html>
