@@ -9,6 +9,7 @@ from sprint1.models import Document,Bulletin
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import User
 
