@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html = "en">
 
-<head>
-	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <title>Profile</title>
-</head>
+{% extends "base.html" %}
 
-<body>
+{% block content %}
 
-{% if user.is_authenticated %}
-
+<!-- {% if user.is_authenticated %}
+ -->
 <nav class="navbar navbar-default" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -67,9 +60,9 @@
 </table>
 </div></div>
 
-{% else %}
+<!-- {% else %}
 	<h2> Please log in. </h2>
 {% endif %}
+ -->
 
-</body>
-</html>
+{% endblock %}
