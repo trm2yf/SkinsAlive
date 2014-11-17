@@ -147,7 +147,7 @@ def user_login(request):
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/bulletin')
+                return HttpResponseRedirect('/profile')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")

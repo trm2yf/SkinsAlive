@@ -13,44 +13,43 @@
       <a class="navbar-brand" href="index">Secure Witness System</a>
     </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
         <li><a href="">Welcome {{ user.username }}</a></li>
-        <li><button type="submit" class="btn btn-default" method="post" action="/user_logout/">Log Out</button></li>
+        <li><a href="logout"><button type="submit" class="btn btn-default btn-sm" method="post">Log Out</button></a></li>
       </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+  </div>
 </nav>
 
-
-<div class="row"> <div class="col-md-10 col-md-offset-1">
-<h3> Submitted Bulletins </h3>
-<table class="table table-bordered">
-  <tr>
-  	<th>Date Created</th>
-  	<th>Date Modified</th>
-  	<th>Title</th>
-  	<th>Encrypted</th>
-  </tr>
-   {% if bulletins %}
-   {% for bulletin in bulletins %}
-      <tr>
-        <td>{{ bulletin.date_created }}</td>
-        <td>{{ bulletin.date_modified }}</td>
-        <td>{{ bulletin.title }}</td>
-        <td>{{ bulletin.encrypted }}</td>
-      </tr>
-   {% endfor %}
-   {% else %}
-        <td>N/A</td>
-        <td>N/A</td>
-        <td>N/A</td>
-        <td>N/A</td>
-   {% endif %}
-
-</table>
-</div></div>
+&nbsp;
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <a href="bulletin"><button type="button" class="btn btn-primary btn-lg">New Bulletin</button></a>
+        <h3> Submitted Bulletins </h3>
+        <table class="table table-bordered">
+          <tr>
+            <th>Date Created</th>
+            <th>Date Modified</th>
+            <th>Title</th>
+            <th>Encrypted</th>
+          </tr>
+           {% if bulletins %}
+           {% for bulletin in bulletins %}
+              <tr>
+                <td>{{ bulletin.date_created }}</td>
+                <td>{{ bulletin.date_modified }}</td>
+                <td>{{ bulletin.title }}</td>
+                <td>{{ bulletin.encrypted }}</td>
+              </tr>
+           {% endfor %}
+           {% else %}
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+           {% endif %}
+        </table>
+    </div>
+</div>
 
 {#<div class="row"> <div class="col-md-10 col-md-offset-1">#}
 {#<h3> Read Bulletins </h3>#}
@@ -71,7 +70,7 @@
 {#</div></div>#}
 
 {% else %}
-	<h2> Please log in. </h2>
+	<h2> Please <a href="login">log in.</a> </h2>
 {% endif %}
 
 
