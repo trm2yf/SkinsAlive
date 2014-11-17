@@ -6,9 +6,10 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from sprint1.models import Document,Bulletin
-from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
+
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
+from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
 from django.contrib.auth.models import User
 
 def home(request):
