@@ -80,7 +80,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATICFILES_DIRS = (
-"\cs3240-f14-team02\dist",
+    "/static/bootstrap/js/bootstrap.min.js",
+    "\cs3240-f14-team02\dist",
+
 
     os.path.join(
         os.path.dirname(__file__),
