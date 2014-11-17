@@ -154,10 +154,42 @@ def search(request):
 
     if request.method == 'POST':
         search_text = request.POST['search_text']
-        query = Bulletin.objects.filter(title__icontains=search_text)
-        string = [b.title for b in query]
-        print string
-        return render_to_response('search.html', {'results':string}, context)
+        search_type = request.POST['type']
+
+        #Keyword Search Option
+        if search_type == 'all':
+            q1 = Bulletin.objects.filter(title__icontains=search_text)
+           # q2 = q1.filter(Bulletin.objects.filter(text_description__icontains=search_text))
+            #extra logic needed for dates?
+           # q3 =q2.filter(Bulletin.objects.filter(date_created__icontains=search_text))
+            query = q1.order_by('date_created', 'title')
+
+        # Title Search Option
+        if search_type == 'title':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(title__icontains=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+        #Author Search Option
+        if search_type == 'author':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(authors__icontains=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+        if search_type == 'date':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(date_created__year=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+
+
+
+        bulletins = [b for b in query]
+       # print string
+        return render_to_response('search.html', {'bulletins':bulletins}, context)
 
     else:
         #The request is not a POST so it's probably a GET request
