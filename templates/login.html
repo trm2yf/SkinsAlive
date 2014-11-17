@@ -4,6 +4,7 @@
 
     <h1>Log Into Your Secure Witness Account</h1>
 
+    <form id="login_form" method="post" action="/login/">
 
     <form id="login_form" method="post" actions="login">
         {% csrf_token %}
@@ -12,7 +13,7 @@
         Password: <input type="password" id="password" name="password" value="" size="50" />
         <br />
 
-        <input type="submit" value="submit" />
+        <input type="submit" value="login" />
     </form>
 
 {% endblock %}

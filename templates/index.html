@@ -1,59 +1,28 @@
 <!DOCTYPE html>
-{% load staticfiles %}
-<html lang="en">
-  <head>
-      <link href="{% static 'bootstrap/css/bootstrap.min.css' %}"
-      rel="stylesheet" media="screen">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-
+{% extends "base.html" %}
 
-scale=1">
-<title>Secure Witness</title>
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+{% block content %}
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements 
-
-and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via 
-
-file:// -->
-    <!--[if lt IE 9]>
-      <script 
-
-src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></scrip
-
-t>
-      <script 
-
-src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-<body>
-<header>Please log-in to the Secure Witness System</header>
-<header>Welcome to the Secure Witness System</header>
 <h1>Secure Witness System</h1>
 {% if user.is_authenticated %}
 <h2>Welcome {{ user.username }}</h2>
 {% else %}
 <h2> Log-in as an Administrator, Reader, or Author </h2>
 <section> 
-<h6>To Log-in to the system, please enter your username and password 
+<h4>To Log-in to the system, please enter your username and password in the fields below: </h4>
 
-in the fields below: </h6>
-
-<form action="/user_login/" method="get">
+<form action="/login/" method="post">
 
  username: <input id="username" name="username" placeholder="Type username here">
  password: <input id="password" name="password" placeholder="Type password here">
   <input type="submit"> 
 </form> 
 </section> 
-
-{% endif %}
-<h6>All users must login before using the Secure Witness System </h6>
+<h4>All users must login before using the Secure Witness System.</h4>
+<h4>Login at the page below: </h4>
 <a href="login">Login to the Secure Witness System</a><br>
+{% endif %}
+
 <br>
 <br>
 <br>
@@ -63,15 +32,4 @@ in the fields below: </h6>
 <br>
 <br>
 <a href="logout">Logout of your Account</a><br>
-
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script 
-
-src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual 
-
-files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-  </body>
-</html>
+{% endblock %}

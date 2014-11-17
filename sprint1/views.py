@@ -9,6 +9,11 @@ from sprint1.models import Document,Bulletin
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
+from django.contrib.auth import logout
+
+from django.contrib.auth.decorators import login_required
+
+
 from django.contrib.auth.models import User
 
 def home(request):
@@ -24,6 +29,7 @@ def home(request):
         'index.html',{'form':form},
         context_instance=RequestContext(request)
     )
+
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
     return (0,0)
@@ -155,19 +161,68 @@ def user_login(request):
         #The request is not a POST so it's probably a GET request
         return render_to_response('login.html', {}, context)
 
+#logout
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/index/')
+
+
+
 #Search Function
 def search(request):
     context = RequestContext(request)
 
     if request.method == 'POST':
         search_text = request.POST['search_text']
-        query = Bulletin.objects.filter(title__icontains=search_text)
-        string = [b.title for b in query]
-        print string
-        return render_to_response('search.html', {'results':string}, context)
+        search_type = request.POST['type']
+
+        #Keyword Search Option
+        if search_type == 'all':
+            q1 = Bulletin.objects.filter(title__icontains=search_text)
+           # q2 = q1.filter(Bulletin.objects.filter(text_description__icontains=search_text))
+            #extra logic needed for dates?
+           # q3 =q2.filter(Bulletin.objects.filter(date_created__icontains=search_text))
+            query = q1.order_by('date_created', 'title')
+
+        # Title Search Option
+        if search_type == 'title':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(title__icontains=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+        #Author Search Option
+        if search_type == 'author':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(authors__icontains=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+        if search_type == 'date':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(date_created__year=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+
+
+
+        bulletins = [b for b in query]
+       # print string
+        return render_to_response('search.html', {'bulletins':bulletins}, context)
 
     else:
         #The request is not a POST so it's probably a GET request
         return render_to_response('search.html', {}, context)
 
+# Use the login_required() decorator to ensure only those logged in can access the view.
+def user_logout(request):
+    logout(request)
 
+        # Take the user back to the homepage.
+    return HttpResponseRedirect('/index/')
+
+def profile(request):
+    context = RequestContext(request)
+    return render_to_response('profile.html',{},context_instance=RequestContext(request))

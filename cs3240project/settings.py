@@ -79,10 +79,27 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+STATICFILES_DIRS = (
+    "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/static/dist/",
+
+  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/js/",
+  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/css/",
+  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/fonts/",
+    
+
+
+    os.path.join(
+        os.path.dirname(__file__),
+        'static',
+    ),
+
+)
+
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'templates'),
+
 )
