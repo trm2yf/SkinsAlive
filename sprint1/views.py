@@ -31,12 +31,14 @@ def location_lookup(citystring):
 def auth_util(passedrequest):
 
     if passedrequest.user.id==None:
-        return 1
+        return -1
     else:
         return passedrequest.user.id
 
 def bulletin(request):
     userid=auth_util(request)
+    print request.user
+    print userid
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
