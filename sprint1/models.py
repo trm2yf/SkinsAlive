@@ -6,9 +6,10 @@ from base64 import urlsafe_b64encode
 from django.contrib.auth.models import UserManager
 from django.contrib.auth.models import User
 class Folder(models.Model):
+    owner=models.ForeignKey(User)
     f_key = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    folder_contained=models.ForeignKey('self')
+    folder_contained=models.ForeignKey('self',blank=True,null=True)
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 # Users Model
