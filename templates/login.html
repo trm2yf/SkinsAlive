@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Secure Witness System</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
+
     <h1>Log Into Your Secure Witness Account</h1>
 
-    <form id="login_form" method="post" action="/user_login/">
+
+    <form id="login_form" method="post" actions="login">
         {% csrf_token %}
         Username: <input type="test" id="username" name="username" value="" size="50" />
         <br />
@@ -16,7 +15,7 @@
         <input type="submit" value="submit" />
     </form>
 
-</body>
+{% endblock %}
 
 
 
