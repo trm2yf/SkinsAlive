@@ -101,10 +101,5 @@ STATIC_URL = '/static/'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,  'templates'),
-<<<<<<< HEAD
-
 
 )
-=======
-)
->>>>>>> 0e8cdb5572b136845c86056dfce54b7bf3666978
