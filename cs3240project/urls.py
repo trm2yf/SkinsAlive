@@ -5,7 +5,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-import contacts.views
 
 #from django.views.generic import RedirectView
 
