@@ -3,17 +3,13 @@
 
 {% block content %}
 
-<h1>Welcome to the Secure Witness System</h1>
-<h2>Please log-in to the Secure Witness System</h2>
 <h1>Secure Witness System</h1>
 {% if user.is_authenticated %}
 <h2>Welcome {{ user.username }}</h2>
 {% else %}
 <h2> Log-in as an Administrator, Reader, or Author </h2>
 <section> 
-<h6>To Log-in to the system, please enter your username and password 
-
-in the fields below: </h6>
+<h6>To Log-in to the system, please enter your username and password in the fields below: </h6>
 
 <form action="/user_login/" method="get">
 
@@ -22,7 +18,8 @@ in the fields below: </h6>
   <input type="submit"> 
 </form> 
 </section> 
-<h6>All users must login before using the Secure Witness System </h6>
+<h4>All users must login before using the Secure Witness System.</h4>
+<h4>Login at the page below: </h4>
 <a href="login">Login to the Secure Witness System</a><br>
 {% endif %}
 
