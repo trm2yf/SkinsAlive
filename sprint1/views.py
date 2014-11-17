@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Bulletin
+from sprint1.models import Document,Bulletin,Folder
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
@@ -48,6 +48,7 @@ def bulletin(request):
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
         form =BulletinForm(request.POST)
+        print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
             print request.user
@@ -55,14 +56,15 @@ def bulletin(request):
             enc=1
             if request.POST['encrypted']!='on':
                 enc=0
-            bulletin = Bulletin(author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            print Bulletin
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
                 print 'Saving a file'
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin.b_key)
+                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin, )
                 newdoc.save()
         return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
@@ -80,7 +82,7 @@ def list(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
-            newdoc = Document(docfile = request.FILES['docfile'])
+            newdoc = Document(docfile = request.FILES['docfile'],posted_bulletin=None)
             newdoc.save()
 
             # Redirect to the document list after POST
@@ -115,7 +117,8 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
-
+            folder=Folder(owner=user,name='Default')
+            folder.save()
             #update the registered variable to be true
             registered = True
 
@@ -193,7 +196,7 @@ def search(request):
         #Author Search Option
         if search_type == 'author':
             # if text is contained within title
-            q1 = Bulletin.objects.filter(authors__icontains=search_text)
+            q1 = Bulletin.objects.filter(author__icontains=search_text)
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 

@@ -12,5 +12,4 @@ urlpatterns = patterns('sprint1.views',
     url(r'^profile', 'profile', name='profile'),
     url(r'^logout', 'user_logout', name='logout'),
     url(r'^search', 'search', name='search')
-    
     )
