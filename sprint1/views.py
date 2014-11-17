@@ -11,6 +11,8 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 
+from django.contrib.auth.decorators import login_required
+
 
 from django.contrib.auth.models import User
 
@@ -156,6 +158,14 @@ def user_login(request):
     else:
         #The request is not a POST so it's probably a GET request
         return render_to_response('login.html', {}, context)
+
+#logout
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/index/')
+
+
 
 #Search Function
 def search(request):
