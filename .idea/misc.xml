@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-<<<<<<< HEAD
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.6 (C:/Python27/python.exe)" project-jdk-type="Python SDK" />
-=======
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.8 (C:\Python27\python.exe)" project-jdk-type="Python SDK" />
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  <component name="PyConsoleOptionsProvider">
+<component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7.8 (C:\Python27\python.exe)" project-jdk-type="Python SDK" />
+name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <PyConsoleSettings />
     </option>
   </component>
->>>>>>> a14717b5e70eccffc0e0ad81e17b1f90a4076226
-=======
->>>>>>> bulletinform
-=======
->>>>>>> 807c1fc8a30fb29f43fc2ed99ff79f1109e2fcca
->>>>>>> bulletinform
+a14717b5e70eccffc0e0ad81e17b1f90a4076226
+807c1fc8a30fb29f43fc2ed99ff79f1109e2fcca
 </project>
 
