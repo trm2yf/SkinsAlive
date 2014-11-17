@@ -80,9 +80,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATICFILES_DIRS = (
-    "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/js/",
-    "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/css/",
-    "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/fonts/",
+    "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/static/dist/",
+
+  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/js/",
+  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/css/",
+  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/fonts/",
     
 
 
