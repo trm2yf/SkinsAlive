@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+ <h1>Bulletin Search Page</h1>
+<form action="search" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+    <input name="search_text"/>
+
+ <label for="searchtype">
+	<select name="type" id="searchtype" class='searchbtn'>
+                  <option value="all">Keyword</option>
+                  <option value="title">Title</option>
+                  <option value="author">Author</option>
+                  <option value="date">Date</option>
+                </select>
+</label>
+
+        <button type="button">
+        Search
+    </button>
+
+
+</form>
+
+
+{% if bulletins %}
+{% for bulletin in bulletins %}
+             <p>{{type}}</p>
+            <p>{{bulletin.title}}</p>
+            <p>{{bulletin.text_description}}</p>
+        {% endfor %}
+{% else %}
+        <p>No results found.</p>
+    {% endif %}
+{% endblock %}

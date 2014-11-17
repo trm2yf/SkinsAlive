@@ -5,18 +5,20 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Users,Bulletin
+from sprint1.models import Document,Bulletin
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 
 
+from django.contrib.auth.models import User
+
 def home(request):
     if request.method == 'POST':
         form =AccountForm(request.POST)
         if form.is_valid():
-            user = Users(u_name=request.POST.username,email=request.POST.email,password=request.POST.password)
+            user = User(username=request.POST.username,email=request.POST.email,password=request.POST.password)
             user.save()
             return HttpResponseRedirect(reverse('sprint1.views.home'))
     else:
@@ -29,21 +31,36 @@ def home(request):
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
     return (0,0)
+
+def auth_util(passedrequest):
+
+    if passedrequest.user.id==None:
+        return 1
+    else:
+        return passedrequest.user.id
+
 def bulletin(request):
+    userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
         form =BulletinForm(request.POST)
         if form.is_valid():
             print 'Saving Bulletin'
+            print request.user
             lat,long=location_lookup(request.POST['location'])
-            bulletin = Bulletin(title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=request.POST['encrypted'] )
+            enc=1
+            if request.POST['encrypted']!='on':
+                enc=0
+            bulletin = Bulletin(author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
-        if doc_formset.is_valid():
+        if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
                 print 'Saving a file'
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'))
+                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin.b_key)
                 newdoc.save()
         return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
@@ -128,7 +145,7 @@ def user_login(request):
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/index/')
+                return HttpResponseRedirect('/bulletin')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
@@ -140,7 +157,52 @@ def user_login(request):
         #The request is not a POST so it's probably a GET request
         return render_to_response('login.html', {}, context)
 
+#Search Function
+def search(request):
+    context = RequestContext(request)
 
+    if request.method == 'POST':
+        search_text = request.POST['search_text']
+        search_type = request.POST['type']
+
+        #Keyword Search Option
+        if search_type == 'all':
+            q1 = Bulletin.objects.filter(title__icontains=search_text)
+           # q2 = q1.filter(Bulletin.objects.filter(text_description__icontains=search_text))
+            #extra logic needed for dates?
+           # q3 =q2.filter(Bulletin.objects.filter(date_created__icontains=search_text))
+            query = q1.order_by('date_created', 'title')
+
+        # Title Search Option
+        if search_type == 'title':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(title__icontains=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+        #Author Search Option
+        if search_type == 'author':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(authors__icontains=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+        if search_type == 'date':
+            # if text is contained within title
+            q1 = Bulletin.objects.filter(date_created__year=search_text)
+            # order by publication date, then headline
+            query =q1.order_by('date_created', 'title')
+
+
+
+
+        bulletins = [b for b in query]
+       # print string
+        return render_to_response('search.html', {'bulletins':bulletins}, context)
+
+    else:
+        #The request is not a POST so it's probably a GET request
+        return render_to_response('search.html', {}, context)
 
 # Use the login_required() decorator to ensure only those logged in can access the view.
 def user_logout(request):
