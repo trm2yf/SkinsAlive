@@ -1,5 +1,7 @@
 __author__ = 'Zachary'
 from django.conf.urls import patterns, url
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('sprint1.views',
     url(r'^list', 'list', name='list'),
@@ -9,5 +11,7 @@ urlpatterns = patterns('sprint1.views',
     url(r'^login/$', 'user_login', name='login'),
     url(r'^profile', 'profile', name='profile'),
     url(r'^logout', 'user_logout', name='logout'),
-    url(r'^search', 'search', name='search')
+    url(r'^search', 'search', name='search'),
+    url(r'^admin/', include(admin.site.urls))
+    
     )
