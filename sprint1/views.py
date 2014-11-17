@@ -154,6 +154,14 @@ def user_login(request):
         #The request is not a POST so it's probably a GET request
         return render_to_response('login.html', {}, context)
 
+#logout
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/index/')
+
+
+
 #Search Function
 def search(request):
     context = RequestContext(request)
