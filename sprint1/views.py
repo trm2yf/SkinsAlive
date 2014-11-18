@@ -37,14 +37,12 @@ def location_lookup(citystring):
 def auth_util(passedrequest):
 
     if passedrequest.user.id==None:
-        return -1
+        return 1
     else:
         return passedrequest.user.id
 
 def bulletin(request):
     userid=auth_util(request)
-    print request.user
-    print userid
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
@@ -152,7 +150,7 @@ def user_login(request):
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/bulletin')
+                return HttpResponseRedirect('/profile')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
@@ -168,7 +166,7 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect('/index')
+    return HttpResponseRedirect('/index/')
 
 
 
@@ -219,8 +217,19 @@ def search(request):
         #The request is not a POST so it's probably a GET request
         return render_to_response('search.html', {}, context)
 
+# Use the login_required() decorator to ensure only those logged in can access the view.
+def user_logout(request):
+    logout(request)
 
+        # Take the user back to the homepage.
+    return HttpResponseRedirect('/index')
 
 def profile(request):
     context = RequestContext(request)
-    return render_to_response('profile.html',{},context_instance=RequestContext(request))
+    author = request.user.id
+
+    q1 = Bulletin.objects.filter(author__exact=author)
+
+    bulletins = [b for b in q1]
+    return render_to_response('profile.html', {'bulletins':bulletins}, context)
+
