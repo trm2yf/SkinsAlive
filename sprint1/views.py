@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Q
 
 from django.contrib.auth.models import User
 
@@ -180,10 +180,12 @@ def search(request):
 
         #Keyword Search Option
         if search_type == 'all':
-            q1 = Bulletin.objects.filter(title__icontains=search_text)
-           # q2 = q1.filter(Bulletin.objects.filter(text_description__icontains=search_text))
-            #extra logic needed for dates?
-           # q3 =q2.filter(Bulletin.objects.filter(date_created__icontains=search_text))
+            #search logic
+            q1 = Bulletin.objects.get(Q(title__icontains=search_text) |
+                                      Q(author__icontains=search_text) |
+                                      Q(date_created__icontains=search_text)
+                                      )
+            # show/order most recent posts first
             query = q1.order_by('date_created', 'title')
 
         # Title Search Option
