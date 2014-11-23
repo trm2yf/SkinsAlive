@@ -9,25 +9,60 @@
 &nbsp;
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <a href="bulletin"><button type="button" class="btn btn-primary btn-lg">New Bulletin</button></a>
+
+        <a href="bulletin"><button type="button" class="btn btn-primary btn-lg"><i class="fa fa-pencil-square-o"></i> Create</button></a>
+        <a href="search"><button type="button" class="btn btn-success btn-lg"> <i class="fa fa-search"></i> Search</button></a>
+
+
         <h3> Submitted Bulletins </h3>
+
         <table class="table table-bordered">
           <tr>
+            <th>Title</th>
+            <th>Description</th>
             <th>Date Created</th>
             <th>Date Modified</th>
-            <th>Title</th>
             <th>Encrypted</th>
+            <th>Delete</th>
+            <th>Edit</th>
+            <th>Copy</th>
           </tr>
            {% if bulletins %}
            {% for bulletin in bulletins %}
               <tr>
+                <td>{{ bulletin.title }}</td>
+                <td>{{ bulletin.text_description }}</td>
                 <td>{{ bulletin.date_created }}</td>
                 <td>{{ bulletin.date_modified }}</td>
-                <td>{{ bulletin.title }}</td>
                 <td>{{ bulletin.encrypted }}</td>
+                <td>
+{#                    <div class="col-md-2">#}
+                    <form action="profile" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-danger btn-sm" name="delete" value="{{ bulletin.b_key }}"><i class="fa fa-minus-circle"></i></button>
+                    </form>
+{#                    </div>#}
+                </td>
+                <td>
+{#                    <div class="col-md-2">#}
+                    <form action="edit" method="get" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-info btn-sm" name="edit" value="{{ bulletin.b_key }}"><i class="fa fa-pencil"></i></button>
+                    </form>
+{#                    </div>#}
+                </td>
+                <td>
+{#                    <div class="col-md-2">#}
+                    <form action="copy" method="get" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-warning btn-sm" name="edit" value="{{ bulletin.b_key }}"><i class="fa fa-copy"></i></button>
+                    </form>
+{#                    </div>#}
+                </td>
               </tr>
            {% endfor %}
            {% else %}
+                <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
@@ -37,23 +72,6 @@
     </div>
 </div>
 
-{#<div class="row"> <div class="col-md-10 col-md-offset-1">#}
-{#<h3> Read Bulletins </h3>#}
-{#<table class="table table-bordered">#}
-{#  <tr>#}
-{#  	<th>Date Created</th>#}
-{#  	<th>Date Modified</th>#}
-{#  	<th>Title</th>#}
-{#  	<th>Encrypted</th>#}
-{#  </tr>#}
-{#  <tr>#}
-{#  	<td>{{ sprint1_bulletin.date_created }}</td>#}
-{#  	<td>{{ sprint1_bulletin.date_modified }}</td>#}
-{#  	<td>{{ sprint1_bulletin.title }}</td>#}
-{#  	<td>{{ sprint1_bulletin.encrypted }}</td>#}
-{#  </tr>#}
-{#</table>#}
-{#</div></div>#}
 
 {% else %}
 	<h2> Please <a href="login">log in.</a> </h2>
