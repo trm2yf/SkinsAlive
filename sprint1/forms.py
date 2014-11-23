@@ -1,13 +1,16 @@
 __author__ = 'Zachary'
 from django import forms
-from models import Bulletin
+from models import Bulletin,Document
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
 
-class DocumentForm(forms.Form):
+class DocumentForm(forms.ModelForm):
     docfile = forms.FileField(
         label='Select a file'
     )
+    class Meta:
+        model=Document
+        fields=['docfile']
 class BulletinForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
     # text_description=forms.CharField(label='Text Description')
