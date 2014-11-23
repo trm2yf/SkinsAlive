@@ -64,7 +64,7 @@ def bulletin(request):
             for doc in doc_formset:
                 print 'Saving a file'
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin, )
+                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
                 newdoc.save()
         return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
@@ -242,6 +242,7 @@ def profile(request):
 
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
+<<<<<<< HEAD
 
 def edit(request):
     context = RequestContext(request)
@@ -285,6 +286,33 @@ def bdisplay(request):
     else:
 
         q1 = Bulletin.objects.filter(author__exact=bulletin_key)
+=======
+
+def edit(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    if request.method == 'GET':
+        b_id = request.GET['edit']
+        q1 = Bulletin.objects.filter(b_key__exact=b_id, author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('edit.html', {'bulletins':bulletins}, context)
+
+    else:
+        b_id = request.POST['submit']
+        title = request.POST['title']
+        desc = request.POST['desc']
+        # encrypt = request.POST['encrypt']
+        folder = request.POST['folder']
+
+        Bulletin.objects.filter(b_key=b_id).update(title=title)
+        Bulletin.objects.filter(b_key=b_id).update(text_description=desc)
+        # Bulletin.objects.filter(b_key=b_id).update(encrypted=encrypt)
+        Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
+
+        return HttpResponseRedirect('profile.html')
+>>>>>>> 12c108c6ff185a019e9013f3dc58465b7769c9ef
 
         bulletin = [b for b in q1]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
