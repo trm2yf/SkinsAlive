@@ -255,15 +255,16 @@ def edit(request):
         return render_to_response('edit.html', {'bulletins':bulletins}, context)
 
     else:
+        b_id = request.POST['submit']
         title = request.POST['title']
         desc = request.POST['desc']
-        encrypt = request.POST['encrypt']
+        # encrypt = request.POST['encrypt']
         folder = request.POST['folder']
 
-        Bulletin.objects.update(title=title)
-        Bulletin.objects.update(text_description=desc)
-        Bulletin.objects.update(encrypted=encrypt)
-        Bulletin.objects.update(folder_id=folder)
+        Bulletin.objects.filter(b_key=b_id).update(title=title)
+        Bulletin.objects.filter(b_key=b_id).update(text_description=desc)
+        # Bulletin.objects.filter(b_key=b_id).update(encrypted=encrypt)
+        Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
 
         return HttpResponseRedirect('profile.html')
 
