@@ -17,8 +17,9 @@ class BulletinForm(forms.ModelForm):
     class Meta:
         model=Bulletin
         fields=['title','text_description','encrypted','folder']
-    # def __init__(self):
-    #         self.fields['encrypted'].initial= True
+    #def __init__(self):
+     #        self.fields['encrypted'].initial= True
+      #       self.fields['folder'].initial=1
     """
     bulletin = models.ForeignKey(Folder)
     title = models.CharField(max_length=255)
