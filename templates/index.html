@@ -8,19 +8,13 @@
 <h2>Welcome {{ user.username }}</h2>
 {% else %}
 <h2> Log-in as an Administrator, Reader, or Author </h2>
-<section> 
-<h4>To Log-in to the system, please enter your username and password in the fields below: </h4>
-
-<form action="/login/" method="post">
-
- username: <input id="username" name="username" placeholder="Type username here">
- password: <input id="password" name="password" placeholder="Type password here">
-  <input type="submit"> 
-</form> 
-</section> 
 <h4>All users must login before using the Secure Witness System.</h4>
-<h4>Login at the page below: </h4>
+<h4>Authors and Readers Login at the page below: </h4>
 <a href="login">Login to the Secure Witness System</a><br>
+<h4>Administrative users Login at the page below: </h4>
+<a href="admin">Admin Login to the Secure Witness System</a><br>
+
+
 {% endif %}
 
 <br>
