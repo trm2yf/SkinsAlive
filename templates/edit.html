@@ -24,17 +24,17 @@
             <label for="desc">Text Description</label>
             <textarea type="text" class="form-control" id="desc" name="desc">{{ bulletin.text_description }}</textarea>
          </div>
-        <div class="checkbox">
-        <label>
-          <input type="checkbox" id="encrypt" name="encrypt"> Encrypted
-        </label>
-      </div>
+{#        <div class="checkbox">#}
+{#        <label>#}
+{#          <input type="checkbox" id="encrypt" name="encrypt"> Encrypted#}
+{#        </label>#}
+{#        </div>#}
          <div class="form-group">
             <label for="folder">Folder</label>
             <input type="text" class="form-control" id="folder" name="folder" value="{{ bulletin.folder_id }}">
          </div>
 
-        <input class="btn btn-info" type="submit" name="submit" value="Update Bulletin" />
+        <button class="btn btn-info" name="submit" value="{{ bulletin.b_key }}">Update</button>
 
         </form>
     </div>
