@@ -228,8 +228,42 @@ def profile(request):
     context = RequestContext(request)
     author = request.user.id
 
-    q1 = Bulletin.objects.filter(author__exact=author)
+    if request.method == 'POST':
+        delete = request.POST['delete']
+        Bulletin.objects.filter(b_key=delete).delete()
 
-    bulletins = [b for b in q1]
-    return render_to_response('profile.html', {'bulletins':bulletins}, context)
+        q1 = Bulletin.objects.filter(author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('profile.html', {'bulletins':bulletins}, context)
+
+    else:
+        q1 = Bulletin.objects.filter(author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('profile.html', {'bulletins':bulletins}, context)
+
+def edit(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    if request.method == 'GET':
+        b_id = request.GET['edit']
+        q1 = Bulletin.objects.filter(b_key__exact=b_id, author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('edit.html', {'bulletins':bulletins}, context)
+
+    else:
+        title = request.POST['title']
+        desc = request.POST['desc']
+        encrypt = request.POST['encrypt']
+        folder = request.POST['folder']
+
+        Bulletin.objects.update(title=title)
+        Bulletin.objects.update(text_description=desc)
+        Bulletin.objects.update(encrypted=encrypt)
+        Bulletin.objects.update(folder_id=folder)
+
+        return HttpResponseRedirect('profile.html')
 
