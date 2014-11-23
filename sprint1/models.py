@@ -90,18 +90,18 @@ class Document(models.Model):
     posted_bulletin=models.ForeignKey(Bulletin)
     docfile = models.FileField(upload_to=filepath_handler)
     d_key = models.AutoField(primary_key=True)
-    def save(self, *args, **kwargs):
-        print 'save called'
-        super(Document, self).save(*args, **kwargs)
-        if self.d_key:
-
-            #print self.docfile
-            enc=encrypt_file(self.docfile,None)
-            snake=path.join(getcwd(),'media',self.docfile.name)
-            with open(path.join(getcwd(),'media',self.docfile.name),'w') as f:
-                f.write(enc)
-            if not self.docfile:
-                self.docfile.save(self.docfile.name,ContentFile(open(snake)),save=False)
+    # def save(self, *args, **kwargs):
+    #     print 'save called'
+    #     super(Document, self).save(*args, **kwargs)
+    #     if self.d_key:
+    #
+    #         #print self.docfile
+    #         enc=encrypt_file(self.docfile,None)
+    #         snake=path.join(getcwd(),'media',self.docfile.name)
+    #         with open(path.join(getcwd(),'media',self.docfile.name),'w') as f:
+    #             f.write(enc)
+    #         if not self.docfile:
+    #             self.docfile.save(self.docfile.name,ContentFile(open(snake)),save=False)
             #temp=ContentFile(temp.read())
             #self.docfile.save(self.docfile.name.split("/")[-1],content=ContentFile(StringIO.StringIO(self.docfile._file)),save=False)
             #return
