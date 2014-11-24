@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Bulletin Display Page</h1>
+    {% if bulletin %}
+        {% for b in bulletin %}
+            <p>{{ type }}</p>
+            <h2> {{ b.title }}</h2>
+            <p> Author: {{ b.author }}</p>
+            <p> Description: {{ b.text_description }}</p>
+            <p> Lat: {{ b.lat }} Longitude {{ b.long }}</p>
+            <p> Created on: {{ b.creat_date }}</p>
+            <p> Modified on: {{ b.modified_date }}</p>
+            <p> Bulletin id: {{ b.b_key }}</p>
+            <p> Is Encrypted?: {{ b.encrypted }}</p>
+
+              <!-- List of uploaded documents -->
+    {% if documents %}
+        <h3>  Documents</h3>
+        <ul>
+        {% for document in documents %}
+{#            <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>#}
+           <p>{{document.docfile}}</p>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No documents.</p>
+    {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+{% endblock %}

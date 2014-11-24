@@ -26,9 +26,12 @@
 
 {% if bulletins %}
 {% for bulletin in bulletins %}
-             <p>{{type}}</p>
-            <p>{{bulletin.title}}</p>
+              <p>{{type}}</p>
+        <form action="bdisplay" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+         <button name="button_id" value="{{ bulletin.b_key }}">{{bulletin.title}}></button>
             <p>{{bulletin.text_description}}</p>
+        </form>
         {% endfor %}
 {% else %}
         <p>No results found.</p>

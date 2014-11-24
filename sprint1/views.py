@@ -245,6 +245,50 @@ def profile(request):
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
 
+
+def edit(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    if request.method == 'GET':
+        b_id = request.GET['edit']
+        q1 = Bulletin.objects.filter(b_key__exact=b_id, author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('edit.html', {'bulletins':bulletins}, context)
+
+    else:
+        title = request.POST['title']
+        desc = request.POST['desc']
+        encrypt = request.POST['encrypt']
+        folder = request.POST['folder']
+
+        Bulletin.objects.update(title=title)
+        Bulletin.objects.update(text_description=desc)
+        Bulletin.objects.update(encrypted=encrypt)
+        Bulletin.objects.update(folder_id=folder)
+
+        return HttpResponseRedirect('profile.html')
+
+def bdisplay(request):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        bulletin_key = request.POST['button_id']
+
+       # bulletin_key = request.POST['value']
+        q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
+
+        bulletin = [b for b in q1]
+        documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
+
+
+        return render_to_response('bdisplay.html', {'bulletin':bulletin,'documents': documents}, context)
+
+    else:
+
+        return HttpResponseRedirect('profile.html')
+
+
 def edit(request):
     context = RequestContext(request)
     author = request.user.id
@@ -270,3 +314,7 @@ def edit(request):
 
         return HttpResponseRedirect('profile.html')
 
+
+        bulletin = [b for b in q1]
+        documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
+        return render_to_response('bdisplay.html', {'bulletin':bulletin,'documents': documents}, context)
