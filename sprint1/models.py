@@ -66,13 +66,16 @@ def decrypt(ciphertext, key):
 
 def encrypt_file(file_name, key):
     print 'Encrypt called'
-    with file_name as fo:
+    with open(file_name,'r') as fo:
         plaintext = fo.read()
     enc = encrypt(plaintext, key)
+    #file_name.close()
+    overwrite=open(file_name,'wb')
+    overwrite.write(enc)
+    overwrite.close()
     # fo=open('E'+file_name.name.split("/")[-1], 'wb')
     # fo.write(enc)
     # fo.close()
-    return enc
 
 def decrypt_file(file_name, key):
     with open(file_name, 'rb') as fo:
@@ -90,24 +93,28 @@ class Document(models.Model):
     posted_bulletin=models.ForeignKey(Bulletin)
     docfile = models.FileField(upload_to=filepath_handler)
     d_key = models.AutoField(primary_key=True)
-    # def save(self, *args, **kwargs):
-    #     print 'save called'
-    #     super(Document, self).save(*args, **kwargs)
-    #     if self.d_key:
-    #
-    #         #print self.docfile
-    #         enc=encrypt_file(self.docfile,None)
-    #         snake=path.join(getcwd(),'media',self.docfile.name)
-    #         with open(path.join(getcwd(),'media',self.docfile.name),'w') as f:
-    #             f.write(enc)
-    #         if not self.docfile:
-    #             self.docfile.save(self.docfile.name,ContentFile(open(snake)),save=False)
-            #temp=ContentFile(temp.read())
-            #self.docfile.save(self.docfile.name.split("/")[-1],content=ContentFile(StringIO.StringIO(self.docfile._file)),save=False)
-            #return
-            #self.docfile.save(self.docfile.name,encrypt(self.docfile.))
-            #... unzip your file ...
-            #... encrypt your file if necessary ...
+    def save(self, *args, **kwargs):
+        super(Document, self).save(*args, **kwargs)
+        #print self.docfile.name
+        snake=path.join(getcwd(),'media',self.docfile.name)
+        encrypt_file(snake,None)
+        #self.docfile=ContentFile.open(ContentFile(self.docfile),)
+
+        # print 'save called'
+        # super(Document, self).save(*args, **kwargs)
+        # print self.docfile
+        # name=self.docfile.file.name
+        # print name
+        # snake=path.join(getcwd(),'media',name)
+        # enc=encrypt_file(ContentFile(open(snake)),None)
+        #
+        # with open(path.join(getcwd(),'media',name),'w') as f:
+        #     f.write(enc)
+        # if not self.docfile:
+        #     self.docfile.save(name=name,content=ContentFile(open(snake)), save=False)
+        #     #self.docfile.close()
+        #     #self.docfile=ContentFile(open(snake))
+        # print 'Done'
 
 
 

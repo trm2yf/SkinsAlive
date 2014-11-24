@@ -63,9 +63,11 @@ def bulletin(request):
         if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
                 print 'Saving a file'
+
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                newdoc.save()
+                if cd.get('docfile')!=None:
+                    newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
+                    newdoc.save()
         return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
         form=BulletinForm()
