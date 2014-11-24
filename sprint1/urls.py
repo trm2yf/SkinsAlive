@@ -12,11 +12,11 @@ urlpatterns = patterns('sprint1.views',
     url(r'^profile', 'profile', name='profile'),
     url(r'^logout', 'user_logout', name='logout'),
     url(r'^search', 'search', name='search'),
-<<<<<<< HEAD
+
     url(r'^edit', 'edit', name='edit'),
-    url(r'^bdisplay', 'bdisplay', name='bdisplay')
-=======
+    url(r'^bdisplay', 'bdisplay', name='bdisplay'),
+
     url(r'^edit', 'edit', name='edit')
-#    url(r'^admin', 'admin', name='admin')
->>>>>>> 12c108c6ff185a019e9013f3dc58465b7769c9ef
+
+
     )

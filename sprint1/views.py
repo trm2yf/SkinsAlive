@@ -242,7 +242,7 @@ def profile(request):
 
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
-<<<<<<< HEAD
+
 
 def edit(request):
     context = RequestContext(request)
@@ -270,23 +270,22 @@ def edit(request):
 
 def bdisplay(request):
     context = RequestContext(request)
-    bulletin_key=1
     if request.method == 'POST':
+        bulletin_key = request.POST['button_id']
+
        # bulletin_key = request.POST['value']
         q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
 
         bulletin = [b for b in q1]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
 
-    # Render list page with the documents and the form
-
 
         return render_to_response('bdisplay.html', {'bulletin':bulletin,'documents': documents}, context)
 
     else:
 
-        q1 = Bulletin.objects.filter(author__exact=bulletin_key)
-=======
+        return HttpResponseRedirect('profile.html')
+
 
 def edit(request):
     context = RequestContext(request)
@@ -312,7 +311,7 @@ def edit(request):
         Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
 
         return HttpResponseRedirect('profile.html')
->>>>>>> 12c108c6ff185a019e9013f3dc58465b7769c9ef
+
 
         bulletin = [b for b in q1]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)

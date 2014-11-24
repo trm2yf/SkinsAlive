@@ -27,9 +27,11 @@
 {% if bulletins %}
 {% for bulletin in bulletins %}
               <p>{{type}}</p>
-
-         <button name="button_id" id="button" onclick="window.location.href='/bdisplay'" value='{{ bulletin.id }}'><p>{{bulletin.title}}</p></button>
+        <form action="bdisplay" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+         <button name="button_id" value="{{ bulletin.b_key }}">{{bulletin.title}}></button>
             <p>{{bulletin.text_description}}</p>
+        </form>
         {% endfor %}
 {% else %}
         <p>No results found.</p>
