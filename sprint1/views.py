@@ -63,9 +63,11 @@ def bulletin(request):
         if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
                 print 'Saving a file'
+
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                newdoc.save()
+                if cd.get('docfile')!=None:
+                    newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
+                    newdoc.save()
         return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
         form=BulletinForm()
@@ -243,6 +245,26 @@ def profile(request):
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
 
+
+def bdisplay(request):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        bulletin_key = request.POST['button_id']
+
+       # bulletin_key = request.POST['value']
+        q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
+
+        bulletin = [b for b in q1]
+        documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
+
+
+        return render_to_response('bdisplay.html', {'bulletin':bulletin,'documents': documents}, context)
+
+    else:
+
+        return HttpResponseRedirect('/search')
+
+
 def edit(request):
     context = RequestContext(request)
     author = request.user.id
@@ -266,7 +288,7 @@ def edit(request):
         # Bulletin.objects.filter(b_key=b_id).update(encrypted=encrypt)
         Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
 
-        return HttpResponseRedirect('profile.html')
+        return HttpResponseRedirect('/profile')
 
 def copy(request):
     context = RequestContext(request)
@@ -294,7 +316,7 @@ def copy(request):
                 cd=doc.cleaned_data
                 newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
                 newdoc.save()
-        return HttpResponseRedirect('profile.html')
+        return HttpResponseRedirect('/profile')
     else:
         b_id = request.GET['copy']
         query = Bulletin.objects.filter(b_key=b_id)
@@ -309,3 +331,4 @@ def copy(request):
         'copy.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
         )
+

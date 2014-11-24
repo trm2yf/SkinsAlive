@@ -13,6 +13,8 @@ urlpatterns = patterns('sprint1.views',
     url(r'^logout', 'user_logout', name='logout'),
     url(r'^search', 'search', name='search'),
     url(r'^edit', 'edit', name='edit'),
-    url(r'^copy', 'copy', name='copy')
+    url(r'^copy', 'copy', name='copy'),
+    url(r'^bdisplay', 'bdisplay', name='bdisplay'),
+
 #    url(r'^admin', 'admin', name='admin')
     )
