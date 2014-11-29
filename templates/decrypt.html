@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form method="POST" action="/decrypt" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>In order to view {{ document }}, you must </p>
+    <p>Upload private key (This will not be stored on the server!)</p>
+    <input type="file" name="private">
+    <button name="document" value="{{ document }}">Submit</button>
+</form>
+</body>
+</html>
