@@ -55,13 +55,16 @@
 {#                    <div class="col-md-2">#}
                     <form action="copy" method="get" enctype="multipart/form-data">
                     {% csrf_token %}
-                        <button class="btn btn-warning btn-sm" name="edit" value="{{ bulletin.b_key }}"><i class="fa fa-copy"></i></button>
+                        <button class="btn btn-warning btn-sm" name="copy" value="{{ bulletin.b_key }}"><i class="fa fa-copy"></i></button>
                     </form>
 {#                    </div>#}
                 </td>
               </tr>
            {% endfor %}
            {% else %}
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>

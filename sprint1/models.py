@@ -44,6 +44,42 @@ class Bulletin(models.Model):
     def __str__(self):              # __unicode__ on Python 2
         return self.title
 # Create your models here.
+# from Crypto import Random
+# from Crypto.Cipher import AES
+#
+# def pad(s):
+#     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
+#
+# def encrypt(message, key, key_size=256):
+#     if key is None:
+#         key = Random.new().read(key_size // 8)
+#     message = pad(message)
+#     iv = Random.new().read(AES.block_size)
+#     cipher = AES.new(key, AES.MODE_CBC, iv)
+#     return iv + cipher.encrypt(message)
+#
+# def decrypt(ciphertext, key):
+#     iv = ciphertext[:AES.block_size]
+#     cipher = AES.new(key, AES.MODE_CBC, iv)
+#     plaintext = cipher.decrypt(ciphertext[AES.block_size:])
+#     return plaintext.rstrip(b"\0")
+#
+# def encrypt_file(file_name, key):
+#     print 'Encrypt called'
+#     with file_name as fo:
+#         plaintext = fo.read()
+#     enc = encrypt(plaintext, key)
+#     # fo=open('E'+file_name.name.split("/")[-1], 'wb')
+#     # fo.write(enc)
+#     # fo.close()
+#     return enc
+#
+# def decrypt_file(file_name, key):
+#     with open(file_name, 'rb') as fo:
+#         ciphertext = fo.read()
+#     dec = decrypt(ciphertext, key)
+#     with open(file_name[:-4], 'wb') as fo:
+#         fo.write(dec)
 
 from Crypto import Random
 from Crypto.Cipher import AES,PKCS1_OAEP
@@ -94,9 +130,17 @@ def decrypt_file(file_name, key):
     dec = decrypt(ciphertext, key)
     print dec
     return dec
+# =======
+#     with open(file_name, 'rb') as fo:
+#         ciphertext = fo.read()
+#     dec = decrypt(ciphertext, key)
+#     with open(file_name[:-4], 'wb') as fo:
+#         fo.write(dec)
+# >>>>>>> e4883da4315350c540808eb10c8034e6e796948e
 
 def filepath_handler(instance,name):
     return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
+
 
 class Permission(models.Model):
     p_key=models.AutoField(primary_key=True)
@@ -107,6 +151,7 @@ class Key(models.Model):
     k_key=models.AutoField(primary_key=True)
     owner=models.ForeignKey(User)
     public=models.CharField(max_length=2048)
+
 # Document Model
 def keylookup(userobject):
     results=Key.objects.filter(owner__exact=userobject)

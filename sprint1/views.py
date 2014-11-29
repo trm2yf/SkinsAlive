@@ -306,6 +306,10 @@ def decrypt(request):
         print e
         print 'empty'
         return render_to_response('decrypt.html',{'document':reqdoc}, context)
+        # return HttpResponseRedirect('/search')
+
+
+
 def edit(request):
     context = RequestContext(request)
     author = request.user.id
@@ -329,9 +333,49 @@ def edit(request):
         # Bulletin.objects.filter(b_key=b_id).update(encrypted=encrypt)
         Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
 
-        return HttpResponseRedirect('profile.html')
+        return HttpResponseRedirect('/profile')
 
-        #
-        # bulletin = [b for b in q1]
-        # documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
-        # return render_to_response('bdisplay.html', {'bulletin':bulletin,'documents': documents}, context)
+
+def copy(request):
+    context = RequestContext(request)
+    author = request.user.id
+    if author<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    DocumentFormSet=formset_factory(DocumentForm,extra=2)
+    if request.method == 'POST':
+        form =BulletinForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            print 'Saving Bulletin'
+            print request.user
+            lat,long=location_lookup(request.POST['location'])
+            enc=1
+            if request.POST['encrypted']!='on':
+                enc=0
+            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            print Bulletin
+            bulletin.save()
+        doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
+        if doc_formset.is_valid() and form.is_valid():
+            for doc in doc_formset:
+                print 'Saving a file'
+                cd=doc.cleaned_data
+                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
+                newdoc.save()
+        return HttpResponseRedirect('/profile')
+    else:
+        b_id = request.GET['copy']
+        query = Bulletin.objects.filter(b_key=b_id)
+        bulletin = [b for b in query]
+
+        form=BulletinForm(initial={'title': bulletin[0].title,
+                                   'text_description': bulletin[0].text_description,
+                                   'encrypted': bulletin[0].encrypted,
+                                   'folder': bulletin[0].folder})
+        doc_formset=DocumentFormSet(prefix='documents')
+        return render_to_response(
+        'copy.html',{'form':form,'doc_formset':doc_formset},
+        context_instance=RequestContext(request)
+        )
+
+
