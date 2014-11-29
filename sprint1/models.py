@@ -4,9 +4,11 @@ from os import urandom
 from hashlib import sha256
 from base64 import urlsafe_b64encode
 class Folder(models.Model):
+    owner=models.ForeignKey(User)
+    f_key = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    tagline = models.TextField()
-    #folder_contained=models.ForeignKey(default=None)
+    text_description = models.TextField(max_length=1024)
+    folder_contained=models.ForeignKey('self',blank=True,null=True)
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 # Users Model
