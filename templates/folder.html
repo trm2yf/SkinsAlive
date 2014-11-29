@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <!-- Upload form. Note enctype attribute! -->
+        <h1>Create a New Folder</h1>
+    {{ form.errors }}
+{{ form.non_field_errors }}
+        <form action="folder" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ doc_formset.management_form }}
+{#            {{ doc_formset.as_table }}#}
+
+            <div id="form_set">
+    {% for form in doc_formset.forms %}
+        <table class='no_error'>
+            {{ form.as_table }}
+        </table>
+    {% endfor %}
+            </div>
+            <div id="empty_form" style="display:none">
+            <table class='no_error'>
+                {{ doc_formset.empty_form.as_table }}
+            </table>
+            </div>
+
+
+            <button id="add-another" type="button">Add another document</button>
+            <p><input type="submit" value="Submit" /></p>
+
+        </form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $('#add-another').click(function() {
+        var form_idx = $('#id_form-TOTAL_FORMS').val();
+        $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+</script>
+{% endblock %}
