@@ -133,7 +133,7 @@ def register(request):
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
-            key = Key(owner=user,public=pubkey.publickey())
+            key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
             pkey=pubkey.exportKey('PEM')
 
@@ -298,7 +298,7 @@ def decrypt(request):
         pkey=request.FILES['private']
         print 'uploaded'
         from models import decrypt_file
-        bcontents=decrypt_file(reqdoc,pkey)
+        bcontents=decrypt_file(reqdoc,pkey.read())
         response=HttpResponse(content_type='multipart/encrypted')
         response.write(bcontents)
         return response

@@ -46,7 +46,8 @@ class Bulletin(models.Model):
 # Create your models here.
 
 from Crypto import Random
-from Crypto.Cipher import AES
+from Crypto.Cipher import AES,PKCS1_OAEP
+from Crypto.PublicKey import RSA
 
 def pad(s):
     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
@@ -54,23 +55,30 @@ def pad(s):
 def encrypt(message, key, key_size=256):
     if key is None:
         key = Random.new().read(key_size // 8)
-    message = pad(message)
-    iv = Random.new().read(AES.block_size)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return iv + cipher.encrypt(message)
-
+    # message = pad(message)
+    # iv = Random.new().read(RSA.block_size)
+    # cipher = RSA.new(key, RSA.MODE_CBC, iv)
+    # return iv + cipher.encrypt(message)
+    key=RSA.importKey(key)
+    cipher = PKCS1_OAEP.new(key)
+    ciphertext = cipher.encrypt(message)
+    return ciphertext
 def decrypt(ciphertext, key):
-    iv = ciphertext[:AES.block_size]
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    plaintext = cipher.decrypt(ciphertext[AES.block_size:])
-    return plaintext.rstrip(b"\0")
-
+    # iv = ciphertext[:RSA.block_size]
+    # cipher = RSA.new(key, RSA.MODE_CBC, iv)
+    # plaintext = cipher.decrypt(ciphertext[AES.block_size:])
+    # return plaintext.rstrip(b"\0")
+    key=RSA.importKey(key,None)
+    cipher = PKCS1_OAEP.new(key)
+    return cipher.decrypt(ciphertext)
 def encrypt_file(file_name, key):
     print 'Encrypt called'
     with open(file_name,'r') as fo:
         plaintext = fo.read()
+    print plaintext
     enc = encrypt(plaintext, key)
     #file_name.close()
+    print enc
     overwrite=open(file_name,'wb')
     overwrite.write(enc)
     overwrite.close()
@@ -79,9 +87,12 @@ def encrypt_file(file_name, key):
     # fo.close()
 
 def decrypt_file(file_name, key):
-    with open(path.join(getcwd(),file_name), 'rb') as fo:
+    pathway=getcwd()
+    print pathway
+    with open(pathway+file_name, 'rb') as fo:
         ciphertext = fo.read()
     dec = decrypt(ciphertext, key)
+    print dec
     return dec
 
 def filepath_handler(instance,name):
@@ -95,7 +106,7 @@ class Permission(models.Model):
 class Key(models.Model):
     k_key=models.AutoField(primary_key=True)
     owner=models.ForeignKey(User)
-    public=models.CharField(max_length=1024)
+    public=models.CharField(max_length=2048)
 # Document Model
 def keylookup(userobject):
     results=Key.objects.filter(owner__exact=userobject)
