@@ -53,7 +53,7 @@ def folder(request):
             print 'Saving Folder'
             print request.user
             if(request.POST['folder_contained'] != None):
-                folder = Folder(owner=userid,name=request.POST['name'],folder_contained=Folder.objects.filter(f_key__exact=request.POST['folder'])[0])
+                folder = Folder(owner=userid,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
             else:
                 folder = Folder(owner=userid,name=request.POST['name'])
             folder.save()
