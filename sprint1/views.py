@@ -40,6 +40,40 @@ def auth_util(passedrequest):
         return 1
     else:
         return passedrequest.user.id
+        
+def folder(request):
+    userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    DocumentFormSet=formset_factory(DocumentForm,extra=2)
+    if request.method == 'POST':
+        form =FolderForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            print 'Saving Folder'
+            print request.user
+            if(request.POST['folder_contained'] != None):
+                folder = Folder(owner=userid,name=request.POST['name'],folder_contained=Folder.objects.filter(f_key__exact=request.POST['folder'])[0])
+            else:
+                folder = Folder(owner=userid,name=request.POST['name'])
+            folder.save()
+        bul_formset=BulletinFormSet(request.POST,request.FILES,prefix='documents')
+        if doc_formset.is_valid() and form.is_valid():
+            for doc in doc_formset:
+                print 'Saving a file'
+                cd=doc.cleaned_data
+                if cd.get('bulletinAdd')!=None:
+                    newdoc = Bulletin(bulfile=cd.get('bulletinAdd'),posted_bulletin=bulletin)
+                    newdoc.save()
+        return HttpResponseRedirect(reverse('sprint1.views.folder'))
+    else:
+        form=FolderForm()
+        bul_formset=FolderFormSet(prefix='bulletins')
+    return render_to_response(
+        'folder.html',{'form':form,'bul_formset':bul_formset},
+        context_instance=RequestContext(request)
+    )
+
 
 def bulletin(request):
     userid=auth_util(request)
