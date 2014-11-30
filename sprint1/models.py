@@ -45,7 +45,7 @@ class Bulletin(models.Model):
     def __str__(self):              # __unicode__ on Python 2
         return self.title
 # Create your models here.
-<<<<<<< HEAD
+
 
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -90,7 +90,6 @@ from Crypto.Cipher import AES
 from Crypto import Random
 from Crypto.Cipher import AES,PKCS1_OAEP
 from Crypto.PublicKey import RSA
->>>>>>> 3f54f4559bc90ab67388838918271faf7853ae02
 
 def pad(s):
     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
@@ -98,7 +97,6 @@ def pad(s):
 def encrypt(message, key, key_size=256):
     if key is None:
         key = Random.new().read(key_size // 8)
-<<<<<<< HEAD
     message = pad(message)
     iv = Random.new().read(AES.block_size)
     cipher = AES.new(key, AES.MODE_CBC, iv)
@@ -127,12 +125,10 @@ def decrypt(ciphertext, key):
     key=RSA.importKey(key,None)
     cipher = PKCS1_OAEP.new(key)
     return cipher.decrypt(ciphertext)
->>>>>>> 3f54f4559bc90ab67388838918271faf7853ae02
 def encrypt_file(file_name, key):
     print 'Encrypt called'
     with open(file_name,'r') as fo:
         plaintext = fo.read()
-<<<<<<< HEAD
     enc = encrypt(plaintext, key)
     #file_name.close()
 =======
@@ -140,7 +136,6 @@ def encrypt_file(file_name, key):
     enc = encrypt(plaintext, key)
     #file_name.close()
     print enc
->>>>>>> 3f54f4559bc90ab67388838918271faf7853ae02
     overwrite=open(file_name,'wb')
     overwrite.write(enc)
     overwrite.close()
@@ -149,7 +144,6 @@ def encrypt_file(file_name, key):
     # fo.close()
 
 def decrypt_file(file_name, key):
-<<<<<<< HEAD
     with open(file_name, 'rb') as fo:
         ciphertext = fo.read()
     dec = decrypt(ciphertext, key)
@@ -217,7 +211,6 @@ def filepath_handler(instance,name):
 
 def filepath_handler(instance,name):
     return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
->>>>>>> 3f54f4559bc90ab67388838918271faf7853ae02
 
 
 class Permission(models.Model):
@@ -239,7 +232,6 @@ class Document(models.Model):
     posted_bulletin=models.ForeignKey(Bulletin)
     docfile = models.FileField(upload_to=filepath_handler)
     d_key = models.AutoField(primary_key=True)
-<<<<<<< HEAD
     def save(self, *args, **kwargs):
         super(Document, self).save(*args, **kwargs)
         #print self.docfile.name
@@ -252,7 +244,6 @@ class Document(models.Model):
         snake=path.join(getcwd(),'media',self.docfile.name)
         if encrypted==1:
             encrypt_file(snake,keylookup(self.posted_bulletin.author))
->>>>>>> 3f54f4559bc90ab67388838918271faf7853ae02
         #self.docfile=ContentFile.open(ContentFile(self.docfile),)
 
         # print 'save called'
