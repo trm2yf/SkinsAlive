@@ -2,6 +2,7 @@
 
 {% block content %}
         <!-- Upload form. Note enctype attribute! -->
+{% if user.is_authenticated %}
         <h1>Create a New Folder</h1>
     {{ form.errors }}
 {{ form.non_field_errors }}
@@ -27,7 +28,6 @@
 
             <button id="add-another" type="button">Add another bulletin</button>
             <p><input type="submit" value="Submit" /></p>
-
         </form>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
@@ -37,4 +37,5 @@
         $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     });
 </script>
+{% endif %}
 {% endblock %}
