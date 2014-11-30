@@ -11,6 +11,15 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model=Document
         fields=['docfile']
+        
+class BulForm(forms.ModelForm):
+    bulfile = forms.FileField(
+        label='Select a bulletin'
+    )
+    class Meta:
+        model=Bulletin
+        fields=['bulfile']
+        
 class FolderForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
     # text_description=forms.CharField(label='Text Description')
