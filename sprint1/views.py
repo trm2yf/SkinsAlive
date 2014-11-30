@@ -45,7 +45,7 @@ def folder(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    DocumentFormSet=formset_factory(DocumentForm,extra=2)
+    BulletinFormSet=formset_factory(BulForm,extra=3)
     if request.method == 'POST':
         form =FolderForm(request.POST)
         print form.is_valid()
@@ -57,14 +57,14 @@ def folder(request):
             else:
                 folder = Folder(owner=userid,name=request.POST['name'])
             folder.save()
-        bul_formset=BulletinFormSet(request.POST,request.FILES,prefix='documents')
-        if doc_formset.is_valid() and form.is_valid():
-            for doc in doc_formset:
-                print 'Saving a file'
-                cd=doc.cleaned_data
+        bul_formset=BulletinFormSet(request.POST,request.FILES,prefix='bulletins')
+        if bul_formset.is_valid() and form.is_valid():
+            for bul in bul_formset:
+                print 'Saving a bulletin'
+                cd=bul.cleaned_data
                 if cd.get('bulletinAdd')!=None:
-                    newdoc = Bulletin(bulfile=cd.get('bulletinAdd'),posted_bulletin=bulletin)
-                    newdoc.save()
+                    newbul = Bulletin(bulfile=cd.get('bulfile'),posted_folder=folder)
+                    newbul.save()
         return HttpResponseRedirect(reverse('sprint1.views.folder'))
     else:
         form=FolderForm()
@@ -103,7 +103,6 @@ def bulletin(request):
                 print 'Saving a file'
                 cd=doc.cleaned_data
                 if cd.get('docfile')!=None:
-
                     newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
                     newdoc.save(encrypted=enc)
         return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
