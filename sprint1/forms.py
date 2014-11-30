@@ -14,13 +14,10 @@ class DocumentForm(forms.ModelForm):
 class FolderForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
     # text_description=forms.CharField(label='Text Description')
-    # encrypted = forms.BooleanField()
-
     class Meta:
         model=Folder
-        fields=['name','text_description','encrypted','folder']
+        fields=['name','text_description','folder']
     #def __init__(self):
-     #        self.fields['encrypted'].initial= True
       #       self.fields['folder'].initial=1
     """
     bulletin = models.ForeignKey(Folder)
