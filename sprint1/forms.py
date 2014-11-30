@@ -1,6 +1,6 @@
 __author__ = 'Zachary'
 from django import forms
-from models import Bulletin,Document
+from models import Bulletin,Document,Folder
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
 
