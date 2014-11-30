@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
-      <module fileurl="file://$PROJECT_DIR$/.idea/cs3240project.iml" filepath="$PROJECT_DIR$/.idea/cs3240project.iml" />
-=======
       <module fileurl="file://$PROJECT_DIR$/.idea/cs3240_project_team2.iml" filepath="$PROJECT_DIR$/.idea/cs3240_project_team2.iml" />
->>>>>>> 1bab7e4282aabf671f8e95a56628939cb6204dae
+      <module fileurl="file://$PROJECT_DIR$/.idea/cs3240project.iml" filepath="$PROJECT_DIR$/.idea/cs3240project.iml" />
     </modules>
   </component>
 </project>

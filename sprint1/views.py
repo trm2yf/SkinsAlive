@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Bulletin,Folder
+from sprint1.models import Document,Bulletin,Folder,Key,Permission
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
@@ -46,6 +46,7 @@ def bulletin(request):
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
+
     if request.method == 'POST':
         form =BulletinForm(request.POST)
         print form.is_valid()
@@ -54,18 +55,23 @@ def bulletin(request):
             print request.user
             lat,long=location_lookup(request.POST['location'])
             enc=1
-            if request.POST['encrypted']!='on':
+            try:
+                request.POST['encrypted']=='on'
+                enc=1
+            except:
                 enc=0
+                pass
             bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
-            print Bulletin
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
                 print 'Saving a file'
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                newdoc.save()
+                if cd.get('docfile')!=None:
+
+                    newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
+                    newdoc.save(encrypted=enc)
         return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
     else:
         form=BulletinForm()
@@ -100,14 +106,23 @@ def list(request):
         context_instance=RequestContext(request)
     )
 # Create your views here.
+import Crypto
+from Crypto.PublicKey import RSA
+from Crypto import Random
+from Crypto.Hash import MD5
 
-#Account Creation Function
+# Use a larger key length in practice...
+KEY_LENGTH = 1024  # Key size (in bits)
+random_gen = Random.new().read
+
+# Generate RSA private/public key pairs for both parties...
+
 def register(request):
     context = RequestContext(request)
 
     #initially this is set to be false and is updated if the user is registered
     registered = False
-
+    pkey=None
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
 
@@ -117,6 +132,20 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
+            pubkey=RSA.generate(KEY_LENGTH,random_gen)
+            key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
+            key.save()
+            pkey=pubkey.exportKey('PEM')
+
+
+            from django.core.mail import send_mail,EmailMessage
+            mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
+            mail.attach('private.pem',pkey)
+            mail.send()
+            # except Exception as e:
+            #     print e
+            perm=Permission(owner=user,permitted=user)
+            perm.save()
             folder=Folder(owner=user,name='Default')
             folder.save()
             #update the registered variable to be true
@@ -243,6 +272,7 @@ def profile(request):
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
 
+
 def bdisplay(request):
     context = RequestContext(request)
     if request.method == 'POST':
@@ -253,13 +283,29 @@ def bdisplay(request):
 
         bulletin = [b for b in q1]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
-
+        print 'DOCUMENT LENGTH',
+        print len(documents)
 
         return render_to_response('bdisplay.html', {'bulletin':bulletin,'documents': documents}, context)
 
     else:
-
         return HttpResponseRedirect('/search')
+def decrypt(request):
+    reqdoc=request.POST['document']
+    context=RequestContext(request)
+    try:
+        pkey=request.FILES['private']
+        print 'uploaded'
+        from models import decrypt_file
+        bcontents=decrypt_file(reqdoc,pkey.read())
+        response=HttpResponse(content_type='multipart/encrypted')
+        response.write(bcontents)
+        return response
+    except Exception as e:
+        print e
+        print 'empty'
+        return render_to_response('decrypt.html',{'document':reqdoc}, context)
+        # return HttpResponseRedirect('/search')
 
 
 def edit(request):
@@ -286,5 +332,50 @@ def edit(request):
         Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
 
         return HttpResponseRedirect('/profile')
+
+
+
+def copy(request):
+    context = RequestContext(request)
+    author = request.user.id
+    if author<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    DocumentFormSet=formset_factory(DocumentForm,extra=2)
+    if request.method == 'POST':
+        form =BulletinForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            print 'Saving Bulletin'
+            print request.user
+            lat,long=location_lookup(request.POST['location'])
+            enc=1
+            if request.POST['encrypted']!='on':
+                enc=0
+            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            print Bulletin
+            bulletin.save()
+        doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
+        if doc_formset.is_valid() and form.is_valid():
+            for doc in doc_formset:
+                print 'Saving a file'
+                cd=doc.cleaned_data
+                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
+                newdoc.save()
+        return HttpResponseRedirect('/profile')
+    else:
+        b_id = request.GET['copy']
+        query = Bulletin.objects.filter(b_key=b_id)
+        bulletin = [b for b in query]
+
+        form=BulletinForm(initial={'title': bulletin[0].title,
+                                   'text_description': bulletin[0].text_description,
+                                   'encrypted': bulletin[0].encrypted,
+                                   'folder': bulletin[0].folder})
+        doc_formset=DocumentFormSet(prefix='documents')
+        return render_to_response(
+        'copy.html',{'form':form,'doc_formset':doc_formset},
+        context_instance=RequestContext(request)
+        )
+
 
 

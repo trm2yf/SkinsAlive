@@ -12,6 +12,12 @@ urlpatterns = patterns('sprint1.views',
     url(r'^profile', 'profile', name='profile'),
     url(r'^logout', 'user_logout', name='logout'),
     url(r'^search', 'search', name='search'),
+<<<<<<< HEAD
+=======
+
+    url(r'^decrypt','decrypt',name='search'),
+
+>>>>>>> 3f54f4559bc90ab67388838918271faf7853ae02
     url(r'^edit', 'edit', name='edit'),
     url(r'^copy', 'copy', name='copy'),
     url(r'^bdisplay', 'bdisplay', name='bdisplay'),

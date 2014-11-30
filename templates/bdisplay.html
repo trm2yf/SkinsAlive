@@ -20,8 +20,10 @@
         <h3>  Documents</h3>
         <ul>
         {% for document in documents %}
-{#            <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>#}
-           <p>{{document.docfile}}</p>
+            <form action="/decrypt"method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <button name="document" value="{{document.docfile.url}}">{{ document.docfile.name }}</button>
+            </form>
         {% endfor %}
         </ul>
     {% else %}
