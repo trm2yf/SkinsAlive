@@ -68,7 +68,7 @@ def folder(request):
         return HttpResponseRedirect(reverse('sprint1.views.folder'))
     else:
         form=FolderForm()
-        bul_formset=FolderFormSet(prefix='bulletins')
+        bul_formset=BulletinFormSet(prefix='bulletins')
     return render_to_response(
         'folder.html',{'form':form,'bul_formset':bul_formset},
         context_instance=RequestContext(request)
