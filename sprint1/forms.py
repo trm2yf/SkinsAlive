@@ -25,7 +25,7 @@ class FolderForm(forms.ModelForm):
     # text_description=forms.CharField(label='Text Description')
     class Meta:
         model=Folder
-        fields=['name']
+        fields=['name','folder_contained']
     #def __init__(self):
       #       self.fields['folder'].initial=1
     """
