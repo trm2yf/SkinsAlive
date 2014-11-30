@@ -49,7 +49,6 @@ class Bulletin(models.Model):
 
 from Crypto import Random
 from Crypto.Cipher import AES
-=======
 # from Crypto import Random
 # from Crypto.Cipher import AES
 #
@@ -108,7 +107,7 @@ def decrypt(ciphertext, key):
     plaintext = cipher.decrypt(ciphertext[AES.block_size:])
     return plaintext.rstrip(b"\0")
 
-=======
+
     # message = pad(message)
     # iv = Random.new().read(RSA.block_size)
     # cipher = RSA.new(key, RSA.MODE_CBC, iv)
@@ -131,7 +130,7 @@ def encrypt_file(file_name, key):
         plaintext = fo.read()
     enc = encrypt(plaintext, key)
     #file_name.close()
-=======
+
     print plaintext
     enc = encrypt(plaintext, key)
     #file_name.close()
@@ -193,7 +192,7 @@ def decrypt_file(file_name, key):
 def filepath_handler(instance,name):
     return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
 
-=======
+
     pathway=getcwd()
     print pathway
     with open(pathway+file_name, 'rb') as fo:
@@ -237,7 +236,7 @@ class Document(models.Model):
         #print self.docfile.name
         snake=path.join(getcwd(),'media',self.docfile.name)
         encrypt_file(snake,None)
-=======
+
     def save(self, encrypted=1,*args, **kwargs):
         super(Document, self).save(*args, **kwargs)
         #print self.docfile.name
