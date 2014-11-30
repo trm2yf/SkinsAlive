@@ -8,11 +8,11 @@
         <form action="folder" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            {{ doc_formset.management_form }}
-{#            {{ doc_formset.as_table }}#}
+            {{ bul_formset.management_form }}
+{#            {{ bul_formset.as_table }}#}
 
             <div id="form_set">
-    {% for form in doc_formset.forms %}
+    {% for form in bul_formset.forms %}
         <table class='no_error'>
             {{ form.as_table }}
         </table>
@@ -20,12 +20,12 @@
             </div>
             <div id="empty_form" style="display:none">
             <table class='no_error'>
-                {{ doc_formset.empty_form.as_table }}
+                {{ bul_formset.empty_form.as_table }}
             </table>
             </div>
 
 
-            <button id="add-another" type="button">Add another document</button>
+            <button id="add-another" type="button">Add another bulletin</button>
             <p><input type="submit" value="Submit" /></p>
 
         </form>
