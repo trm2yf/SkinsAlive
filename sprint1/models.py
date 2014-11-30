@@ -20,6 +20,8 @@ class Folder(models.Model):
     name = models.CharField(max_length=100)
   #  text_description = models.TextField(max_length=1024)
     folder_contained=models.ForeignKey('self',blank=True,null=True)
+    def save(self):
+        super(Folder, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 
