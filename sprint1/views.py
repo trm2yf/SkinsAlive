@@ -31,7 +31,7 @@ def home(request):
     )
 #Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
 def add_bulletin(request):
-        userid=auth_util(request)
+    userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     BulFormSet=formset_factory(Bulletin)
