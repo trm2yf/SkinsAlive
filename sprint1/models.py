@@ -21,7 +21,7 @@ class Folder(models.Model):
     f_key = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
   #  text_description = models.TextField(max_length=1024)
-    folder_contained=models.ForeignKey('self',blank=True,null=True)
+    folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'ownder_id': owner})
     def save(self):
         super(Folder, self).save()
     def __str__(self):              # __unicode__ on Python 2
