@@ -4,8 +4,6 @@
         <h1>Add Bulletin to Folder</h1>
         <form action="addbul" method="post">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button id="add-another" type="button">Add another bulletin</button>
             <p><input type="submit" value="Submit" /></p>
         </form>
 {% endif %}
