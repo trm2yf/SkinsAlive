@@ -26,7 +26,7 @@ class AddBulForm(forms.ModelForm):
     )
     class Meta:
         model=Bulletin
-        fields=['folder,bulletin']
+        fields=['folder,title']
         
 class FolderForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
