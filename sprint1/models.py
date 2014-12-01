@@ -24,7 +24,7 @@ class Folder(models.Model):
         super(Folder, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.name
-    
+
 # Bulletin Model
 class Bulletin(models.Model):
     folder = models.ForeignKey(Folder)
