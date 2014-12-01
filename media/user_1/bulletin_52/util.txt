@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Christmas Concert Receptions
 Post Rotunda Sing Publicity
 
@@ -36,4 +37,44 @@ XHoos In Treble: Melina Rapazzini mnr6fn
 CHoosE: Viet Huynh
 Flying Virginians: LeighAnna Morris
 Jubilate: Martha Bland
+=======
+Christmas Concert Receptions
+Post Rotunda Sing Publicity
+
+Prize for Referral Game
+
+Sheet for Amphitheatre
+
+Next Wednesday Publicity Event
+
+Matt's Exec conflict
+
+Bulletin Board
+Check for Sandwich Board Inserts
+Tailgate at 505 planned Singing around the Stadium
+Sandwich boards
+Reminder to Max for Roundup
+Parent Packet
+SingFest Invitations
+
+Affiliated Status OCH
+
+Kickstarter results?
+Frank? Slon Dunk Tank?
+Hot Tub on the Lawn
+
+AVP: Will Cochrane wbc5fbZ, Max Serpe
+Harmonious Hoos: Annan Hepner agh8qa@virginia.edu
+Hullabahoos: Alex Spears ras2qn
+Virginia Belles: Natalie Wyman nsw3ub
+Virginia Gentlemen: Rohan Deshpande rkd5mb
+Virginia Women's Chorus: Maya Sadagopal mks6mg
+XVirginia Silhooettes: Mackenzie Newman mgn2qt
+XNew Dominions: Vishwa Bhuta vtb7rr
+XHoos In Treble: Melina Rapazzini mnr6fn
+
+CHoosE: Viet Huynh
+Flying Virginians: LeighAnna Morris
+Jubilate: Martha Bland
+>>>>>>> 3f54f4559bc90ab67388838918271faf7853ae02
 Ektaal: Palak Shah

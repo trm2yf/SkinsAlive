@@ -1,0 +1,49 @@
+University of Virginia (UVA)
+
+ Fencer 	 Weapon 	 Gender 	 last Bout Year 	 is Active? 
+ Alejandro Garcia-Chinchilla 	 FOIL 	 MALE 	 (none) 	 No 
+ Alice Liu 	 EPEE 	 FEMALE 	 (none) 	 No 
+ Amanda Morganthaw 	 FOIL 	 FEMALE 	 2014 	 Yes 
+ Ana Cackley 	 FOIL 	 FEMALE 	 2013 	 No 
+ Andrew Becker 	 SABRE 	 MALE 	 2014 	 Yes 
+ Artemie Jurgenson 	 EPEE 	 MALE 	 2014 	 Yes 
+ Atallah Hezbor 	 SABRE 	 MALE 	 (none) 	 Yes 
+ Brian Murphy 	 FOIL 	 MALE 	 2014 	 Yes 
+ Cameron Yeong 	 FOIL 	 MALE 	 2013 	 No 
+ Carla Winter 	 EPEE 	 FEMALE 	 2013 	 No 
+ Corey Cochran 	 EPEE 	 MALE 	 2014 	 Yes 
+ Daniel Hothem 	 FOIL 	 MALE 	 2014 	 Yes 
+ Douglas Bae 	 SABRE 	 MALE 	 2014 	 Yes 
+ Edward (Max) Reinsel 	 EPEE 	 MALE 	 2014 	 Yes 
+ Emily Thomas 	 FOIL 	 FEMALE 	 2013 	 No 
+ Emma Kyono 	 SABRE 	 FEMALE 	 2014 	 Yes 
+ Erik Lopez 	 FOIL 	 MALE 	 2014 	 Yes 
+ Erin Goodier 	 SABRE 	 FEMALE 	 2014 	 Yes 
+ Hua Xin 	 SABRE 	 FEMALE 	 2013 	 No 
+ Isaac Tessler 	 SABRE 	 MALE 	 2014 	 Yes 
+ Ivina Klissouvona 	 FOIL 	 FEMALE 	 2014 	 Yes 
+ Jack Hawkins 	 FOIL 	 MALE 	 (none) 	 Yes 
+ Jacob Blevins 	 SABRE 	 MALE 	 2014 	 Yes 
+ James Sipthorpe 	 FOIL 	 UNKN 	 2013 	 No 
+ Jay Sebastian 	 FOIL 	 MALE 	 2014 	 Yes 
+ Jessica Cederquist 	 EPEE 	 FEMALE 	 2014 	 Yes 
+ Kathy Michels 	 SABRE 	 FEMALE 	 2013 	 No 
+ Laura Burden 	 SABRE 	 FEMALE 	 2013 	 No 
+ Marissa Grayson 	 SABRE 	 FEMALE 	 2013 	 No 
+ Matthew Diem 	 FOIL 	 MALE 	 (none) 	 Yes 
+ Matthew Dischner 	 FOIL 	 MALE 	 (none) 	 No 
+ Matthew Gordon 	 SABRE 	 MALE 	 2014 	 Yes 
+ Matthew West 	 SABRE 	 MALE 	 2013 	 No 
+ Megan Wright 	 SABRE 	 FEMALE 	 2013 	 No 
+ Nicholas Monahan 	 SABRE 	 MALE 	 2014 	 Yes 
+ Peter Jacobi 	 EPEE 	 MALE 	 2013 	 No 
+ Rebecca Zeledon 	 FOIL 	 FEMALE 	 2014 	 Yes 
+ Ryan Loomis 	 FOIL 	 MALE 	 (none) 	 No 
+ Sam Fortuna 	 EPEE 	 FEMALE 	 2014 	 Yes 
+ Siddarth Agarwala 	 FOIL 	 MALE 	 2013 	 No 
+ Sten Hasselquist 	 FOIL 	 MALE 	 2013 	 No 
+ Sydney Huppert 	 EPEE 	 FEMALE 	 2014 	 Yes 
+ Taylor Montgomery 	 FOIL 	 MALE 	 (none) 	 No 
+ Tony Lin  	 SABRE 	 MALE 	 (none) 	 Yes 
+ Walter Varhue 	 SABRE 	 MALE 	 (none) 	 Yes 
+ Zachary Seid 	 EPEE 	 MALE 	 2014 	 Yes 

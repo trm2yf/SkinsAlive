@@ -1,6 +1,6 @@
 __author__ = 'Zachary'
 from django import forms
-from models import Bulletin,Document
+from models import Bulletin,Document,Folder
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
 
@@ -11,6 +11,35 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model=Document
         fields=['docfile']
+        
+class BulForm(forms.ModelForm):
+    bulfile = forms.FileField(
+        label='Select a bulletin'
+    )
+    class Meta:
+        model=Bulletin
+        fields=['bulfile']
+        
+class FolderForm(forms.ModelForm):
+    # title=forms.CharField(label='Bulletin Title')
+    # text_description=forms.CharField(label='Text Description')
+    class Meta:
+        model=Folder
+        fields=['name','folder_contained']
+    #def __init__(self):
+      #       self.fields['folder'].initial=1
+    """
+    bulletin = models.ForeignKey(Folder)
+    name = models.CharField(max_length=255)
+    text_description = models.TextField(max_length=1024)
+    pub_date = models.DateField()
+    mod_date = models.DateField()
+    authors = models.ManyToManyField(Users)
+    author_id = models.IntegerField()
+    lat = models.DecimalField(decimal_places=2,max_digits=10)
+    long = models.DecimalField(decimal_places=2,max_digits=10)
+    """
+
 class BulletinForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
     # text_description=forms.CharField(label='Text Description')
