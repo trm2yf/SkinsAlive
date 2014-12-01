@@ -5,12 +5,12 @@
         <h1>Add Bulletin to Folder</h1>
     {{ form.errors }}
 {{ form.non_field_errors }}
-        <form action="add_bulletin" method="post" enctype="multipart/form-data">
+        <form action="addbul" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <div id="empty_form" style="display:none">
             <table class='no_error'>
-                {{ bul_formset.empty_form.as_table }}
+                {{ AddBulForm.empty_form.as_table }}
             </table>
             </div>
             <button id="add-another" type="button">Add another bulletin</button>
