@@ -1,20 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
+<br>
+{#    <form id="login_form" method="post" action="/login/">#}
+    <div class="col-md-4 col-md-offset-4">
+    <div class="jumbotron">
+        <div class="container">
+            <div class="col-md-12">
+            <h3>Log into your SWS account.</h3>
+            &nbsp;
+            <form id="login_form" method="post" actions="login" role="form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="" size="50">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" value="" size="50">
+                </div>
 
-    <h1>Log Into Your Secure Witness Account</h1>
-
-    <form id="login_form" method="post" action="/login/">
-
-    <form id="login_form" method="post" actions="login">
-        {% csrf_token %}
-        Username: <input type="test" id="username" name="username" value="" size="50" />
-        <br />
-        Password: <input type="password" id="password" name="password" value="" size="50" />
-        <br />
-
-        <input type="submit" value="login" />
-    </form>
+                <button type="submit" class="btn btn-default">Go</button>
+            </form>
+            </div>
+        </div>
+    </div>
+    </div>
 
 {% endblock %}
 

@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="col-md-10 col-md-offset-1">
 
-    <h1>Bulletin Display Page</h1>
+    <h1>Bulletin Details</h1>
     {% if bulletin %}
         {% for b in bulletin %}
             <p>{{ type }}</p>
             <h2> {{ b.title }}</h2>
             <p> Author: {{ b.author }}</p>
             <p> Description: {{ b.text_description }}</p>
-            <p> Lat: {{ b.lat }} Longitude {{ b.long }}</p>
-            <p> Created on: {{ b.creat_date }}</p>
-            <p> Modified on: {{ b.modified_date }}</p>
+            <p> Coordinates: {{ b.lat }}, {{ b.long }}</p>
+            <p> Created on: {{ b.date_created }}</p>
+            <p> Modified on: {{ b.date_modified }}</p>
             <p> Bulletin id: {{ b.b_key }}</p>
-            <p> Is Encrypted?: {{ b.encrypted }}</p>
+            <p> Encryption: {{ b.encrypted }}</p>
 
               <!-- List of uploaded documents -->
     {% if documents %}
@@ -33,4 +34,5 @@
     {% else %}
         <p>No results found.</p>
     {% endif %}
+</div>
 {% endblock %}

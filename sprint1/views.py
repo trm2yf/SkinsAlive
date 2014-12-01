@@ -105,7 +105,7 @@ def bulletin(request):
                 if cd.get('docfile')!=None:
                     newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
                     newdoc.save(encrypted=enc)
-        return HttpResponseRedirect(reverse('sprint1.views.bulletin'))
+        return HttpResponseRedirect('/profile')
     else:
         form=BulletinForm()
         doc_formset=DocumentFormSet(prefix='documents')
@@ -113,7 +113,6 @@ def bulletin(request):
         'bulletin.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
     )
-
 
 
 def list(request):
@@ -323,6 +322,7 @@ def bdisplay(request):
 
     else:
         return HttpResponseRedirect('/search')
+
 def decrypt(request):
     reqdoc=request.POST['document']
     context=RequestContext(request)
@@ -347,22 +347,39 @@ def edit(request):
 
     if request.method == 'GET':
         b_id = request.GET['edit']
-        q1 = Bulletin.objects.filter(b_key__exact=b_id, author__exact=author)
+        q1 = Bulletin.objects.filter(b_key=b_id, author__exact=author)
+        bulletin = [b for b in q1]
 
-        bulletins = [b for b in q1]
-        return render_to_response('edit.html', {'bulletins':bulletins}, context)
+        form=BulletinForm(initial={'title': bulletin[0].title,
+                                   'text_description': bulletin[0].text_description,
+                                   'encrypted': bulletin[0].encrypted,
+                                   'folder': bulletin[0].folder})
+        return render_to_response(
+
+        'edit.html',{'b_id':b_id,'form':form},
+        context_instance=RequestContext(request)
+        )
 
     else:
-        b_id = request.POST['submit']
-        title = request.POST['title']
-        desc = request.POST['desc']
-        # encrypt = request.POST['encrypt']
-        folder = request.POST['folder']
+        form = BulletinForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            # b_id = request.POST['submit']
+            # title = request.POST['title']
+            # desc = request.POST['text_description']
+            # # encrypt = request.POST['encrypt']
+            # folder = request.POST['folder']
 
-        Bulletin.objects.filter(b_key=b_id).update(title=title)
-        Bulletin.objects.filter(b_key=b_id).update(text_description=desc)
-        # Bulletin.objects.filter(b_key=b_id).update(encrypted=encrypt)
-        Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
+            # Bulletin.objects.filter(b_key=b_id).update(title=title)
+            # Bulletin.objects.filter(b_key=b_id).update(text_description=desc)
+            # # Bulletin.objects.filter(b_key=b_id, author_id__exact=author).update(encrypted=encrypt)
+            # Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
+            lat,long=location_lookup(request.POST['location'])
+            enc=1
+            if request.POST['encrypted']!='on':
+                enc=0
+            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc, b_key=request.POST['submit'] )
+            bulletin.save()
 
         return HttpResponseRedirect('/profile')
 

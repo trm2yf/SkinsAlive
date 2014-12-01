@@ -1,24 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Create a Secure Witness Account</h1>
 
-    {% if registered %}
-    You have created an account with Secure Witness
-    <a href="../index">Main Page</a>
-    <br/>
-    {% else %}
-    Create an account by filling in the form below:
+    {% load bootstrap %}
+    <br>
+    <div class="col-md-6 col-md-offset-3">
+    <div class="jumbotron">
+        <div class="container">
+        <div class="col-md-12">
+        <h3>Create a Secure Witness Account</h3>
+        <br>
+        {% if registered %}
+        <h5>You have created an account with Secure Witness.</h5>
+        <a href="../index">Main Page</a>
+        <br/>
+        {% else %}
+        <form id="user_form" method="post" action="/register/" accept-charset=""
+                enctype="multipart/form-data">
 
-    <form id="user_form" method="post" action="/register/" accept-charset=""
-            enctype="multipart/form-data">
+            {% csrf_token %}
 
-        {% csrf_token %}
+            {{ user_form|bootstrap }}
 
-        {{ user_form.as_p }}
+            <button type="submit" class="btn btn-default" name="submit">Create Account</button>
 
-        <input type="submit" name="submit" value="Create Account" />
-
-     </form>
+         </form>
+         </div>
+         </div>
+    </div>
+    </div>
     {% endif %}
 {% endblock %}

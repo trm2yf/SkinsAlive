@@ -1,56 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% load bootstrap %}
 
 {% if user.is_authenticated %}
-
-    {% if bulletins %}
-    {% for bulletin in bulletins %}
+<div class="row">
     <div class="col-md-6 col-md-offset-1">
 
         <h2>Edit Bulletin</h2>
+        {{ form.errors }}
+        {{ form.non_field_errors }}
         &nbsp;
 
-       <form role="form" id="edit_bulletin" method="post" action="edit" accept-charset=""
+        <form role="form" id="edit_bulletin" method="post" action="edit" accept-charset=""
             enctype="multipart/form-data">
 
         {% csrf_token %}
+        {{ form|bootstrap }}
 
-         <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" name="title" value="{{ bulletin.title }}">
-         </div>
-         <div class="form-group">
-            <label for="desc">Text Description</label>
-            <textarea type="text" class="form-control" id="desc" name="desc">{{ bulletin.text_description }}</textarea>
-         </div>
-
-        <div class="checkbox">
-        <label>
-          <input type="checkbox" id="encrypt" name="encrypt"> Encrypted
-        </label>
-      </div>
+{#         <div class="form-group">#}
+{#            <label for="title">Title</label>#}
+{#            <input type="text" class="form-control" id="title" name="title" value="{{ bulletin.title }}">#}
+{#         </div>#}
+{#         <div class="form-group">#}
+{#            <label for="desc">Text Description</label>#}
+{#            <textarea type="text" class="form-control" id="desc" name="desc">{{ bulletin.text_description }}</textarea>#}
+{#         </div>#}
+{##}
 {#        <div class="checkbox">#}
 {#        <label>#}
 {#          <input type="checkbox" id="encrypt" name="encrypt"> Encrypted#}
 {#        </label>#}
-{#        </div>#}
+{#      </div>#}
 
-         <div class="form-group">
-            <label for="folder">Folder</label>
-            <input type="text" class="form-control" id="folder" name="folder" value="{{ bulletin.folder_id }}">
-         </div>
 
-        <button class="btn btn-info" name="submit" value="{{ bulletin.b_key }}">Update</button>
+        <button class="btn btn-primary" name="submit" value="{{ b_id }}">Submit</button>
 
 
         </form>
-    </div>
 
-           {% endfor %}
-    {% else %}
-        <h2>nada</h2>
-    {% endif %}
+    </div>
+</div>
+<div class="row">
+    <br>
+    <br>
+</div>
 
 {% else %}
 	<h2> Please <a href="login">log in.</a> </h2>
