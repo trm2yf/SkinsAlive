@@ -24,8 +24,27 @@
                 {{ bul_formset.empty_form.as_table }}
             </table>
             </div>
+    
+<form action="bulletin" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {{ bull_formset.management_form }}
+{#            {{ bull_formset.as_table }}#}
 
-
+            <div id="form_set">
+    {% for form in bull_formset.forms %}
+        <table class='no_error'>
+            {{ form.as_table }}
+        </table>
+    {% endfor %}
+            </div>
+            <div id="empty_form" style="display:none">
+            <table class='no_error'>
+                {{ bull_formset.empty_form.as_table }}
+            </table>
+            </div>
+            
+            
             <button id="add-another" type="button">Add another bulletin</button>
             <p><input type="submit" value="Submit" /></p>
         </form>
