@@ -3,27 +3,41 @@
 
 {% block content %}
 
-<h1>Secure Witness System</h1>
-{% if user.is_authenticated %}
-<h2>Welcome {{ user.username }}</h2>
-{% else %}
-<h2> Log-in as an Administrator, Reader, or Author </h2>
-<h4>All users must login before using the Secure Witness System.</h4>
-<h4>Authors and Readers Login at the page below: </h4>
-<a href="login">Login to the Secure Witness System</a><br>
-<h4>Administrative users Login at the page below: </h4>
-<a href="admin">Admin Login to the Secure Witness System</a><br>
+<div class="container">
+    <div class="jumbotron">
+        <h2><b>Welcome to the Secure Witness System</b></h2>
+        <br>
+        {% if user.is_authenticated %}
+        <h3>Hello, {{ user.username }}.</h3>
+        <a href="profile" role="button" class="btn btn-primary">Go to Profile</a>
+        {% else %}
+        <div class="row">
+            <div class="col-md-4">
+            <h3>You must have an account to use the Secure Witness System.</h3>
+            </div>
+            <div class="col-md-4">
+            <h3> All authors and readers must login before accessing our site. </h3>
+            </div>
+            <div class="col-md-4">
+            <h3>If you are an administrator, please login here. </h3>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-4">
+            <a href="register" role="button" class="btn btn-success btn-lg">Register</a>
+            </div>
+            <div class="col-md-4">
+            <a href="login" role="button" class="btn btn-info btn-lg">User Login</a>
+            </div>
+            <div class="col-md-4">
+            <a href="admin" role="button" class="btn btn-warning btn-lg">Admin Login</a>
+            </div>
+        </div>
+        {% endif %}
+        <br>
+        <br>
+    </div>
+</div>
 
-
-{% endif %}
-
-<br>
-<br>
-<br>
-<h6>Don't have an account? Visit the page bekow to create a Secure Witness Account </h6>
-<br>
-<a href="register">Create an Account</a><br>
-<br>
-<br>
-<a href="logout">Logout of your Account</a><br>
 {% endblock %}

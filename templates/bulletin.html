@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-1">
+    {%  load bootstrap %}
         <!-- Upload form. Note enctype attribute! -->
         <h1>Create a New Bulletin</h1>
     {{ form.errors }}
-{{ form.non_field_errors }}
+    {{ form.non_field_errors }}
         <form action="bulletin" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form|bootstrap }}
             {{ doc_formset.management_form }}
 {#            {{ doc_formset.as_table }}#}
 
@@ -23,12 +26,19 @@
                 {{ doc_formset.empty_form.as_table }}
             </table>
             </div>
+            <br>
 
-
-            <button id="add-another" type="button">Add another document</button>
-            <p><input type="submit" value="Submit" /></p>
+            <button class="btn btn-default" id="add-another" type="button">Add another document</button>
+            <br><br>
+            <button type="submit" class="btn btn-primary">Submit</button>
 
         </form>
+    </div>
+</div>
+<div class="row">
+    <br>
+    <br>
+</div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
     $('#add-another').click(function() {

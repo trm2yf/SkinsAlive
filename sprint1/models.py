@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 import StringIO
 from django.contrib.auth.models import User
+# from Crypto import Random
+# from Crypto.Cipher import AES
 
 ######  MODELS ######
 
@@ -43,46 +45,44 @@ class Bulletin(models.Model):
         super(Bulletin, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.title
-# Create your models here.
-# from Crypto import Random
-# from Crypto.Cipher import AES
-#
-# def pad(s):
-#     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
-#
-# def encrypt(message, key, key_size=256):
-#     if key is None:
-#         key = Random.new().read(key_size // 8)
-#     message = pad(message)
-#     iv = Random.new().read(AES.block_size)
-#     cipher = AES.new(key, AES.MODE_CBC, iv)
-#     return iv + cipher.encrypt(message)
-#
-# def decrypt(ciphertext, key):
-#     iv = ciphertext[:AES.block_size]
-#     cipher = AES.new(key, AES.MODE_CBC, iv)
-#     plaintext = cipher.decrypt(ciphertext[AES.block_size:])
-#     return plaintext.rstrip(b"\0")
-#
-# def encrypt_file(file_name, key):
-#     print 'Encrypt called'
-#     with file_name as fo:
-#         plaintext = fo.read()
-#     enc = encrypt(plaintext, key)
-#     # fo=open('E'+file_name.name.split("/")[-1], 'wb')
-#     # fo.write(enc)
-#     # fo.close()
-#     return enc
-#
-# def decrypt_file(file_name, key):
-#     with open(file_name, 'rb') as fo:
-#         ciphertext = fo.read()
-#     dec = decrypt(ciphertext, key)
-#     with open(file_name[:-4], 'wb') as fo:
-#         fo.write(dec)
 
+# Create your models here.
 from Crypto import Random
 from Crypto.Cipher import AES
+
+def pad(s):
+    return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
+
+def encrypt(message, key, key_size=256):
+    if key is None:
+        key = Random.new().read(key_size // 8)
+    message = pad(message)
+    iv = Random.new().read(AES.block_size)
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    return iv + cipher.encrypt(message)
+
+def decrypt(ciphertext, key):
+    iv = ciphertext[:AES.block_size]
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    plaintext = cipher.decrypt(ciphertext[AES.block_size:])
+    return plaintext.rstrip(b"\0")
+
+def encrypt_file(file_name, key):
+    print 'Encrypt called'
+    with file_name as fo:
+        plaintext = fo.read()
+    enc = encrypt(plaintext, key)
+    # fo=open('E'+file_name.name.split("/")[-1], 'wb')
+    # fo.write(enc)
+    # fo.close()
+    return enc
+
+def decrypt_file(file_name, key):
+    with open(file_name, 'rb') as fo:
+        ciphertext = fo.read()
+    dec = decrypt(ciphertext, key)
+    with open(file_name[:-4], 'wb') as fo:
+        fo.write(dec)
 
 def pad(s):
     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
@@ -134,7 +134,7 @@ class Document(models.Model):
         super(Document, self).save(*args, **kwargs)
         #print self.docfile.name
         snake=path.join(getcwd(),'media',self.docfile.name)
-        encrypt_file(snake,None)
+        # encrypt_file(snake,None)
         #self.docfile=ContentFile.open(ContentFile(self.docfile),)
 
         # print 'save called'

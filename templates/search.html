@@ -1,39 +1,61 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
 
- <h1>Bulletin Search Page</h1>
-<form action="search" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-    <input name="search_text"/>
+    <h1>Search Bulletins</h1>
+    <form action="search" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+        <input name="search_text"/>
 
- <label for="searchtype">
-	<select name="type" id="searchtype" class='searchbtn'>
-                  <option value="all">Keyword</option>
-                  <option value="title">Title</option>
-                  <option value="author">Author</option>
-                  <option value="date">Date</option>
-                </select>
-</label>
+     <label for="searchtype">
+        <select name="type" id="searchtype" class='searchbtn'>
+                      <option value="all">Keyword</option>
+                      <option value="title">Title</option>
+                      <option value="author">Author</option>
+                      <option value="date">Date</option>
+                    </select>
+    </label>
 
-        <button type="button">
-        Search
-    </button>
-
-
-</form>
+            <button type="button">
+            Search
+        </button>
 
 
-{% if bulletins %}
-{% for bulletin in bulletins %}
+    </form>
+    {% if bulletins %}
+
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+        </tr>
+
+        {% for bulletin in bulletins %}
               <p>{{type}}</p>
-        <form action="bdisplay" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-         <button name="button_id" value="{{ bulletin.b_key }}">{{bulletin.title}}></button>
-            <p>{{bulletin.text_description}}</p>
-        </form>
+
+        <tr>
+            <td>
+                <form action="bdisplay" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                 <button class="btn btn-link" name="button_id" value="{{ bulletin.b_key }}">{{bulletin.title}}</button>
+                </form>
+            </td>
+            <td>
+                {{bulletin.text_description}}
+            </td>
+        </tr>
         {% endfor %}
-{% else %}
+
+    </table>
+
+    {% else %}
+        <br>
         <p>No results found.</p>
     {% endif %}
+
+    </div>
+</div>
+
 {% endblock %}
