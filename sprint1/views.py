@@ -29,6 +29,27 @@ def home(request):
         'index.html',{'form':form},
         context_instance=RequestContext(request)
     )
+#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
+def add_bulletin(request):
+        userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    BulFormSet=formset_factory(Bulletin)
+    if request.method == 'POST':
+        form =AddBulForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            print 'Adding bulletin to folder'
+            bulletin = request.POST['bulletin']
+            bulletin.folder = models.ForeignKey(request.POST['folder'])
+            bulletin.save(update_fields=['name'])
+        return HttpResponseRedirect(reverse('sprint1.views.folder'))
+    else:
+        form=AddBulForm()
+    return render_to_response(
+        'folder.html',{'form':form},
+        context_instance=RequestContext(request)
+    )
 
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
