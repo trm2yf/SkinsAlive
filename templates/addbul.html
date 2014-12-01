@@ -8,11 +8,6 @@
         <form action="addbul" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            <div id="empty_form" style="display:none">
-            <table class='no_error'>
-                {{ AddBulForm.empty_form.as_table }}
-            </table>
-            </div>
             <button id="add-another" type="button">Add another bulletin</button>
             <p><input type="submit" value="Submit" /></p>
         </form>
