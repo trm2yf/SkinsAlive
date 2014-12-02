@@ -195,7 +195,7 @@ from Crypto import Random
 from Crypto.Hash import MD5
 
 # Use a larger key length in practice...
-KEY_LENGTH = 2048  # Key size (in bits)
+KEY_LENGTH = 1024  # Key size (in bits)
 random_gen = Random.new().read
 
 # Generate RSA private/public key pairs for both parties...
@@ -216,12 +216,10 @@ def register(request):
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
-            pubstring=pubkey.publickey()
-            print len(str(pubstring.n))
-            pubstring=pubstring.exportKey('PEM')
-            key = Key(owner=user,public=pubstring)
+            key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
             pkey=pubkey.exportKey('PEM')
+
 
             from django.core.mail import send_mail,EmailMessage
             mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
@@ -389,7 +387,6 @@ def decrypt(request):
         from models import decrypt_file
         bcontents=decrypt_file(reqdoc,pkey.read())
         response=HttpResponse(content_type='multipart/encrypted')
-        response['Content-Disposition'] = 'attachment; filename='+reqdoc.split('/')[-1]
         response.write(bcontents)
         return response
     except Exception as e:
@@ -484,6 +481,3 @@ def copy(request):
         'copy.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
         )
-
-
-
