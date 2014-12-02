@@ -136,7 +136,22 @@ def bulletin(request):
 
 
 
-
+def changebulletin(request):
+    userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    bulletin = request.POST['bull']
+    if request.method == 'POST':
+        form =BulletinForm('title':bulletin.title,'text_description':bulletin.text_description,'encrypted':bulletin.encrypted, 'folder':bulletin.folder)
+        print form.is_valid()
+        return HttpResponseRedirect('/bulletin')
+    else:
+        form=BulletinForm()
+        doc_formset=DocumentFormSet(prefix='documents')
+    return render_to_response(
+        'bulletin.html',{'form':form,'doc_formset':doc_formset},
+        context_instance=RequestContext(request)
+    )
 
 
 def editbulletin(request):
@@ -177,10 +192,6 @@ def editbulletin(request):
         'bulletin.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
     )
-
-
-
-
 
 
 
