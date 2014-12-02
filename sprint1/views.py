@@ -73,9 +73,9 @@ def folder(request):
             print 'Saving Folder'
             print request.user
             if(request.POST['folder_contained'] != None):
-                folder = Folder(owner=user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
+                folder = Folder(owner=userid,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
             else:
-                folder = Folder(owner=user,name=request.POST['name'])
+                folder = Folder(owner=userid,name=request.POST['name'])
             folder.save()
         bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
         if bul_formset.is_valid() and form.is_valid():
