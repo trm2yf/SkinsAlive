@@ -5,7 +5,9 @@ admin.autodiscover()
 
 urlpatterns = patterns('sprint1.views',
     url(r'^list', 'list', name='list'),
+    url(r'^addbul', 'addbul', name='addbul'),
     url(r'^bulletin', 'bulletin', name='bulletin'),
+    url(r'^changebulletin', 'changebulletin', name='changebulletin'),
     url(r'^folder', 'folder', name='folder'),
     url(r'^index', 'home',name='home'),
     url(r'^register/$', 'register', name='register'),

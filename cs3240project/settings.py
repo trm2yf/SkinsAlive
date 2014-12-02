@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from os import getcwd,path
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -63,7 +64,7 @@ DATABASES = {
     }
 }
 
-MEDIA_ROOT = 'C:/Users/Zachary/Desktop/Fall 2014/Advanced Software/cs3240project/media/'
+MEDIA_ROOT = path.join(getcwd(),'media')
 MEDIA_URL = '/media/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

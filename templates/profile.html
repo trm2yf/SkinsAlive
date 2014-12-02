@@ -30,7 +30,12 @@
            {% if bulletins %}
            {% for bulletin in bulletins %}
               <tr>
-                <td>{{ bulletin.title }}</td>
+                <td>
+                    <form action="bdisplay" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                     <button class="btn btn-link" name="button_id" value="{{ bulletin.b_key }}">{{bulletin.title}}</button>
+                    </form>
+                </td>
                 <td>{{ bulletin.text_description }}</td>
                 <td>{{ bulletin.date_created }}</td>
                 <td>{{ bulletin.date_modified }}</td>
