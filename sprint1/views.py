@@ -195,7 +195,7 @@ from Crypto import Random
 from Crypto.Hash import MD5
 
 # Use a larger key length in practice...
-KEY_LENGTH = 1024  # Key size (in bits)
+KEY_LENGTH = 2048  # Key size (in bits)
 random_gen = Random.new().read
 
 # Generate RSA private/public key pairs for both parties...
@@ -387,6 +387,7 @@ def decrypt(request):
         from models import decrypt_file
         bcontents=decrypt_file(reqdoc,pkey.read())
         response=HttpResponse(content_type='multipart/encrypted')
+        response['Content-Disposition'] = 'attachment; filename='+reqdoc.split('/')[-1]
         response.write(bcontents)
         return response
     except Exception as e:
