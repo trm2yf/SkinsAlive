@@ -136,65 +136,6 @@ def bulletin(request):
 
 
 
-def changebulletin(request):
-    userid=auth_util(request)
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
-    bulletin = request.POST['bull']
-    if request.method == 'POST':
-        form =BulletinForm('title':bulletin.title,'text_description':bulletin.text_description,'encrypted':bulletin.encrypted, 'folder':bulletin.folder)
-        print form.is_valid()
-        return HttpResponseRedirect('/bulletin')
-    else:
-        form=BulletinForm()
-        doc_formset=DocumentFormSet(prefix='documents')
-    return render_to_response(
-        'bulletin.html',{'form':form,'doc_formset':doc_formset},
-        context_instance=RequestContext(request)
-    )
-
-
-def editbulletin(request):
-    userid=auth_util(request)
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
-    DocumentFormSet=formset_factory(DocumentForm,extra=2)
-
-    if request.method == 'POST':
-        form =EditBulletinForm(request.POST)
-        print form.is_valid()
-        if form.is_valid():
-            print 'Updating Bulletin'
-            print request.user
-            lat,long=location_lookup(request.POST['location'])
-            enc=1
-            try:
-                request.POST['encrypted']=='on'
-                enc=1
-            except:
-                enc=0
-                pass
-            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
-            bulletin.save(update_fields=['folder'],['title'],['text_description'],['date_modified'])
-        doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
-        if doc_formset.is_valid() and form.is_valid():
-            for doc in doc_formset:
-                print 'Saving a file'
-                cd=doc.cleaned_data
-                if cd.get('docfile')!=None:
-                    newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                    newdoc.save(encrypted=enc)
-        return HttpResponseRedirect('/profile')
-    else:
-        form=BulletinForm()
-        doc_formset=DocumentFormSet(prefix='documents')
-    return render_to_response(
-        'bulletin.html',{'form':form,'doc_formset':doc_formset},
-        context_instance=RequestContext(request)
-    )
-
-
-
 def list(request):
     # Handle file upload
     if request.method == 'POST':
