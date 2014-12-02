@@ -72,7 +72,7 @@ def folder(request):
         if form.is_valid():
             print 'Saving Folder'
             print request.user
-            if(request.POST['folder_contained'] != None):
+            if(request.POST['folder_contained'] != u''):
                 folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
             else:
                 folder = Folder(owner=request.user,name=request.POST['name'])
