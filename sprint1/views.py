@@ -34,7 +34,6 @@ def addbul(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(Bulletin)
     if request.method == 'POST':
         form =AddBulForm(request.POST)
         print form.is_valid()
@@ -43,11 +42,11 @@ def addbul(request):
             bulletin = request.POST['bulletin']
             bulletin.folder = models.ForeignKey(request.POST['folder'])
             bulletin.save(update_fields=['name'])
-        return HttpResponseRedirect(reverse('sprint1.views.folder'))
+        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
     else:
         form=AddBulForm()
     return render_to_response(
-        'folder.html',{'form':form},
+        'addbul.html',{'form':form},
         context_instance=RequestContext(request)
     )
 
