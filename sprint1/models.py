@@ -105,6 +105,7 @@ def encrypt_file(file_name, key):
     # fo.close()
 
 def decrypt_file(file_name, key):
+    file_name=path.normpath(file_name)
     pathway=getcwd()
     print pathway
     dec=b''
@@ -118,7 +119,7 @@ def decrypt_file(file_name, key):
     return dec
 
 def filepath_handler(instance,name):
-    return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
+    return path.normpath(path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name))
 
 
 class Permission(models.Model):
