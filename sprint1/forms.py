@@ -20,6 +20,13 @@ class BulForm(forms.ModelForm):
         model=Bulletin
         fields=['bulfile']
         
+class AddBulForm(forms.ModelForm):
+    folder = forms.CharField(label='Enter a folder', max_length=100)
+    bulletin = forms.CharField(label='Enter a bulletin', max_length=100)
+    class Meta:
+        model=Bulletin
+        fields=['folder','bulletin']
+        
 class FolderForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
     # text_description=forms.CharField(label='Text Description')
