@@ -21,7 +21,7 @@ class Folder(models.Model):
     f_key = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
   #  text_description = models.TextField(max_length=1024)
-    folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'ownder_id': owner})
+    folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'owner_id': User})
     def save(self):
         super(Folder, self).save()
     def __str__(self):              # __unicode__ on Python 2
@@ -48,50 +48,9 @@ class Bulletin(models.Model):
         super(Bulletin, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.title
-# Create your models here.
-
-
-from Crypto import Random
-from Crypto.Cipher import AES
-# from Crypto import Random
-# from Crypto.Cipher import AES
-#
-# def pad(s):
-#     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
-#
-# def encrypt(message, key, key_size=256):
-#     if key is None:
-#         key = Random.new().read(key_size // 8)
-#     message = pad(message)
-#     iv = Random.new().read(AES.block_size)
-#     cipher = AES.new(key, AES.MODE_CBC, iv)
-#     return iv + cipher.encrypt(message)
-#
-# def decrypt(ciphertext, key):
-#     iv = ciphertext[:AES.block_size]
-#     cipher = AES.new(key, AES.MODE_CBC, iv)
-#     plaintext = cipher.decrypt(ciphertext[AES.block_size:])
-#     return plaintext.rstrip(b"\0")
-#
-# def encrypt_file(file_name, key):
-#     print 'Encrypt called'
-#     with file_name as fo:
-#         plaintext = fo.read()
-#     enc = encrypt(plaintext, key)
-#     # fo=open('E'+file_name.name.split("/")[-1], 'wb')
-#     # fo.write(enc)
-#     # fo.close()
-#     return enc
-#
-# def decrypt_file(file_name, key):
-#     with open(file_name, 'rb') as fo:
-#         ciphertext = fo.read()
-#     dec = decrypt(ciphertext, key)
-#     with open(file_name[:-4], 'wb') as fo:
-#         fo.write(dec)
 
 # Create your models here.
-from Crypto import Random
+from Crypto import Random,Util
 from Crypto.Cipher import AES,PKCS1_OAEP
 from Crypto.PublicKey import RSA
 
@@ -101,26 +60,18 @@ def pad(s):
 def encrypt(message, key, key_size=256):
     if key is None:
         key = Random.new().read(key_size // 8)
-    message = pad(message)
-    iv = Random.new().read(AES.block_size)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return iv + cipher.encrypt(message)
-
-def decrypt(ciphertext, key):
-    iv = ciphertext[:AES.block_size]
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    plaintext = cipher.decrypt(ciphertext[AES.block_size:])
-    return plaintext.rstrip(b"\0")
-
-
     # message = pad(message)
     # iv = Random.new().read(RSA.block_size)
     # cipher = RSA.new(key, RSA.MODE_CBC, iv)
     # return iv + cipher.encrypt(message)
     key=RSA.importKey(key)
     cipher = PKCS1_OAEP.new(key)
-    ciphertext = cipher.encrypt(message)
+    #print 'LENGTH',
+    #print len(cipher._key)
+    ciphertext=cipher.encrypt(message)
+    print len(ciphertext)
     return ciphertext
+
 def decrypt(ciphertext, key):
     # iv = ciphertext[:RSA.block_size]
     # cipher = RSA.new(key, RSA.MODE_CBC, iv)
@@ -128,52 +79,24 @@ def decrypt(ciphertext, key):
     # return plaintext.rstrip(b"\0")
     key=RSA.importKey(key,None)
     cipher = PKCS1_OAEP.new(key)
+    modBits = Util.number.size(cipher._key.n)
+    k = modBits/8 # Convert from bits to bytes
+    print k
     return cipher.decrypt(ciphertext)
-def encrypt_file(file_name, key):
-    print 'Encrypt called'
-    with file_name as fo:
-        plaintext = fo.read()
-    enc = encrypt(plaintext, key)
-    # fo=open('E'+file_name.name.split("/")[-1], 'wb')
-    # fo.write(enc)
-    # fo.close()
-    return enc
-
-def decrypt_file(file_name, key):
-    with open(file_name, 'rb') as fo:
-        ciphertext = fo.read()
-    dec = decrypt(ciphertext, key)
-    with open(file_name[:-4], 'wb') as fo:
-        fo.write(dec)
-
-def pad(s):
-    return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
-
-def encrypt(message, key, key_size=256):
-    if key is None:
-        key = Random.new().read(key_size // 8)
-    message = pad(message)
-    iv = Random.new().read(AES.block_size)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return iv + cipher.encrypt(message)
-
-def decrypt(ciphertext, key):
-    iv = ciphertext[:AES.block_size]
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    plaintext = cipher.decrypt(ciphertext[AES.block_size:])
-    return plaintext.rstrip(b"\0")
 
 def encrypt_file(file_name, key):
     print 'Encrypt called'
-    with open(file_name,'r') as fo:
-        plaintext = fo.read()
-    enc = encrypt(plaintext, key)
-    #file_name.close()
-
-    print plaintext
-    enc = encrypt(plaintext, key)
-    #file_name.close()
-    print enc
+    print key
+    enc=b''
+    fo=open(file_name,'rb')
+    while True:
+        plaintext = fo.read(64)
+        print plaintext
+        if len(plaintext)==0:
+            break
+        enc+=encrypt(plaintext, key)
+    #print enc
+    fo.close()
     overwrite=open(file_name,'wb')
     overwrite.write(enc)
     overwrite.close()
@@ -182,68 +105,17 @@ def encrypt_file(file_name, key):
     # fo.close()
 
 def decrypt_file(file_name, key):
-    with open(file_name, 'rb') as fo:
-        ciphertext = fo.read()
-    dec = decrypt(ciphertext, key)
-    with open(file_name[:-4], 'wb') as fo:
-        fo.write(dec)
-
-def filepath_handler(instance,name):
-    return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
-
-from Crypto import Random
-from Crypto.Cipher import AES
-
-def pad(s):
-    return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
-
-def encrypt(message, key, key_size=256):
-    if key is None:
-        key = Random.new().read(key_size // 8)
-    message = pad(message)
-    iv = Random.new().read(AES.block_size)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    return iv + cipher.encrypt(message)
-
-def decrypt(ciphertext, key):
-    iv = ciphertext[:AES.block_size]
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    plaintext = cipher.decrypt(ciphertext[AES.block_size:])
-    return plaintext.rstrip(b"\0")
-
-def encrypt_file(file_name, key):
-    print 'Encrypt called'
-    with file_name as fo:
-        plaintext = fo.read()
-    enc = encrypt(plaintext, key)
-    # fo=open('E'+file_name.name.split("/")[-1], 'wb')
-    # fo.write(enc)
-    # fo.close()
-    return enc
-
-def decrypt_file(file_name, key):
-    with open(file_name, 'rb') as fo:
-        ciphertext = fo.read()
-    dec = decrypt(ciphertext, key)
-    with open(file_name[:-4], 'wb') as fo:
-        fo.write(dec)
-
-def filepath_handler(instance,name):
-    return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
-
-
     pathway=getcwd()
     print pathway
-    with open(pathway+file_name, 'rb') as fo:
-        ciphertext = fo.read()
-    dec = decrypt(ciphertext, key)
+    dec=b''
+    fo=open(pathway+file_name, 'rb')
+    while True:
+        ciphertext = fo.read(256)
+        if len(ciphertext)==0:
+            break
+        dec+=decrypt(ciphertext, key)
     print dec
     return dec
-#     with open(file_name, 'rb') as fo:
-#         ciphertext = fo.read()
-#     dec = decrypt(ciphertext, key)
-#     with open(file_name[:-4], 'wb') as fo:
-#         fo.write(dec)
 
 def filepath_handler(instance,name):
     return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
@@ -298,7 +170,3 @@ class Document(models.Model):
         #     #self.docfile.close()
         #     #self.docfile=ContentFile(open(snake))
         # print 'Done'
-
-
-
-

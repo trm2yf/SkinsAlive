@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from sprint1.models import Document,Bulletin,Folder,Key,Permission
-from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm
+from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -27,6 +27,26 @@ def home(request):
         form=AccountForm()
         return render_to_response(
         'index.html',{'form':form},
+        context_instance=RequestContext(request)
+    )
+#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
+def addbul(request):
+    userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    if request.method == 'POST':
+        form =AddBulForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            print 'Adding bulletin to folder'
+            bulletin = request.POST['bulletin']
+            bulletin.folder = models.ForeignKey(request.POST['folder'])
+            bulletin.save(update_fields=['name'])
+        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
+    else:
+        form=AddBulForm()
+    return render_to_response(
+        'addbul.html',{'form':form},
         context_instance=RequestContext(request)
     )
 
@@ -52,10 +72,10 @@ def folder(request):
         if form.is_valid():
             print 'Saving Folder'
             print request.user
-            if(request.POST['folder_contained'] != None):
-                folder = Folder(owner=userid,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
+            if(request.POST['folder_contained'] != u''):
+                folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
             else:
-                folder = Folder(owner=userid,name=request.POST['name'])
+                folder = Folder(owner=request.user,name=request.POST['name'])
             folder.save()
         bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
         if bul_formset.is_valid() and form.is_valid():
@@ -114,7 +134,6 @@ def bulletin(request):
         context_instance=RequestContext(request)
     )
 
-
 def list(request):
     # Handle file upload
     if request.method == 'POST':
@@ -144,7 +163,7 @@ from Crypto import Random
 from Crypto.Hash import MD5
 
 # Use a larger key length in practice...
-KEY_LENGTH = 1024  # Key size (in bits)
+KEY_LENGTH = 2048  # Key size (in bits)
 random_gen = Random.new().read
 
 # Generate RSA private/public key pairs for both parties...
@@ -165,10 +184,12 @@ def register(request):
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
-            key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
+            pubstring=pubkey.publickey()
+            print len(str(pubstring.n))
+            pubstring=pubstring.exportKey('PEM')
+            key = Key(owner=user,public=pubstring)
             key.save()
             pkey=pubkey.exportKey('PEM')
-
 
             from django.core.mail import send_mail,EmailMessage
             mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
@@ -332,6 +353,7 @@ def decrypt(request):
         from models import decrypt_file
         bcontents=decrypt_file(reqdoc,pkey.read())
         response=HttpResponse(content_type='multipart/encrypted')
+        response['Content-Disposition'] = 'attachment; filename='+reqdoc.split('/')[-1]
         response.write(bcontents)
         return response
     except Exception as e:
@@ -426,6 +448,3 @@ def copy(request):
         'copy.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
         )
-
-
-
