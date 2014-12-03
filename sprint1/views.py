@@ -251,9 +251,10 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
-            is_author = user_form.author
-            author = Author(user_id=user)
-            author.save()
+            is_author = request.POST['author']
+            if is_author != u'on' :
+                author = Author(user_id=user)
+                author.save()
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
             key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
