@@ -14,6 +14,8 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
+import datetime
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 
@@ -507,3 +509,47 @@ def copy(request):
         'copy.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
         )
+def frontpage(request):
+    context = RequestContext(request)
+
+    if request.method == 'POST':
+        #search_text = request.POST['search_text']
+        #search_type = request.POST['type']
+        #granted=Permission.objects.filter(permitted__exact=request.user)
+        #granted=[i.owner for i in granted]
+        today = datetime.date.today()
+        q1 = Bulletin.objects.filter(date_created__lte=today - timedelta(days=7))
+            # order by publication date, then headline
+        query =q1.order_by('date_created', 'title')
+
+
+        recent_bulletins=[]
+        for b in query:
+                recent_bulletins.append(b)
+       # print string
+        print "rec bulletins"
+        print recent_bulletins
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)
+
+    else:
+      # if request.method == 'POST':
+        #search_text = request.POST['search_text']
+        #search_type = request.POST['type']
+        #granted=Permission.objects.filter(permitted__exact=request.user)
+        #granted=[i.owner for i in granted]
+        today = datetime.date.today()
+        q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
+            # order by publication date, then headline
+        query =q1.order_by('-date_created', 'title')
+        print "query"
+        print query
+
+
+        recent_bulletins=[]
+        for b in query:
+                recent_bulletins.append(b)
+                print b.date_created
+       # print string
+        print "rec bulletins"
+        print recent_bulletins
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)
