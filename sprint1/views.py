@@ -86,7 +86,7 @@ def folder(request):
                 if cd.get('bulletinAdd')!=None:
                     newbul = Bulletin(bulfile=cd.get('bulfile'),posted_folder=folder)
                     newbul.save()
-        return HttpResponseRedirect(reverse('sprint1.views.folder'))
+        return HttpResponseRedirect('/profile')
     else:
         form=FolderForm()
         bul_formset=BulFormSet(prefix='bulletins')
@@ -356,9 +356,11 @@ def profile(request):
 
     else:
         q1 = Bulletin.objects.filter(author__exact=author)
+        q2 = Folder.objects.filter(owner__exact=author)
 
         bulletins = [b for b in q1]
-        return render_to_response('profile.html', {'bulletins':bulletins}, context)
+        folders = [f for f in q2]
+        return render_to_response('profile.html', {'bulletins':bulletins, 'folders':folders}, context)
 
 
 def bdisplay(request):
@@ -421,22 +423,40 @@ def edit(request):
         form = BulletinForm(request.POST)
         print form.is_valid()
         if form.is_valid():
-            # b_id = request.POST['submit']
-            # title = request.POST['title']
-            # desc = request.POST['text_description']
-            # # encrypt = request.POST['encrypt']
-            # folder = request.POST['folder']
-
-            # Bulletin.objects.filter(b_key=b_id).update(title=title)
-            # Bulletin.objects.filter(b_key=b_id).update(text_description=desc)
-            # # Bulletin.objects.filter(b_key=b_id, author_id__exact=author).update(encrypted=encrypt)
-            # Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
             lat,long=location_lookup(request.POST['location'])
             enc=1
-            if request.POST['encrypted']!='on':
+            try:
+                request.POST['encrypted']=='on'
+                enc=1
+            except:
                 enc=0
+                pass
             bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc, b_key=request.POST['submit'] )
-            bulletin.save()
+            bulletin.save(update_fields=['folder_id', 'title', 'text_description', 'date_modified', 'encrypted'])
+
+        return HttpResponseRedirect('/profile')
+
+def f_edit(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    if request.method == 'GET':
+        f_id = request.GET['f_edit']
+        q1 = Folder.objects.filter(f_key=f_id, owner__exact=author)
+        folder = [f for f in q1]
+
+        form=FolderForm(initial={'name': folder[0].name})
+        return render_to_response(
+        'f_edit.html',{'f_id':f_id,'form':form},
+        context_instance=RequestContext(request)
+        )
+
+    else:
+        form = FolderForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            folder = Folder(owner=request.user,f_key=request.POST['submit'],name=request.POST['name'])
+            folder.save()
 
         return HttpResponseRedirect('/profile')
 
@@ -445,7 +465,8 @@ def edit(request):
 def copy(request):
     context = RequestContext(request)
     author = request.user.id
-    if author<0:
+    userid=auth_util(request)
+    if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
@@ -456,18 +477,22 @@ def copy(request):
             print request.user
             lat,long=location_lookup(request.POST['location'])
             enc=1
-            if request.POST['encrypted']!='on':
+            try:
+                request.POST['encrypted']=='on'
+                enc=1
+            except:
                 enc=0
-            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
-            print Bulletin
+                pass
+            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
                 print 'Saving a file'
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                newdoc.save()
+                if cd.get('docfile')!=None:
+                    newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
+                    newdoc.save(encrypted=enc)
         return HttpResponseRedirect('/profile')
     else:
         b_id = request.GET['copy']
@@ -483,3 +508,53 @@ def copy(request):
         'copy.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
         )
+
+def f_copy(request):
+    userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    BulFormSet=formset_factory(BulForm,extra=3)
+    if request.method == 'POST':
+        form =FolderForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            print 'Saving Folder'
+            print request.user
+            if(request.POST['folder_contained'] != u''):
+                folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
+            else:
+                folder = Folder(owner=request.user,name=request.POST['name'])
+            folder.save()
+        bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
+        if bul_formset.is_valid() and form.is_valid():
+            for bul in bul_formset:
+                print 'Saving a bulletin'
+                cd=bul.cleaned_data
+                if cd.get('bulletinAdd')!=None:
+                    newbul = Bulletin(bulfile=cd.get('bulfile'),posted_folder=folder)
+                    newbul.save()
+        return HttpResponseRedirect('/profile')
+    else:
+        f_id = request.GET['f_copy']
+        query = Folder.objects.filter(f_key=f_id)
+        folder = [f for f in query]
+
+        form=FolderForm(initial={'name': folder[0].name})
+        bul_formset=BulFormSet(prefix='bulletins')
+
+        return render_to_response(
+        'f_copy.html',{'form':form,'bul_formset':bul_formset},
+        context_instance=RequestContext(request)
+        )
+
+def deletefolder(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    f_id = request.POST['delete']
+    Bulletin.objects.filter(b_key=delete).delete()
+
+    q1 = Bulletin.objects.filter(author__exact=author)
+
+    bulletins = [b for b in q1]
+    return render_to_response('profile.html', {'bulletins':bulletins}, context)

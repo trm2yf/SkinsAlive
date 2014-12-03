@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-
+{%  load bootstrap %}
 {% block content %}
+        <!-- Upload form. Note enctype attribute! -->
+{% if user.is_authenticated %}
 <div class="row">
     <div class="col-md-6 col-md-offset-1">
-    {%  load bootstrap %}
-        <!-- Upload form. Note enctype attribute! -->
-        <h1>Create a New Bulletin</h1>
+        <h1>Create a New Folder</h1>
     {{ form.errors }}
-    {{ form.non_field_errors }}
-        <form action="copy" method="post" enctype="multipart/form-data">
+{{ form.non_field_errors }}
+        <form action="f_copy" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|bootstrap }}
-            {{ doc_formset.management_form }}
-{#            {{ doc_formset.as_table }}#}
+            {{ bul_formset.management_form }}
+{#            {{ bul_formset.as_table }}#}
 
             <div id="form_set">
-    {% for form in doc_formset.forms %}
+    {% for form in bul_formset.forms %}
         <table class='no_error'>
             {{ form.as_table }}
         </table>
@@ -23,22 +23,13 @@
             </div>
             <div id="empty_form" style="display:none">
             <table class='no_error'>
-                {{ doc_formset.empty_form.as_table }}
+                {{ bul_formset.empty_form.as_table }}
             </table>
             </div>
+            <button id="add-another" type="button">Add another bulletin</button>
             <br>
-
-            <button class="btn btn-default" id="add-another" type="button">Add another document</button>
-            <br><br>
             <button type="submit" class="btn btn-primary">Submit</button>
-
         </form>
-    </div>
-</div>
-<div class="row">
-    <br>
-    <br>
-</div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
     $('#add-another').click(function() {
@@ -47,4 +38,9 @@
         $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     });
 </script>
+<div class="row">
+    <br>
+    <br>
+</div>
+{% endif %}
 {% endblock %}

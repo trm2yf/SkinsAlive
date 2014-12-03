@@ -13,14 +13,18 @@
         <a href="bulletin"><button type="button" class="btn btn-primary btn-lg"><i class="fa fa-pencil-square-o"></i> Create</button></a>
         <a href="search"><button type="button" class="btn btn-success btn-lg"> <i class="fa fa-search"></i> Search</button></a>
         <br><br>
+    </div>
+</div>
 
+<div class="row">
+
+    <div class="col-md-6 col-md-offset-1">
         <h3> Submitted Bulletins &nbsp;<a href="permission"><button class="btn btn-permission">Grant Permission</button></a> </h3>
         <br>
         <table class="table table-bordered">
           <tr>
             <th>Title</th>
             <th>Description</th>
-            <th>Last Modified</th>
             <th>Encrypted</th>
             <th>Delete</th>
             <th>Edit</th>
@@ -36,7 +40,6 @@
                     </form>
                 </td>
                 <td>{{ bulletin.text_description }}</td>
-                <td>{{ bulletin.date_modified }}</td>
                 <td>{{ bulletin.encrypted }}</td>
                 <td>
 {#                    <div class="col-md-2">#}
@@ -74,6 +77,49 @@
                 <td>N/A</td>
                 <td>N/A</td>
            {% endif %}
+        </table>
+    </div>
+    <div class="col-md-3" id="foldercol">
+        <h3>My Folders &nbsp;<a href="folder"><button class="btn btn-addfolder"><i class="fa fa-plus"></i></button></a></h3>
+        <br>
+        <table class="table table-bordered">
+            <tr>
+                <th>Name</th>
+                <th>Edit</th>
+                <th>Copy</th>
+                <th>Delete</th>
+            </tr>
+            {% if folders %}
+            {%  for folder in folders %}
+             <tr>
+                <td>{{ folder.name }}</td>
+                <td>
+                     <form action="f_edit" method="get" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-info btn-sm" name="f_edit" value="{{ folder.f_key }}"><i class="fa fa-pencil"></i></button>
+                    </form>
+                </td>
+                <td>
+                     <form action="f_copy" method="get" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-warning btn-sm" name="f_copy" value="{{ folder.f_key }}"><i class="fa fa-copy"></i></button>
+                    </form>
+                </td>
+                <td>
+                    <form action="deletefolder" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-danger btn-sm" name="delete" value="{{ folder.f_key }}"><i class="fa fa-minus-circle"></i></button>
+                    </form>
+                </td>
+             {% endfor %}
+             {% else %}
+             </tr>
+             <tr>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+             </tr>
+             {% endif %}
         </table>
     </div>
 </div>

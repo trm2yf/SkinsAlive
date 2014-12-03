@@ -1,6 +1,11 @@
+<!DOCTYPE html>
+
 {% extends "base.html" %}
 
 {% block content %}
+
+{% if user.is_authenticated %}
+
 <div class="row">
     <div class="col-md-6 col-md-offset-1">
     {%  load bootstrap %}
@@ -47,4 +52,11 @@
         $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     });
 </script>
+
+
+{% else %}
+	<h2> Please <a href="login">log in.</a> </h2>
+{% endif %}
+
+
 {% endblock %}

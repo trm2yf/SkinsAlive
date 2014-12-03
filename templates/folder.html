@@ -1,14 +1,16 @@
 {% extends "base.html" %}
-
+{%  load bootstrap %}
 {% block content %}
         <!-- Upload form. Note enctype attribute! -->
 {% if user.is_authenticated %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-1">
         <h1>Create a New Folder</h1>
     {{ form.errors }}
 {{ form.non_field_errors }}
         <form action="folder" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form|bootstrap }}
             {{ bul_formset.management_form }}
 {#            {{ bul_formset.as_table }}#}
 
@@ -25,7 +27,8 @@
             </table>
             </div>
             <button id="add-another" type="button">Add another bulletin</button>
-            <p><input type="submit" value="Submit" /></p>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
@@ -35,5 +38,9 @@
         $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     });
 </script>
+<div class="row">
+    <br>
+    <br>
+</div>
 {% endif %}
 {% endblock %}
