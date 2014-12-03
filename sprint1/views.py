@@ -15,6 +15,7 @@ from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
 import datetime
+from django.db.models import F
 from datetime import timedelta
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -33,7 +34,7 @@ def home(request):
         'index.html',{'form':form},
         context_instance=RequestContext(request)
     )
-#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
+#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
 def addbul(request):
     context = RequestContext(request)
     author = request.user.id
@@ -59,7 +60,7 @@ def addbul(request):
 
         return render_to_response('addbul.html',{'folder':folders, 'bulletin':bulletins}, context)
 
-#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
+#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
 def connect(request):
     userid=auth_util(request)
     if userid<0:
@@ -74,7 +75,7 @@ def connect(request):
         return HttpResponseRedirect(reverse('sprint1.views.addbul'))
     else:
        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
-    
+
 
 
 def location_lookup(citystring):
@@ -94,38 +95,38 @@ def auth_util(passedrequest):
         return 1
     else:
         return passedrequest.user.id
-        
+
 def folder(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(BulForm,extra=1)
     if request.method == 'POST':
         form =FolderForm(request.POST)
+        b1 = request.POST['test']
+        b2 = request.POST['test1']
+        b3 = request.POST['test2']
+
         print form.is_valid()
         if form.is_valid():
             print 'Saving Folder'
             print request.user
-            if(request.POST['folder_contained'] != u''):
-                folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
-            else:
-                folder = Folder(owner=request.user,name=request.POST['name'])
+            folder = Folder(owner=request.user,name=request.POST['name'])
             folder.save()
-        bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
-        if bul_formset.is_valid() and form.is_valid():
-            for bul in bul_formset:
-                print 'Adding bulletin to folder'
-                bulletin = request.POST['bulletin']
-                bulletin.folder = models.ForeignKey(request.POST['folder'])
-                bulletin.save(update_fields=['folder'])
+            f_id = folder.f_key
+
+        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+
         return HttpResponseRedirect('/profile')
     else:
         form=FolderForm()
-        bul_formset=BulFormSet(prefix='bulletins')
-    return render_to_response(
-        'folder.html',{'form':form,'bul_formset':bul_formset},
-        context_instance=RequestContext(request)
-    )
+        q1 = Bulletin.objects.filter(author__exact=userid)
+        bulletins = [b for b in q1]
+        return render_to_response(
+            'folder.html',{'form':form, 'bulletins':bulletins},
+            context_instance=RequestContext(request)
+        )
 
 
 def bulletin(request):
@@ -134,7 +135,8 @@ def bulletin(request):
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
-    form=BulletinForm()
+
+    form =BulletinForm()
     if request.method == 'POST':
         form =BulletinForm(request.POST)
         print form.is_valid()
@@ -290,12 +292,16 @@ def user_login(request):
 
         #If the password/username combination is valid, an User Object will be returned
         user = authenticate(username=username, password=password)
+        profile = request.user.get_profile()
 
         if user:
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
+               # if profile.author: 
                 return HttpResponseRedirect('/profile')
+              #  else:
+                #    return HttpResponseRedirect('/index')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
@@ -324,7 +330,7 @@ def search(request):
         search_type = request.POST['type']
         granted=Permission.objects.filter(permitted__exact=request.user)
         granted=[i.owner for i in granted]
-        
+
         #Keyword Search Option
         if search_type == 'all':
             q1 = Bulletin.objects.filter(title__icontains=search_text)
@@ -422,10 +428,12 @@ def readerprofile(request):
 
 
 def bdisplay(request):
+
     context = RequestContext(request)
     if request.method == 'POST':
         bulletin_key = request.POST['button_id']
         q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
+        q1.update(num_views=F('num_views') + 1)
         bulletin = [b for b in q1]
 
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
@@ -579,23 +587,22 @@ def f_copy(request):
     BulFormSet=formset_factory(BulForm,extra=3)
     if request.method == 'POST':
         form =FolderForm(request.POST)
+        b1 = request.POST['test']
+        b2 = request.POST['test1']
+        b3 = request.POST['test2']
+
         print form.is_valid()
         if form.is_valid():
             print 'Saving Folder'
             print request.user
-            if(request.POST['folder_contained'] != u''):
-                folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
-            else:
-                folder = Folder(owner=request.user,name=request.POST['name'])
+            folder = Folder(owner=request.user,name=request.POST['name'])
             folder.save()
-        bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
-        if bul_formset.is_valid() and form.is_valid():
-            for bul in bul_formset:
-                print 'Saving a bulletin'
-                cd=bul.cleaned_data
-                if cd.get('bulletinAdd')!=None:
-                    newbul = Bulletin(bulfile=cd.get('bulfile'),posted_folder=folder)
-                    newbul.save()
+            f_id = folder.f_key
+
+        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+
         return HttpResponseRedirect('/profile')
     else:
         f_id = request.GET['f_copy']
@@ -603,11 +610,12 @@ def f_copy(request):
         folder = [f for f in query]
 
         form=FolderForm(initial={'name': folder[0].name})
-        bul_formset=BulFormSet(prefix='bulletins')
 
+        q1 = Bulletin.objects.filter(author__exact=userid)
+        bulletins = [b for b in q1]
         return render_to_response(
-        'f_copy.html',{'form':form,'bul_formset':bul_formset},
-        context_instance=RequestContext(request)
+            'folder.html',{'form':form, 'bulletins':bulletins},
+            context_instance=RequestContext(request)
         )
 
 def deletefolder(request):
@@ -629,38 +637,48 @@ def frontpage(request):
         #granted=Permission.objects.filter(permitted__exact=request.user)
         #granted=[i.owner for i in granted]
         today = datetime.date.today()
-        q1 = Bulletin.objects.filter(date_created__lte=today - timedelta(days=7))
+        q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
             # order by publication date, then headline
-        query =q1.order_by('date_created', 'title')
+        query1 =q1.order_by('-date_created', 'title')
 
-
+        q2 = Bulletin.objects.all()
+        query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
-        for b in query:
-                recent_bulletins.append(b)
+
+        for b1 in query1:
+                recent_bulletins.append(b1)
+
+        most_viewed_bulletins=[]
+        for b2 in query2:
+                most_viewed_bulletins.append(b2)
        # print string
         print "rec bulletins"
         print recent_bulletins
-        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)
+        print "viewed bulletins"
+        print most_viewed_bulletins
+
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
 
     else:
-      # if request.method == 'POST':
-        #search_text = request.POST['search_text']
-        #search_type = request.POST['type']
-        #granted=Permission.objects.filter(permitted__exact=request.user)
-        #granted=[i.owner for i in granted]
         today = datetime.date.today()
         q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
             # order by publication date, then headline
-        query =q1.order_by('-date_created', 'title')
-        print "query"
-        print query
+        query1 =q1.order_by('-date_created', 'title')
 
-
+        q2 = Bulletin.objects.all()
+        query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
-        for b in query:
-                recent_bulletins.append(b)
-                print b.date_created
+
+        for b1 in query1:
+                recent_bulletins.append(b1)
+
+        most_viewed_bulletins=[]
+        for b2 in query2:
+                most_viewed_bulletins.append(b2)
        # print string
         print "rec bulletins"
         print recent_bulletins
-        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)
+
+        print "viewed bulletins"
+        print most_viewed_bulletins
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)

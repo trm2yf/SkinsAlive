@@ -13,24 +13,29 @@ from django.contrib.auth.models import User
 # from Crypto.Cipher import AES
 
 ######  MODELS ######
-
-#extending User object
-class UserProfile(models.Model):
-    author = models.BooleanField(default=True)
-    user = models.ForeignKey(User, unique=True)
-
-# Folder Model
+#
+# #extending User object
+# class UserProfile(models.Model):
+#     author = models.BooleanField(default=True)
+#     user = models.ForeignKey(User, unique=True, related_name='profile')
+#
+# # Folder Model
 
 class Folder(models.Model):
     owner=models.ForeignKey(User)
     f_key = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
   #  text_description = models.TextField(max_length=1024)
-    folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'owner_id': User})
+  #   folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'owner_id': User})
     def save(self):
         super(Folder, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.name
+#
+# class UserProfile(models.Model):
+#     user = models.OneToOneField('auth.User')
+#     author = models.BooleanField(default=True)
+
 
 # Bulletin Model
 class Bulletin(models.Model):
@@ -39,7 +44,7 @@ class Bulletin(models.Model):
     text_description = models.TextField(max_length=1024)
     date_created = models.DateTimeField(editable=False, auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
-    views= models.CharField(max_length=1000)
+    num_views = models.IntegerField(default=0)
     author= models.ForeignKey(User)
     lat = models.DecimalField(decimal_places=2,max_digits=10)
     long = models.DecimalField(decimal_places=2,max_digits=10)

@@ -5,6 +5,8 @@
 
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 {#          <link href="{% static 'dist/css/bootstrap.min.css' %}"#}
 {#                rel="stylesheet" media="screen">#}
         <style>
@@ -36,33 +38,29 @@
                 font-size: 12px;
                 color: #737373;
             }
-{#            .btn-pink {#}
-{#                color:#fff;#}
-{#                font-weight: bold;#}
-{#                background-color: #ea63a7;#}
-{#                border-color: #d45c98;#}
-{#            }#}
-{#            .btn-pink:hover {#}
-{#                color:#fff;#}
-{#                font-weight: bold;#}
-{#                background-color: #d45c98;#}
-{#                border-color: #d45c98;#}
-{#            }#}
+            .btn-gray {
+                color:#fff;
+                background-color: #bcbdbc;
+                border-color: #aeaeae;
+            }
+            .btn-gray:hover {
+                color:#fff;
+                background-color: #aeaeae;
+                border-color: #aeaeae;
+            }
             #foldercol {
                 margin-left: 25px;
             }
-{#            .btn-lime {#}
-{#                color:#fff;#}
-{#                font-weight: bold;#}
-{#                background-color: #51d23d;#}
-{#                border-color: #4dc73a;#}
-{#            }#}
-{#            .btn-lime:hover {#}
-{#                color:#fff;#}
-{#                font-weight: bold;#}
-{#                background-color: #4dc73a;#}
-{#                border-color: #4dc73a;#}
-{#            }#}
+            .btn-lime {
+                color:#fff;
+                background-color: #51d23d;
+                border-color: #4dc73a;
+            }
+            .btn-lime:hover {
+                color:#fff;
+                background-color: #4dc73a;
+                border-color: #4dc73a;
+            }
 
         </style>
 </head>
@@ -75,6 +73,9 @@
       <a class="navbar-brand" href="index">Secure Witness System</a>
     </div>
       {% if user.is_authenticated %}
+      <ul class="nav navbar-nav navbar-left">
+         <li><a href="search"><button type="button" class="btn btn-success btn-sm navbutton"> <i class="fa fa-search"></i> Search Bulletins</button></a></li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="profile" class="welcome">Welcome {{ user.username }}</a></li>
         <li><a href="logout"><button type="submit" class="btn btn-danger btn-sm navbutton" method="post">Log Out</button></a></li>
