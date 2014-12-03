@@ -14,6 +14,11 @@ from django.contrib.auth.models import User
 
 ######  MODELS ######
 
+#extending User object
+class UserProfile(models.Model):
+    author = models.BooleanField(default=True)
+    user = models.ForeignKey(User, unique=True)
+
 # Folder Model
 
 class Folder(models.Model):
