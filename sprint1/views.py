@@ -11,6 +11,8 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from Crypto.Cipher import PKCS1_OAEP
+from django.db.models import signals
+from sprint1.models import UserProfile
 from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
@@ -118,6 +120,10 @@ def folder(request):
             'folder.html',{'form':form, 'bulletins':bulletins},
             context_instance=RequestContext(request)
         )
+
+#def create_user_profile(sender, instance, created, **kwargs):
+#   if created:
+ #       UserProfile.objects.create(user=instance)
 
 
 def bulletin(request):
@@ -241,6 +247,7 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
+    #        signals.post_save.connect(create_user_profile, sender=User)
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
             key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
@@ -288,7 +295,10 @@ def user_login(request):
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/profile')
+          #      if user.profile.author: 
+                 return HttpResponseRedirect('/profile')
+            #    else:
+            #        return HttpResponseRedirect('/frontpage')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
@@ -643,13 +653,21 @@ def frontpage(request):
         q2 = Bulletin.objects.all()
         query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
-
+        i = 0
+        display_number = 10
         for b1 in query1:
-                recent_bulletins.append(b1)
-
+            recent_bulletins.append(b1)
+            i += 1
+            if i == display_number:
+                i = 0
+                break
         most_viewed_bulletins=[]
         for b2 in query2:
-                most_viewed_bulletins.append(b2)
+            most_viewed_bulletins.append(b2)
+            i += 1
+            if i == display_number:
+                i = 0
+                break
        # print string
         print "rec bulletins"
         print recent_bulletins
