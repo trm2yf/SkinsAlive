@@ -379,12 +379,30 @@ def profile(request):
 
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
-
     else:
         q1 = Bulletin.objects.filter(author__exact=author)
 
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
+
+
+
+def readerprofile(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    if request.method == 'POST':
+
+        q1 = Bulletin.objects.filter(author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
+
+    else:
+        q1 = Bulletin.objects.filter(author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
 
 
 def bdisplay(request):
