@@ -121,6 +121,10 @@ def folder(request):
         context_instance=RequestContext(request)
     )
 
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
 
 def bulletin(request):
     userid=auth_util(request)
