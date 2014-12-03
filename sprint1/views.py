@@ -284,7 +284,13 @@ def register(request):
         'register.html',
         {'user_form': user_form, 'registered':registered},
         context)
+        
+#function to check if user is author
+def is_author(userid):
+    if Author.objects.filter(user_id=userid).count():
+        return True
 
+    return False
 
 #Log-in Function
 def user_login(request):
@@ -304,7 +310,11 @@ def user_login(request):
             if user.is_active:
                 login(request, user)
                # if profile.author: 
-                return HttpResponseRedirect('/profile')
+ #                  if User.objects.filter(username=username).count():
+                if is_author(user):
+                    return HttpResponseRedirect('/profile')
+                else:
+                    return HttpResponseRedirect('/frontpage')
               #  else:
                 #    return HttpResponseRedirect('/index')
             else:
