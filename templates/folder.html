@@ -11,9 +11,9 @@
         <form action="folder" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|bootstrap }}
-            {% if bulletins %}
 
             <label for="dropdownMenu1">Move Bulletins to this Folder:</label>
+            {% if bulletins %}
                 <select class="form-control" role="menu" name="test">
                     <option role="menuitem" tabindex="-1" value="0"></option>
             {% for bulletin in bulletins %}
@@ -38,7 +38,7 @@
                 </select>
                 <br>
             {% else %}
-                No bulletins
+                <p>No bulletins</p>
             {% endif %}
             <br><br>
             <button type="submit" class="btn btn-primary">Submit</button>

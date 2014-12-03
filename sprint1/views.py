@@ -126,6 +126,7 @@ def bulletin(request):
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
+    form =BulletinForm()
 
     if request.method == 'POST':
         form =BulletinForm(request.POST)
