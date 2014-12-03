@@ -39,20 +39,10 @@ class FolderForm(forms.ModelForm):
     # text_description=forms.CharField(label='Text Description')
     class Meta:
         model=Folder
-        fields=['name','folder_contained']
+        fields=['name']
     #def __init__(self):
       #       self.fields['folder'].initial=1
-    """
-    bulletin = models.ForeignKey(Folder)
-    name = models.CharField(max_length=255)
-    text_description = models.TextField(max_length=1024)
-    pub_date = models.DateField()
-    mod_date = models.DateField()
-    authors = models.ManyToManyField(Users)
-    author_id = models.IntegerField()
-    lat = models.DecimalField(decimal_places=2,max_digits=10)
-    long = models.DecimalField(decimal_places=2,max_digits=10)
-    """
+
 
 class BulletinForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')

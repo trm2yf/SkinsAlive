@@ -90,33 +90,33 @@ def folder(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(BulForm,extra=1)
     if request.method == 'POST':
         form =FolderForm(request.POST)
+        b1 = request.POST['test']
+        b2 = request.POST['test1']
+        b3 = request.POST['test2']
+
         print form.is_valid()
         if form.is_valid():
             print 'Saving Folder'
             print request.user
-            if(request.POST['folder_contained'] != u''):
-                folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
-            else:
-                folder = Folder(owner=request.user,name=request.POST['name'])
+            folder = Folder(owner=request.user,name=request.POST['name'])
             folder.save()
-        bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
-        if bul_formset.is_valid() and form.is_valid():
-            for bul in bul_formset:
-                print 'Adding bulletin to folder'
-                bulletin = request.POST['bulletin']
-                bulletin.folder = models.ForeignKey(request.POST['folder'])
-                bulletin.save(update_fields=['folder'])
+            f_id = folder.f_key
+
+        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+
         return HttpResponseRedirect('/profile')
     else:
         form=FolderForm()
-        bul_formset=BulFormSet(prefix='bulletins')
-    return render_to_response(
-        'folder.html',{'form':form,'bul_formset':bul_formset},
-        context_instance=RequestContext(request)
-    )
+        q1 = Bulletin.objects.filter(author__exact=userid)
+        bulletins = [b for b in q1]
+        return render_to_response(
+            'folder.html',{'form':form, 'bulletins':bulletins},
+            context_instance=RequestContext(request)
+        )
 
 
 def bulletin(request):
@@ -558,23 +558,22 @@ def f_copy(request):
     BulFormSet=formset_factory(BulForm,extra=3)
     if request.method == 'POST':
         form =FolderForm(request.POST)
+        b1 = request.POST['test']
+        b2 = request.POST['test1']
+        b3 = request.POST['test2']
+
         print form.is_valid()
         if form.is_valid():
             print 'Saving Folder'
             print request.user
-            if(request.POST['folder_contained'] != u''):
-                folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
-            else:
-                folder = Folder(owner=request.user,name=request.POST['name'])
+            folder = Folder(owner=request.user,name=request.POST['name'])
             folder.save()
-        bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
-        if bul_formset.is_valid() and form.is_valid():
-            for bul in bul_formset:
-                print 'Saving a bulletin'
-                cd=bul.cleaned_data
-                if cd.get('bulletinAdd')!=None:
-                    newbul = Bulletin(bulfile=cd.get('bulfile'),posted_folder=folder)
-                    newbul.save()
+            f_id = folder.f_key
+
+        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+
         return HttpResponseRedirect('/profile')
     else:
         f_id = request.GET['f_copy']
@@ -582,11 +581,12 @@ def f_copy(request):
         folder = [f for f in query]
 
         form=FolderForm(initial={'name': folder[0].name})
-        bul_formset=BulFormSet(prefix='bulletins')
 
+        q1 = Bulletin.objects.filter(author__exact=userid)
+        bulletins = [b for b in q1]
         return render_to_response(
-        'f_copy.html',{'form':form,'bul_formset':bul_formset},
-        context_instance=RequestContext(request)
+            'folder.html',{'form':form, 'bulletins':bulletins},
+            context_instance=RequestContext(request)
         )
 
 def deletefolder(request):

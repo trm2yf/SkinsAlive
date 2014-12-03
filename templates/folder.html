@@ -11,25 +11,40 @@
         <form action="folder" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|bootstrap }}
-            {{ bul_formset.management_form }}
-{#            {{ bul_formset.as_table }}#}
+            {% if bulletins %}
 
-            <div id="form_set">
-    {% for form in bul_formset.forms %}
-        <table class='no_error'>
-            {{ form.as_table }}
-        </table>
-    {% endfor %}
-            </div>
-            <div id="empty_form" style="display:none">
-            <table class='no_error'>
-                {{ bul_formset.empty_form.as_table }}
-            </table>
-            </div>
-            <button id="add-another" type="button">Add another bulletin</button>
-            <br>
+            <label for="dropdownMenu1">Move Bulletins to this Folder:</label>
+                <select class="form-control" role="menu" name="test">
+                    <option role="menuitem" tabindex="-1" value="0"></option>
+            {% for bulletin in bulletins %}
+                    <option role="menuitem" tabindex="-1" value="{{ bulletin.b_key }}">{{ bulletin.title }} </option></li>
+            {% endfor %}
+                </select>
+
+                <br>
+                <select class="form-control" role="menu" name="test1">
+                    <option role="menuitem" tabindex="-1" value="0"></option>
+            {% for bulletin in bulletins %}
+                    <option role="menuitem" tabindex="-1" value="{{ bulletin.b_key }}">{{ bulletin.title }} </option></li>
+            {% endfor %}
+                </select>
+
+                <br>
+                <select class="form-control" role="menu" name="test2">
+                    <option role="menuitem" tabindex="-1" value="0"></option>
+            {% for bulletin in bulletins %}
+                    <option role="menuitem" tabindex="-1" value="{{ bulletin.b_key }}">{{ bulletin.title }} </option></li>
+            {% endfor %}
+                </select>
+                <br>
+            {% else %}
+                No bulletins
+            {% endif %}
+            <br><br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+    </div>
+</div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
     $('#add-another').click(function() {
@@ -37,6 +52,7 @@
         $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
         $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
     });
+    $('.dropdown-toggle').dropdown();
 </script>
 <div class="row">
     <br>
