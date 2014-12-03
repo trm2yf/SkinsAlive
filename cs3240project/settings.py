@@ -112,5 +112,5 @@ TEMPLATE_DIRS = (
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = '3240project@gmail.com'
+EMAIL_HOST_USER = 'christine.suzanne28@gmail.com'
 EMAIL_HOST_PASSWORD = 'chriheletravzach'
