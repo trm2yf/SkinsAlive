@@ -34,28 +34,16 @@ def home(request):
 def addbul(request):
     userid=auth_util(request)
     author = request.user.id
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
     if request.method == 'POST':
-        form =AddBulForm(request.POST)
-        print form.is_valid()
         q1 = Bulletin.objects.filter(author__exact=author)
         bulletins = [b for b in q1]
         q2 = Folder.objects.filter(owner__exact=author)
         folders = [f for f in q2]
         return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins}, context)
-        if form.is_valid():
-            print 'Adding bulletin to folder'
-            bulletin = request.POST['bulletin']
-            bulletin.folder = models.ForeignKey(request.POST['folder'])
-            bulletin.save(update_fields=['name'])
-        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
     else:
-        form=AddBulForm()
-    return render_to_response(
-        'addbul.html',{'form':form},
-        context_instance=RequestContext(request)
-    )
+        q1 = Bulletin.objects.filter(author__exact=author)
+        bulletins = [b for b in q1]
+        return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins}, context)
 
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
