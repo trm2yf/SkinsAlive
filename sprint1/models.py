@@ -15,9 +15,9 @@ from django.contrib.auth.models import User
 ######  MODELS ######
 
 #extending User object
-class UserProfile(models.Model):
-    author = models.BooleanField(default=True)
-    user = models.ForeignKey(User, unique=True)
+# class UserProfile(models.Model):
+#     author = models.BooleanField(default=True)
+#     user = models.ForeignKey(User, unique=True)
 
 # Folder Model
 
@@ -32,9 +32,9 @@ class Folder(models.Model):
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 
-class UserProfile(models.Model):
-    user = models.OneToOneField('auth.User')
-    author = models.BooleanField(default=True)
+# class UserProfile(models.Model):
+#     user = models.OneToOneField('auth.User')
+#     author = models.BooleanField(default=True)
 
 
 # Bulletin Model

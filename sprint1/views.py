@@ -126,7 +126,7 @@ def bulletin(request):
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
-    form =BulletinForm()
+    form =BulletinForm(request.user)
 
     if request.method == 'POST':
         form =BulletinForm(request.POST)
@@ -449,13 +449,14 @@ def decrypt(request):
 def edit(request):
     context = RequestContext(request)
     author = request.user.id
+    form =BulletinForm(request.user)
 
     if request.method == 'GET':
         b_id = request.GET['edit']
         q1 = Bulletin.objects.filter(b_key=b_id, author__exact=author)
         bulletin = [b for b in q1]
 
-        form=BulletinForm(initial={'title': bulletin[0].title,
+        form=BulletinForm(request.user, initial={'title': bulletin[0].title,
                                    'text_description': bulletin[0].text_description,
                                    'encrypted': bulletin[0].encrypted,
                                    'folder': bulletin[0].folder})
