@@ -2,9 +2,10 @@
 {% block content %}
 {% if user.is_authenticated %}
         <h1>Add Bulletin to Folder</h1>
-        <form action="addbul" method="post">
+        <form action="connect" method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+            folder:INSERTDROPDOWN with VALUES GIVEN BY folder
+            bulletin:INSERTDROPDOWN with VALUES GIVEN BY bulletin
             <p><input type="submit" value="Submit" /></p>
         </form>
 {% endif %}
