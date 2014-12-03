@@ -33,23 +33,19 @@ def home(request):
 #Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
 def addbul(request):
     userid=auth_util(request)
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
+    author = request.user.id
     if request.method == 'POST':
-        form =AddBulForm(request.POST)
-        print form.is_valid()
-        if form.is_valid():
-            print 'Adding bulletin to folder'
-            bulletin = request.POST['bulletin']
-            bulletin.folder = models.ForeignKey(request.POST['folder'])
-            bulletin.save(update_fields=['name'])
-        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
+        q1 = Bulletin.objects.filter(author__exact=author)
+        bulletins = [b for b in q1]
+        q2 = Folder.objects.filter(owner__exact=author)
+        folders = [f for f in q2]
+        return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins})
     else:
-        form=AddBulForm()
-    return render_to_response(
-        'addbul.html',{'form':form},
-        context_instance=RequestContext(request)
-    )
+        q1 = Bulletin.objects.filter(author__exact=author)
+        bulletins = [b for b in q1]
+        q2 = Folder.objects.filter(owner__exact=author)
+        folders = [f for f in q2]
+        return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins})
 
 #Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
 def connect(request):
