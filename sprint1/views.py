@@ -98,6 +98,7 @@ def folder(request):
 
 def bulletin(request):
     userid=auth_util(request)
+
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
@@ -128,7 +129,6 @@ def bulletin(request):
                     newdoc.save(encrypted=enc)
         return HttpResponseRedirect('/profile')
     else:
-        form=BulletinForm()
         doc_formset=DocumentFormSet(prefix='documents')
     return render_to_response(
         'bulletin.html',{'form':form,'doc_formset':doc_formset},
@@ -367,11 +367,9 @@ def bdisplay(request):
     context = RequestContext(request)
     if request.method == 'POST':
         bulletin_key = request.POST['button_id']
-
-
         q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
-
         bulletin = [b for b in q1]
+
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
         print 'DOCUMENT LENGTH',
         print len(documents)
