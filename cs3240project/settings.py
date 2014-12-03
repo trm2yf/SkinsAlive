@@ -54,7 +54,7 @@ ROOT_URLCONF = 'cs3240project.urls'
 WSGI_APPLICATION = 'cs3240project.wsgi.application'
 
 #Mapping UserObject to User 
-AUTH_PROFILE_MODULE = 'cs3240project.UserProfile'
+AUTH_PROFILE_MODULE = 'sprint1.UserProfile'
 
 
 # Database
