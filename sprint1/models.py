@@ -37,6 +37,11 @@ class UserProfile(models.Model):
     author = models.BooleanField(default=True)
 
 
+class Author(models.Model):
+    id=models.AutoField(primary_key=True)
+    user_id=models.ForeignKey(User, unique=True)
+
+
 # Bulletin Model
 class Bulletin(models.Model):
     folder = models.ForeignKey(Folder)
