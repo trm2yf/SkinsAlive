@@ -138,7 +138,8 @@ def bulletin(request):
     form =BulletinForm(request.user)
 
     if request.method == 'POST':
-        form =BulletinForm(request.POST)
+        form = BulletinForm(request.user, request.POST)
+
         print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
@@ -304,7 +305,7 @@ def user_login(request):
 
         #If the password/username combination is valid, an User Object will be returned
         user = authenticate(username=username, password=password)
-#        profile = request.user.get_profile()
+        # profile = request.user.get_profile()
 
         if user:
             #check if the account is active and then redirect back to main page
@@ -387,9 +388,9 @@ def search(request):
         for b in query:
             if b.author in granted:
                 bulletins.append(b)
-       # print string
-        print "bulletins"
-        print bulletins
+       # # print string
+       #  print "bulletins"
+       #  print bulletins
         return render_to_response('search.html', {'bulletins':bulletins}, context)
 
     else:
@@ -504,7 +505,7 @@ def edit(request):
         )
 
     else:
-        form = BulletinForm(request.POST)
+        form = BulletinForm(request.user,request.POST)
         print form.is_valid()
         if form.is_valid():
             lat,long=location_lookup(request.POST['location'])
@@ -561,7 +562,7 @@ def copy(request):
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
-        form =BulletinForm(request.POST)
+        form =BulletinForm(request.user, request.POST)
         print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
@@ -590,7 +591,7 @@ def copy(request):
         query = Bulletin.objects.filter(b_key=b_id)
         bulletin = [b for b in query]
 
-        form=BulletinForm(initial={'title': bulletin[0].title,
+        form=BulletinForm(request.user, initial={'title': bulletin[0].title,
                                    'text_description': bulletin[0].text_description,
                                    'encrypted': bulletin[0].encrypted,
                                    'folder': bulletin[0].folder})
@@ -703,7 +704,6 @@ def frontpage(request):
         print most_viewed_bulletins
         return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
 
-
 def viewfolder(request):
     context = RequestContext(request)
     if request.method == 'POST':
@@ -716,3 +716,4 @@ def viewfolder(request):
 
     else:
         return HttpResponseRedirect('/profile')
+
