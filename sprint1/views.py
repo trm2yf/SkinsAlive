@@ -139,6 +139,7 @@ def bulletin(request):
 
     if request.method == 'POST':
         form = BulletinForm(request.user, request.POST)
+
         print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
@@ -304,7 +305,7 @@ def user_login(request):
 
         #If the password/username combination is valid, an User Object will be returned
         user = authenticate(username=username, password=password)
-#        profile = request.user.get_profile()
+        # profile = request.user.get_profile()
 
         if user:
             #check if the account is active and then redirect back to main page
