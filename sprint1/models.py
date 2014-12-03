@@ -65,11 +65,11 @@ class Bulletin(models.Model):
     encrypted=models.BooleanField(default=True)
     b_key = models.AutoField(primary_key=True)
 
-    # def save(self):
-    #     if not self.b_key:
-    #         self.date_created = datetime.datetime.now()
-    #     self.date_modified = datetime.datetime.now()
-    #     super(Bulletin, self).save()
+    def save(self):
+        if not self.date_created:
+            self.date_created = datetime.datetime.now()
+        # self.date_modified = datetime.datetime.now()
+        super(Bulletin, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.title
 
@@ -172,12 +172,12 @@ class Document(models.Model):
     posted_bulletin=models.ForeignKey(Bulletin)
     docfile = models.FileField(upload_to=filepath_handler)
     d_key = models.AutoField(primary_key=True)
-    def save(self, *args, **kwargs):
-        super(Document, self).save(*args, **kwargs)
-        #print self.docfile.name
-        snake=path.join(getcwd(),'media',self.docfile.name)
-        # encrypt_file(snake,None)
-        encrypt_file(snake,None)
+    # def save(self, *args, **kwargs):
+    #     super(Document, self).save(*args, **kwargs)
+    #     #print self.docfile.name
+    #     snake=path.join(getcwd(),'media',self.docfile.name)
+    #     # encrypt_file(snake,None)
+    #     encrypt_file(snake,None)
 
     def save(self, encrypted=1,*args, **kwargs):
         super(Document, self).save(*args, **kwargs)
