@@ -287,7 +287,7 @@ def register(request):
         
 #function to check if user is author
 def is_author(userid):
-    if Author.objects.filter(user_id=userid).count():
+    if Authors.objects.filter(user_id=userid).count():
         return True
 
     return False
