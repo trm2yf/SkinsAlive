@@ -53,7 +53,7 @@ class BulletinForm(forms.ModelForm):
     class Meta:
         model=Bulletin
         fields=['title','text_description','encrypted','folder']
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(BulletinForm, self).__init__(*args, **kwargs)
         self.fields['folder'].queryset = \
         Folder.objects.filter(owner=user)

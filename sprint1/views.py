@@ -138,7 +138,7 @@ def bulletin(request):
     form =BulletinForm(request.user)
 
     if request.method == 'POST':
-        form = BulletinForm(request.POST, user=request.user)
+        form = BulletinForm(request.POST)
         print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
