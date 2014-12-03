@@ -1,15 +1,29 @@
+<!DOCTYPE html>
+
 {% extends "base.html" %}
+
 {% block content %}
-        <!-- Upload form. Note enctype attribute! -->
+
+{% if user.is_authenticated %}
+<br>
+<div class="col-md-10 col-md-offset-1">
 {% if completed %}
-    <p> User has been emailed access for your documents</p>
+    <h4> User has been emailed access for your documents</4>
 {% else%}
-    <p>Please select a user. WARNING: This will grant them access to all 'encrypted' bulletins.</p>
+    <h4>Please select a user. WARNING: This will grant them access to all 'encrypted' bulletins.</h4>
     <form action="permission" method="post" enctype="multipart/form-data">
     {% csrf_token %}
         {{ form.errors }}
     {{ form.as_table }}
-    <button>Submit</button>
+    <br>
+    <button class="btn btn-default">Submit</button>
     </form>
 {% endif %}
+</div>
+
+{% else %}
+	<h2> Please <a href="login">log in.</a> </h2>
+{% endif %}
+
+
 {% endblock %}
