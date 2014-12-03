@@ -39,13 +39,13 @@ def addbul(request):
         bulletins = [b for b in q1]
         q2 = Folder.objects.filter(owner__exact=author)
         folders = [f for f in q2]
-        return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins}, context)
+        return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins})
     else:
         q1 = Bulletin.objects.filter(author__exact=author)
         bulletins = [b for b in q1]
         q2 = Folder.objects.filter(owner__exact=author)
         folders = [f for f in q2]
-        return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins}, context)
+        return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins})
 
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
