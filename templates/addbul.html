@@ -4,8 +4,32 @@
         <h1>Add Bulletin to Folder</h1>
         <form action="connect" method="post">
             {% csrf_token %}
-            folder:INSERTDROPDOWN with VALUES GIVEN BY folder
-            bulletin:INSERTDROPDOWN with VALUES GIVEN BY bulletin
+{#            folder:INSERTDROPDOWN with VALUES GIVEN BY folder#}
+
+            {% if folder %}
+            <label for="folderval">
+        <select name="type" id="foldervalval" class='searchbtn'>
+                     {% for f in folder %}
+                      <option value=f.f_key>f.name</option>
+                     {% endfor %}
+                    </select>
+            </label>
+{% endif %}
+
+
+{#            bulletin:INSERTDROPDOWN with VALUES GIVEN BY bulletin#}
+
+         {% if bulletin %}
+            <label for="bulletinval">
+        <select name="type" id="bulletinval" class='searchbtn'>
+                     {% for b in bulletin %}
+                      <option value=b.b_key>b.title</option>
+                     {% endfor %}
+                    </select>
+            </label>
+
+
+         {% endif %}
             <p><input type="submit" value="Submit" /></p>
         </form>
 {% endif %}
