@@ -377,7 +377,11 @@ def profile(request):
 
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
+    else:
+        q1 = Bulletin.objects.filter(author__exact=author)
 
+        bulletins = [b for b in q1]
+        return render_to_response('profile.html', {'bulletins':bulletins}, context)
 
 
 
