@@ -315,7 +315,7 @@ def user_login(request):
                 if is_author(user):
                     return HttpResponseRedirect('/profile')
                 else:
-                    return HttpResponseRedirect('/frontpage')
+                    return HttpResponseRedirect('/search')
               #  else:
                 #    return HttpResponseRedirect('/index')
             else:
