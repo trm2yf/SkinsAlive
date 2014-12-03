@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="col-md-10 col-md-offset-1">
+
+    <h2>Folder Contents</h2>
+    <br>
+    {% if bulletin %}
+        <ul>
+        {% for b in bulletin %}
+            <li>
+                <form action="bdisplay" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                     <button class="btn btn-link" name="button_id" value="{{ b.b_key }}">{{b.title}}</button>
+                </form>
+            </li>
+
+              <!-- List of uploaded documents -->
+
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+</div>
+{% endblock %}
