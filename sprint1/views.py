@@ -15,6 +15,7 @@ from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
 import datetime
+from django.db.models import F
 from datetime import timedelta
 
 from django.contrib.auth.models import User
@@ -406,13 +407,14 @@ def readerprofile(request):
 
 
 def bdisplay(request):
+
     context = RequestContext(request)
     if request.method == 'POST':
         bulletin_key = request.POST['button_id']
 
 
         q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
-
+        q1.update(num_views=F('num_views') + 1)
         bulletin = [b for b in q1]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
         print 'DOCUMENT LENGTH',
@@ -536,38 +538,48 @@ def frontpage(request):
         #granted=Permission.objects.filter(permitted__exact=request.user)
         #granted=[i.owner for i in granted]
         today = datetime.date.today()
-        q1 = Bulletin.objects.filter(date_created__lte=today - timedelta(days=7))
+        q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
             # order by publication date, then headline
-        query =q1.order_by('date_created', 'title')
+        query1 =q1.order_by('-date_created', 'title')
 
-
+        q2 = Bulletin.objects.all()
+        query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
-        for b in query:
-                recent_bulletins.append(b)
+
+        for b1 in query1:
+                recent_bulletins.append(b1)
+
+        most_viewed_bulletins=[]
+        for b2 in query2:
+                most_viewed_bulletins.append(b2)
        # print string
         print "rec bulletins"
         print recent_bulletins
-        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)
+        print "viewed bulletins"
+        print most_viewed_bulletins
+
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
 
     else:
-      # if request.method == 'POST':
-        #search_text = request.POST['search_text']
-        #search_type = request.POST['type']
-        #granted=Permission.objects.filter(permitted__exact=request.user)
-        #granted=[i.owner for i in granted]
         today = datetime.date.today()
         q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
             # order by publication date, then headline
-        query =q1.order_by('-date_created', 'title')
-        print "query"
-        print query
+        query1 =q1.order_by('-date_created', 'title')
 
-
+        q2 = Bulletin.objects.all()
+        query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
-        for b in query:
-                recent_bulletins.append(b)
-                print b.date_created
+
+        for b1 in query1:
+                recent_bulletins.append(b1)
+
+        most_viewed_bulletins=[]
+        for b2 in query2:
+                most_viewed_bulletins.append(b2)
        # print string
         print "rec bulletins"
         print recent_bulletins
-        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)
+
+        print "viewed bulletins"
+        print most_viewed_bulletins
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
