@@ -80,7 +80,7 @@ def folder(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(BulForm,extra=3)
+    BulFormSet=formset_factory(BulForm,extra=1)
     if request.method == 'POST':
         form =FolderForm(request.POST)
         print form.is_valid()
@@ -95,11 +95,10 @@ def folder(request):
         bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
         if bul_formset.is_valid() and form.is_valid():
             for bul in bul_formset:
-                print 'Saving a bulletin'
-                cd=bul.cleaned_data
-                if cd.get('bulletinAdd')!=None:
-                    newbul = Bulletin(bulfile=cd.get('bulfile'),posted_folder=folder)
-                    newbul.save()
+                print 'Adding bulletin to folder'
+                bulletin = request.POST['bulletin']
+                bulletin.folder = models.ForeignKey(request.POST['folder'])
+                bulletin.save(update_fields=['folder'])
         return HttpResponseRedirect(reverse('sprint1.views.folder'))
     else:
         form=FolderForm()
