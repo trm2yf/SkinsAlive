@@ -12,16 +12,15 @@
 
         <a href="bulletin"><button type="button" class="btn btn-primary btn-lg"><i class="fa fa-pencil-square-o"></i> Create</button></a>
         <a href="search"><button type="button" class="btn btn-success btn-lg"> <i class="fa fa-search"></i> Search</button></a>
+        <br><br>
 
-
-        <h3> Submitted Bulletins </h3>
-
+        <h3> Submitted Bulletins &nbsp;<a href="permission"><button class="btn btn-permission">Grant Permission</button></a> </h3>
+        <br>
         <table class="table table-bordered">
           <tr>
             <th>Title</th>
             <th>Description</th>
-            <th>Date Created</th>
-            <th>Date Modified</th>
+            <th>Last Modified</th>
             <th>Encrypted</th>
             <th>Delete</th>
             <th>Edit</th>
@@ -37,7 +36,6 @@
                     </form>
                 </td>
                 <td>{{ bulletin.text_description }}</td>
-                <td>{{ bulletin.date_created }}</td>
                 <td>{{ bulletin.date_modified }}</td>
                 <td>{{ bulletin.encrypted }}</td>
                 <td>

@@ -63,8 +63,9 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+from os import getcwd,path
 
-MEDIA_ROOT = path.join(getcwd(),'media')
+MEDIA_ROOT = path.join(getcwd(),'media')#'C:/Users/Zachary/Desktop/Fall 2014/Advanced Software/cs3240project/media/'
 MEDIA_URL = '/media/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

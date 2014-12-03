@@ -69,7 +69,7 @@ def encrypt(message, key, key_size=256):
     #print 'LENGTH',
     #print len(cipher._key)
     ciphertext=cipher.encrypt(message)
-    print len(ciphertext)
+    #print len(ciphertext)
     return ciphertext
 
 def decrypt(ciphertext, key):
@@ -105,20 +105,28 @@ def encrypt_file(file_name, key):
     # fo.close()
 
 def decrypt_file(file_name, key):
+    file_name=path.normpath(file_name)
     pathway=getcwd()
-    print pathway
+    #print pathway
     dec=b''
     fo=open(pathway+file_name, 'rb')
     while True:
         ciphertext = fo.read(256)
+        print 'LENGTH',
+        print len(ciphertext)
         if len(ciphertext)==0:
             break
+
+        if len(ciphertext)<256: #pad
+            ciphertext=ciphertext+ b"\0" * (256 - len(ciphertext) % 256)
+            print 'corrected',
+            print len(ciphertext)
         dec+=decrypt(ciphertext, key)
-    print dec
+    #print dec
     return dec
 
 def filepath_handler(instance,name):
-    return path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name)
+    return path.normpath(path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name))
 
 
 class Permission(models.Model):

@@ -6,13 +6,14 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from sprint1.models import Document,Bulletin,Folder,Key,Permission
-from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm
+from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm,PermissionForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
-
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
-
+import random
 
 from django.contrib.auth.models import User
 
@@ -134,6 +135,38 @@ def bulletin(request):
         context_instance=RequestContext(request)
     )
 
+def grant(request):
+    userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    context = RequestContext(request)
+    completed=None
+    if request.method=='POST':
+        form=PermissionForm(request.POST,request.FILES)
+
+        if form.is_valid():
+            grantee=[i for i in User.objects.filter(id__exact=request.POST['permitted'])][0]
+            owner=[i for i in User.objects.filter(id__exact=request.user.id)][0]
+            perm=Permission(owner=owner,permitted=grantee)
+            perm.save()
+            completed=True
+            file=request.FILES['private']
+            for pub in Key.objects.filter(owner__exact=request.user):
+                load=pub.public
+                # key=RSA.importKey(load,None)
+                # cipher = PKCS1_OAEP.new(key)
+                # pkey=construct((cipher._key.n,cipher._key.e,long(random.randint(1,10))))
+
+
+                from django.core.mail import send_mail,EmailMessage
+                print 'sending email?'
+                mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply. Access to '+request.user.username+'\'s encrypted bulletins', ('Secure Witness','3240project@gmail.com'), (grantee.username,grantee.email))
+                mail.attach('private.pem',file.read())
+                mail.send()
+    else:
+        form = PermissionForm()
+    return render_to_response('permission.html',{'form':form,'completed':completed},context)
+
 def list(request):
     # Handle file upload
     if request.method == 'POST':
@@ -184,12 +217,10 @@ def register(request):
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
-            pubstring=pubkey.publickey()
-            print len(str(pubstring.n))
-            pubstring=pubstring.exportKey('PEM')
-            key = Key(owner=user,public=pubstring)
+            key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
             pkey=pubkey.exportKey('PEM')
+
 
             from django.core.mail import send_mail,EmailMessage
             mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
@@ -259,7 +290,8 @@ def search(request):
     if request.method == 'POST':
         search_text = request.POST['search_text']
         search_type = request.POST['type']
-
+        granted=Permission.objects.filter(permitted__exact=request.user)
+        granted=[i.owner for i in granted]
         #Keyword Search Option
         if search_type == 'all':
             q1 = Bulletin.objects.filter(title__icontains=search_text)
@@ -291,7 +323,10 @@ def search(request):
 
 
 
-        bulletins = [b for b in query]
+        bulletins=[]
+        for b in query:
+            if b.author in granted:
+                bulletins.append(b)
        # print string
         return render_to_response('search.html', {'bulletins':bulletins}, context)
 

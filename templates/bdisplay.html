@@ -3,11 +3,12 @@
 {% block content %}
 <div class="col-md-10 col-md-offset-1">
 
-    <h1>Bulletin Details</h1>
+    <h2>Bulletin Details</h2>
+    <br>
     {% if bulletin %}
         {% for b in bulletin %}
             <p>{{ type }}</p>
-            <h2> {{ b.title }}</h2>
+            <h4><b>{{ b.title }}</b></h4>
             <p> Author: {{ b.author }}</p>
             <p> Description: {{ b.text_description }}</p>
             <p> Coordinates: {{ b.lat }}, {{ b.long }}</p>
@@ -18,13 +19,16 @@
 
               <!-- List of uploaded documents -->
     {% if documents %}
-        <h3>  Documents</h3>
+        <br>
+        <h4>Documents:</h4>
         <ul>
         {% for document in documents %}
+            <li>
             <form action="/decrypt"method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <button name="document" value="{{document.docfile.url}}">{{ document.docfile.name }}</button>
+            <button class="btn btn-link" name="document" value="{{document.docfile.url}}">{{ document.docfile.name }}</button>
             </form>
+            </li>
         {% endfor %}
         </ul>
     {% else %}
