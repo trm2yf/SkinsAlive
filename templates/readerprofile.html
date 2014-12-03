@@ -21,6 +21,7 @@
             <th>Title</th>
             <th>Description</th>
             <th>Last Modified</th>
+            <th>Number of Views</th>
             <th>Encrypted</th>
             <th>Delete</th>
             <th>Edit</th>
@@ -47,26 +48,9 @@
                     </form>
 {#                    </div>#}
                 </td>
-                <td>
-{#                    <div class="col-md-2">#}
-                    <form action="edit" method="get" enctype="multipart/form-data">
-                    {% csrf_token %}
-                        <button class="btn btn-info btn-sm" name="edit" value="{{ bulletin.b_key }}"><i class="fa fa-pencil"></i></button>
-                    </form>
-{#                    </div>#}
-                </td>
-                <td>
-{#                    <div class="col-md-2">#}
-                    <form action="copy" method="get" enctype="multipart/form-data">
-                    {% csrf_token %}
-                        <button class="btn btn-warning btn-sm" name="copy" value="{{ bulletin.b_key }}"><i class="fa fa-copy"></i></button>
-                    </form>
-{#                    </div>#}
-                </td>
               </tr>
            {% endfor %}
            {% else %}
-                <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
