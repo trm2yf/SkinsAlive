@@ -22,6 +22,14 @@ from django.contrib.auth.models import User
 
 
 # Folder Model
+#
+# #extending User object
+# class UserProfile(models.Model):
+#     author = models.BooleanField(default=True)
+#     user = models.ForeignKey(User, unique=True, related_name='profile')
+#
+# # Folder Model
+
 
 class Folder(models.Model):
     owner=models.ForeignKey(User)
@@ -49,8 +57,8 @@ class Bulletin(models.Model):
     folder = models.ForeignKey(Folder)
     title = models.CharField(max_length=255)
     text_description = models.TextField(max_length=1024)
-    date_created = models.DateField(editable=False, default=datetime.datetime.today())
-    date_modified = models.DateTimeField(editable=False, default=datetime.datetime.today())
+    date_created = models.DateTimeField(editable=False, auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
     num_views = models.IntegerField(default=0)
     author= models.ForeignKey(User)
     lat = models.DecimalField(decimal_places=2,max_digits=10)
@@ -58,11 +66,11 @@ class Bulletin(models.Model):
     encrypted=models.BooleanField(default=True)
     b_key = models.AutoField(primary_key=True)
 
-    def save(self):
-        if not self.b_key:
-            self.date_created = datetime.date.today()
-        self.date_modified = datetime.datetime.today()
-        super(Bulletin, self).save()
+    # def save(self):
+    #     if not self.b_key:
+    #         self.date_created = datetime.datetime.now()
+    #     self.date_modified = datetime.datetime.now()
+    #     super(Bulletin, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.title
 

@@ -17,9 +17,10 @@ import random
 import datetime
 from django.db.models import F,Q
 from datetime import timedelta
-
+from django.db.models import Q
 from django.contrib.auth.models import User
-
+from geopy.geocoders import Nominatim,GoogleV3
+from geopy import units
 def home(request):
     if request.method == 'POST':
         form =AccountForm(request.POST)
@@ -37,6 +38,7 @@ def home(request):
 def addbul(request):
     context = RequestContext(request)
     author = request.user.id
+    folders=None
     if request.method == 'POST':
 
         # retrieves all bulletins of the current viewer
@@ -47,7 +49,7 @@ def addbul(request):
         q2 = Folder.objects.filter(owner__exact=author)
 
         folders = [f for f in q2]
-        return render_to_response('/addbul',{'folder':folders}, {'bulletin':bulletins}, context)
+        return render_to_response('addbul.html',{'folder':folders,'bulletin':bulletins}, context)
     else:
         # retrieves all bulletins of the current viewer
         q1 = Bulletin.objects.filter(author__exact=author)
@@ -56,7 +58,7 @@ def addbul(request):
         # retrieves all folders of the current viewer
         q2 = Folder.objects.filter(owner__exact=author)
 
-        return render_to_response('/addbul',{'folder':folders}, {'bulletin':bulletins}, context)
+        return render_to_response('addbul.html',{'folder':folders, 'bulletin':bulletins}, context)
 
 #Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
 def connect(request):
@@ -77,8 +79,15 @@ def connect(request):
 
 
 def location_lookup(citystring):
-    '''Implement string lookup to latitude and longitude here'''
-    return (0,0)
+    try:
+
+        #geolocator = Nominatim()
+        geolocator=GoogleV3()
+        location = geolocator.geocode(citystring)
+        return(location.latitude, location.longitude)
+    except:
+    #'''Implement string lookup to latitude and longitude here'''
+        return (0,0)
 
 def auth_util(passedrequest):
 
@@ -126,8 +135,8 @@ def bulletin(request):
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
-    form =BulletinForm()
 
+    form =BulletinForm()
     if request.method == 'POST':
         form =BulletinForm(request.POST)
         print form.is_valid()
@@ -356,11 +365,16 @@ def search(request):
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
-
+        if search_type =='location':
+            lat,long=location_lookup(search_text)
+            rough_distance = units.degrees(arcminutes=units.nautical(miles=50))
+            q1=Bulletin.objects.filter(Q(lat__range=(lat-rough_distance,lat+rough_distance))|Q(long__range=(long-rough_distance,long+rough_distance)))
+            query=q1.order_by('date_created','title')
 
 
         bulletins=[]
         for b in query:
+            if b.author in granted:
                 bulletins.append(b)
        # print string
         print "bulletins"
@@ -486,7 +500,14 @@ def edit(request):
             except:
                 enc=0
                 pass
-            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc, b_key=request.POST['submit'] )
+            bulletin=Bulletin.objects.filter(b_key__exact=request.POST['submit'])[0]
+            bulletin.folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0]
+            bulletin.author=request.user
+            bulletin.title=request.POST['title']
+            bulletin.lat=lat
+            bulletin.long=long
+            bulletin.text_description=request.POST['text_description']
+            bulletin.encrypted=enc
             bulletin.save()
 
         return HttpResponseRedirect('/profile')
