@@ -14,6 +14,11 @@ from django.contrib.auth.models import User
 
 ######  MODELS ######
 
+#extending User object
+class UserProfile(models.Model):
+    author = models.BooleanField(default=True)
+    user = models.ForeignKey(User, unique=True)
+
 # Folder Model
 
 class Folder(models.Model):
@@ -34,7 +39,7 @@ class Bulletin(models.Model):
     text_description = models.TextField(max_length=1024)
     date_created = models.DateField(editable=False, default=datetime.datetime.today())
     date_modified = models.DateTimeField(editable=False, default=datetime.datetime.today())
-
+    #num_views = models.IntegerField()
     author= models.ForeignKey(User)
     lat = models.DecimalField(decimal_places=2,max_digits=10)
     long = models.DecimalField(decimal_places=2,max_digits=10)

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+&nbsp;
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+
+        <a href="search"><button type="button" class="btn btn-success btn-lg"> <i class="fa fa-search"></i> Search</button></a>
+        <br><br>
+        <br><br>
+
+        <h3> Submitted Bulletins &nbsp;<a href="permission"><button class="btn btn-permission">Grant Permission</button></a> </h3>
+        <br>
+        <table class="table table-bordered">
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Last Modified</th>
+            <th>Number of Views</th>
+            <th>Encrypted</th>
+            <th>Delete</th>
+            <th>Edit</th>
+            <th>Copy</th>
+          </tr>
+           {% if bulletins %}
+           {% for bulletin in bulletins %}
+              <tr>
+                <td>
+                    <form action="bdisplay" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                     <button class="btn btn-link" name="button_id" value="{{ bulletin.b_key }}">{{bulletin.title}}</button>
+                    </form>
+                </td>
+                <td>{{ bulletin.text_description }}</td>
+                <td>{{ bulletin.date_modified }}</td>
+                <td>{{ bulletin.num_views }}</td>
+                <td>{{ bulletin.encrypted }}</td>
+                <td>
+{#                    <div class="col-md-2">#}
+                    <form action="profile" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-danger btn-sm" name="delete" value="{{ bulletin.b_key }}"><i class="fa fa-minus-circle"></i></button>
+                    </form>
+{#                    </div>#}
+                </td>
+              </tr>
+           {% endfor %}
+           {% else %}
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+           {% endif %}
+        </table>
+    </div>
+</div>
+
+
+{% else %}
+	<h2> Please <a href="login">log in.</a> </h2>
+{% endif %}
+
+
+{% endblock %}

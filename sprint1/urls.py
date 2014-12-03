@@ -7,12 +7,13 @@ urlpatterns = patterns('sprint1.views',
     url(r'^list', 'list', name='list'),
     url(r'^addbul', 'addbul', name='addbul'),
     url(r'^bulletin', 'bulletin', name='bulletin'),
-    url(r'^changebulletin', 'changebulletin', name='changebulletin'),
+    url(r'^connect', 'connect', name='connect'),
     url(r'^folder', 'folder', name='folder'),
     url(r'^index', 'home',name='home'),
     url(r'^register/$', 'register', name='register'),
     url(r'^login/$', 'user_login', name='login'),
     url(r'^profile', 'profile', name='profile'),
+    url(r'^readerprofile', 'readerprofile', name='readerprofile'),
     url(r'^logout', 'user_logout', name='logout'),
     url(r'^search', 'search', name='search'),
     url(r'^decrypt','decrypt',name='search'),
@@ -22,7 +23,8 @@ urlpatterns = patterns('sprint1.views',
     url(r'^permission','grant',name='grant'),
     url(r'^f_edit', 'f_edit', name='f_edit'),
     url(r'^f_copy', 'f_copy', name='f_copy'),
-    url(r'^deletefolder', 'deletefolder', name='deletefolder')
+    url(r'^deletefolder', 'deletefolder', name='deletefolder'),
+    url(r'^frontpage', 'frontpage', name='frontpage')
 
 #    url(r'^admin', 'admin', name='admin')
     )

@@ -14,6 +14,8 @@ from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
+import datetime
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 
@@ -32,24 +34,46 @@ def home(request):
     )
 #Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
 def addbul(request):
+    context = RequestContext(request)
+    author = request.user.id
+    if request.method == 'POST':
+
+        # retrieves all bulletins of the current viewer
+        q1 = Bulletin.objects.filter(author__exact=author)
+        bulletins = [b for b in q1]
+
+        # retrieves all folders of the current viewer
+        q2 = Folder.objects.filter(owner__exact=author)
+
+        folders = [f for f in q2]
+        return render_to_response('/addbul',{'folder':folders}, {'bulletin':bulletins}, context)
+    else:
+        # retrieves all bulletins of the current viewer
+        q1 = Bulletin.objects.filter(author__exact=author)
+        bulletins = [b for b in q1]
+
+        # retrieves all folders of the current viewer
+        q2 = Folder.objects.filter(owner__exact=author)
+
+        return render_to_response('/addbul',{'folder':folders}, {'bulletin':bulletins}, context)
+
+#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
+def connect(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     if request.method == 'POST':
-        form =AddBulForm(request.POST)
         print form.is_valid()
         if form.is_valid():
             print 'Adding bulletin to folder'
-            bulletin = request.POST['bulletin']
-            bulletin.folder = models.ForeignKey(request.POST['folder'])
-            bulletin.save(update_fields=['name'])
+            bulletin = request.POST['bulletinval']
+            bulletin.folder = models.ForeignKey(request.POST['folderval'])
+            bulletin.save(update_fields=['folder'])
         return HttpResponseRedirect(reverse('sprint1.views.addbul'))
     else:
-        form=AddBulForm()
-    return render_to_response(
-        'addbul.html',{'form':form},
-        context_instance=RequestContext(request)
-    )
+       return HttpResponseRedirect(reverse('sprint1.views.addbul'))
+    
+
 
 def location_lookup(citystring):
     '''Implement string lookup to latitude and longitude here'''
@@ -66,7 +90,7 @@ def folder(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(BulForm,extra=3)
+    BulFormSet=formset_factory(BulForm,extra=1)
     if request.method == 'POST':
         form =FolderForm(request.POST)
         print form.is_valid()
@@ -81,11 +105,10 @@ def folder(request):
         bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
         if bul_formset.is_valid() and form.is_valid():
             for bul in bul_formset:
-                print 'Saving a bulletin'
-                cd=bul.cleaned_data
-                if cd.get('bulletinAdd')!=None:
-                    newbul = Bulletin(bulfile=cd.get('bulfile'),posted_folder=folder)
-                    newbul.save()
+                print 'Adding bulletin to folder'
+                bulletin = request.POST['bulletin']
+                bulletin.folder = models.ForeignKey(request.POST['folder'])
+                bulletin.save(update_fields=['folder'])
         return HttpResponseRedirect('/profile')
     else:
         form=FolderForm()
@@ -292,12 +315,10 @@ def search(request):
         search_type = request.POST['type']
         granted=Permission.objects.filter(permitted__exact=request.user)
         granted=[i.owner for i in granted]
+        
         #Keyword Search Option
         if search_type == 'all':
             q1 = Bulletin.objects.filter(title__icontains=search_text)
-           # q2 = q1.filter(Bulletin.objects.filter(text_description__icontains=search_text))
-            #extra logic needed for dates?
-           # q3 =q2.filter(Bulletin.objects.filter(date_created__icontains=search_text))
             query = q1.order_by('date_created', 'title')
 
         # Title Search Option
@@ -309,14 +330,18 @@ def search(request):
 
         #Author Search Option
         if search_type == 'author':
-            # if text is contained within title
-            q1 = Bulletin.objects.filter(author__icontains=search_text)
+            # gets author id based on search of username
+            author = User.objects.get(username__exact=search_text)
+
+            id = author.id
+            # query db to find all bulletins with given id
+            q1 = Bulletin.objects.filter(author_id__exact=id)
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
         if search_type == 'date':
             # if text is contained within title
-            q1 = Bulletin.objects.filter(date_created__year=search_text)
+            q1 = Bulletin.objects.filter(date_created=search_text)
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
@@ -325,9 +350,10 @@ def search(request):
 
         bulletins=[]
         for b in query:
-            if b.author in granted:
                 bulletins.append(b)
        # print string
+        print "bulletins"
+        print bulletins
         return render_to_response('search.html', {'bulletins':bulletins}, context)
 
     else:
@@ -353,7 +379,6 @@ def profile(request):
 
         bulletins = [b for b in q1]
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
-
     else:
         q1 = Bulletin.objects.filter(author__exact=author)
         q2 = Folder.objects.filter(owner__exact=author)
@@ -361,6 +386,25 @@ def profile(request):
         bulletins = [b for b in q1]
         folders = [f for f in q2]
         return render_to_response('profile.html', {'bulletins':bulletins, 'folders':folders}, context)
+
+
+
+def readerprofile(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    if request.method == 'POST':
+
+        q1 = Bulletin.objects.filter(author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
+
+    else:
+        q1 = Bulletin.objects.filter(author__exact=author)
+
+        bulletins = [b for b in q1]
+        return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
 
 
 def bdisplay(request):
@@ -554,3 +598,48 @@ def deletefolder(request):
     Bulletin.objects.filter(folder_id=f_id).delete()
 
     return HttpResponseRedirect('/profile')
+
+def frontpage(request):
+    context = RequestContext(request)
+
+    if request.method == 'POST':
+        #search_text = request.POST['search_text']
+        #search_type = request.POST['type']
+        #granted=Permission.objects.filter(permitted__exact=request.user)
+        #granted=[i.owner for i in granted]
+        today = datetime.date.today()
+        q1 = Bulletin.objects.filter(date_created__lte=today - timedelta(days=7))
+            # order by publication date, then headline
+        query =q1.order_by('date_created', 'title')
+
+
+        recent_bulletins=[]
+        for b in query:
+                recent_bulletins.append(b)
+       # print string
+        print "rec bulletins"
+        print recent_bulletins
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)
+
+    else:
+      # if request.method == 'POST':
+        #search_text = request.POST['search_text']
+        #search_type = request.POST['type']
+        #granted=Permission.objects.filter(permitted__exact=request.user)
+        #granted=[i.owner for i in granted]
+        today = datetime.date.today()
+        q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
+            # order by publication date, then headline
+        query =q1.order_by('-date_created', 'title')
+        print "query"
+        print query
+
+
+        recent_bulletins=[]
+        for b in query:
+                recent_bulletins.append(b)
+                print b.date_created
+       # print string
+        print "rec bulletins"
+        print recent_bulletins
+        return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins}, context)

@@ -53,6 +53,9 @@ ROOT_URLCONF = 'cs3240project.urls'
 
 WSGI_APPLICATION = 'cs3240project.wsgi.application'
 
+#Mapping UserObject to User 
+AUTH_PROFILE_MODULE = 'cs3240project.UserProfile'
+
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

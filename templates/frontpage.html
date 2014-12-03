@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+
+    <h1>Recent Bulletins</h1>
+
+
+    {% if recent_bulletins %}
+
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+              <th>Date Created</th>
+        </tr>
+
+        {% for bulletin in recent_bulletins %}
+              <p>{{type}}</p>
+
+        <tr>
+            <td>
+                <form action="bdisplay" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                 <button class="btn btn-link" name="button_id" value="{{ bulletin.b_key }}">{{bulletin.title}}</button>
+                </form>
+            </td>
+            <td>
+                {{bulletin.text_description}}
+            </td>
+             <td>
+                {{bulletin.date_created}}
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    {% else %}
+        <br>
+        <p>No results found.</p>
+    {% endif %}
+
+    </div>
+</div>
+
+    {% else %}
+	<h2> Please <a href="login">log in.</a> </h2>
+{% endif %}
+{% endblock %}
+>
