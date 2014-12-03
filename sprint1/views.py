@@ -43,6 +43,8 @@ def addbul(request):
     else:
         q1 = Bulletin.objects.filter(author__exact=author)
         bulletins = [b for b in q1]
+        q2 = Folder.objects.filter(owner__exact=author)
+        folders = [f for f in q2]
         return render_to_response('addbul.html',{'folder':folders}, {'bulletin':bulletins}, context)
 
 def location_lookup(citystring):
