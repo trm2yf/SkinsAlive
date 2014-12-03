@@ -121,9 +121,9 @@ def folder(request):
         context_instance=RequestContext(request)
     )
 
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
+#def create_user_profile(sender, instance, created, **kwargs):
+#   if created:
+ #       UserProfile.objects.create(user=instance)
 
 
 def bulletin(request):
@@ -246,7 +246,7 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
-            signals.post_save.connect(create_user_profile, sender=User)
+    #        signals.post_save.connect(create_user_profile, sender=User)
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
             key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
@@ -294,10 +294,10 @@ def user_login(request):
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
-                if user.profile.author: 
-                    return HttpResponseRedirect('/profile')
-                else:
-                    return HttpResponseRedirect('/frontpage')
+             #   if user.profile.author: 
+                return HttpResponseRedirect('/profile')
+              #  else:
+               #     return HttpResponseRedirect('/frontpage')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
