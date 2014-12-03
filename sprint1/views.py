@@ -56,8 +56,8 @@ def connect(request):
         print form.is_valid()
         if form.is_valid():
             print 'Adding bulletin to folder'
-            bulletin = request.POST['bulletin']
-            bulletin.folder = models.ForeignKey(request.POST['folder'])
+            bulletin = request.POST['bulletinval']
+            bulletin.folder = models.ForeignKey(request.POST['folderval'])
             bulletin.save(update_fields=['folder'])
         return HttpResponseRedirect(reverse('sprint1.views.addbul'))
     else:
