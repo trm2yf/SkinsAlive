@@ -569,13 +569,20 @@ def frontpage(request):
         q2 = Bulletin.objects.all()
         query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
-
+        i = 0
         for b1 in query1:
-                recent_bulletins.append(b1)
-
+            recent_bulletins.append(b1)
+            i+=1
+            if i == 10:
+                i=0
+                break
         most_viewed_bulletins=[]
         for b2 in query2:
-                most_viewed_bulletins.append(b2)
+            most_viewed_bulletins.append(b2)
+            i+=1
+            if i == 10:
+                i =0
+                break
        # print string
         print "rec bulletins"
         print recent_bulletins
