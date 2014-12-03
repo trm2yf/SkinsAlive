@@ -89,7 +89,12 @@
             {% if folders %}
             {%  for folder in folders %}
              <tr>
-                <td>{{ folder.name }}</td>
+                <td>
+                    <form action="viewfolder" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                     <button class="btn btn-link" name="f_id" value="{{ folder.f_key }}">{{folder.name}}</button>
+                    </form>
+                </td>
                 <td>
                      <form action="f_edit" method="get" enctype="multipart/form-data">
                     {% csrf_token %}

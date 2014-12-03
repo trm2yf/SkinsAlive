@@ -53,7 +53,10 @@ class BulletinForm(forms.ModelForm):
     class Meta:
         model=Bulletin
         fields=['title','text_description','encrypted','folder']
-    #def __init__(self):
+    def __init__(self, user, *args, **kwargs):
+        super(BulletinForm, self).__init__(*args, **kwargs)
+        self.fields['folder'].queryset = \
+        Folder.objects.filter(owner=user)
      #        self.fields['encrypted'].initial= True
       #       self.fields['folder'].initial=1
     """
@@ -77,6 +80,9 @@ class AccountForm(forms.Form):
     
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
+    author = forms.BooleanField(required=False)
+    #Type = forms.ChoiceField(choices=('Author','Reader')) 
+
     #nested Meta class
     class Meta:
         model = User

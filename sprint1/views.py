@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Bulletin,Folder,Key,Permission
+from sprint1.models import Document,Bulletin,Folder,Key,Permission,Author
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm,PermissionForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
@@ -135,8 +135,8 @@ def bulletin(request):
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
+    form =BulletinForm(request.user)
 
-    form =BulletinForm()
     if request.method == 'POST':
         form =BulletinForm(request.POST)
         print form.is_valid()
@@ -244,12 +244,18 @@ def register(request):
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
 
+
         #If the form valid
         if user_form.is_valid():
             user = user_form.save()
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
+            #is_author = request.POST['author']
+            #if is_author != u'on' :
+            if 'author' in request.POST:
+                author = Author(user_id=user)
+                author.save()
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
             key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
@@ -279,7 +285,13 @@ def register(request):
         'register.html',
         {'user_form': user_form, 'registered':registered},
         context)
+        
+#function to check if user is author
+def is_author(userid):
+    if Author.objects.filter(user_id=userid).count():
+        return True
 
+    return False
 
 #Log-in Function
 def user_login(request):
@@ -292,14 +304,18 @@ def user_login(request):
 
         #If the password/username combination is valid, an User Object will be returned
         user = authenticate(username=username, password=password)
-        profile = request.user.get_profile()
+#        profile = request.user.get_profile()
 
         if user:
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
                # if profile.author: 
-                return HttpResponseRedirect('/profile')
+ #                  if User.objects.filter(username=username).count():
+                if is_author(user):
+                    return HttpResponseRedirect('/profile')
+                else:
+                    return HttpResponseRedirect('/search')
               #  else:
                 #    return HttpResponseRedirect('/index')
             else:
@@ -472,13 +488,14 @@ def decrypt(request):
 def edit(request):
     context = RequestContext(request)
     author = request.user.id
+    form =BulletinForm(request.user)
 
     if request.method == 'GET':
         b_id = request.GET['edit']
         q1 = Bulletin.objects.filter(b_key=b_id, author__exact=author)
         bulletin = [b for b in q1]
 
-        form=BulletinForm(initial={'title': bulletin[0].title,
+        form=BulletinForm(request.user, initial={'title': bulletin[0].title,
                                    'text_description': bulletin[0].text_description,
                                    'encrypted': bulletin[0].encrypted,
                                    'folder': bulletin[0].folder})
@@ -687,3 +704,17 @@ def frontpage(request):
         print "viewed bulletins"
         print most_viewed_bulletins
         return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
+
+
+def viewfolder(request):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        f_id = request.POST['f_id']
+        q1 = Bulletin.objects.filter(folder_id__exact=f_id)
+
+        bulletin = [b for b in q1]
+
+        return render_to_response('viewfolder.html', {'bulletin':bulletin}, context)
+
+    else:
+        return HttpResponseRedirect('/profile')
