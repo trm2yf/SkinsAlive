@@ -8,7 +8,7 @@
         <h1>Create a New Bulletin</h1>
     {{ form.errors }}
     {{ form.non_field_errors }}
-        <form action="bulletin" method="post" enctype="multipart/form-data">
+        <form action="copy" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|bootstrap }}
             {{ doc_formset.management_form }}

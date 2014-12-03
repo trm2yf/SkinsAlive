@@ -14,6 +14,11 @@ from django.contrib.auth.models import User
 
 ######  MODELS ######
 
+#extending User object
+#class UserProfile(models.Model):
+   # author = models.BooleanField(default=True)
+#    user = models.ForeignKey(User, unique=True)
+
 # Folder Model
 
 class Folder(models.Model):
@@ -21,15 +26,15 @@ class Folder(models.Model):
     f_key = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
   #  text_description = models.TextField(max_length=1024)
-    folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'owner_id': User})
+  #   folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'owner_id': User})
     def save(self):
         super(Folder, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 
-class UserProfile(models.Model):
-    user = models.OneToOneField('auth.User')
-    author = models.BooleanField(default=True)
+# class UserProfile(models.Model):
+#     user = models.OneToOneField('auth.User')
+#     author = models.BooleanField(default=True)
 
 
 # Bulletin Model

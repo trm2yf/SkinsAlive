@@ -11,13 +11,11 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from Crypto.Cipher import PKCS1_OAEP
-from django.db.models import signals
-from sprint1.models import UserProfile
 from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
 import datetime
-from django.db.models import F
+from django.db.models import F,Q
 from datetime import timedelta
 
 from django.contrib.auth.models import User
@@ -35,7 +33,7 @@ def home(request):
         'index.html',{'form':form},
         context_instance=RequestContext(request)
     )
-#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
+#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
 def addbul(request):
     context = RequestContext(request)
     author = request.user.id
@@ -60,7 +58,7 @@ def addbul(request):
 
         return render_to_response('/addbul',{'folder':folders}, {'bulletin':bulletins}, context)
 
-#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder 
+#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
 def connect(request):
     userid=auth_util(request)
     if userid<0:
@@ -75,7 +73,7 @@ def connect(request):
         return HttpResponseRedirect(reverse('sprint1.views.addbul'))
     else:
        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
-    
+
 
 
 def location_lookup(citystring):
@@ -88,49 +86,47 @@ def auth_util(passedrequest):
         return 1
     else:
         return passedrequest.user.id
-        
+
 def folder(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(BulForm,extra=1)
     if request.method == 'POST':
         form =FolderForm(request.POST)
+        b1 = request.POST['test']
+        b2 = request.POST['test1']
+        b3 = request.POST['test2']
+
         print form.is_valid()
         if form.is_valid():
             print 'Saving Folder'
             print request.user
-            if(request.POST['folder_contained'] != u''):
-                folder = Folder(owner=request.user,name=request.POST['name'],folder_contained=request.POST['folder_contained'])
-            else:
-                folder = Folder(owner=request.user,name=request.POST['name'])
+            folder = Folder(owner=request.user,name=request.POST['name'])
             folder.save()
-        bul_formset=BulFormSet(request.POST,request.FILES,prefix='bulletins')
-        if bul_formset.is_valid() and form.is_valid():
-            for bul in bul_formset:
-                print 'Adding bulletin to folder'
-                bulletin = request.POST['bulletin']
-                bulletin.folder = models.ForeignKey(request.POST['folder'])
-                bulletin.save(update_fields=['folder'])
-        return HttpResponseRedirect(reverse('sprint1.views.folder'))
+            f_id = folder.f_key
+
+        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+
+        return HttpResponseRedirect('/profile')
     else:
         form=FolderForm()
-        bul_formset=BulFormSet(prefix='bulletins')
-    return render_to_response(
-        'folder.html',{'form':form,'bul_formset':bul_formset},
-        context_instance=RequestContext(request)
-    )
-
-#def create_user_profile(sender, instance, created, **kwargs):
-#   if created:
- #       UserProfile.objects.create(user=instance)
+        q1 = Bulletin.objects.filter(author__exact=userid)
+        bulletins = [b for b in q1]
+        return render_to_response(
+            'folder.html',{'form':form, 'bulletins':bulletins},
+            context_instance=RequestContext(request)
+        )
 
 
 def bulletin(request):
     userid=auth_util(request)
+
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
+    form =BulletinForm()
 
     if request.method == 'POST':
         form =BulletinForm(request.POST)
@@ -158,7 +154,6 @@ def bulletin(request):
                     newdoc.save(encrypted=enc)
         return HttpResponseRedirect('/profile')
     else:
-        form=BulletinForm()
         doc_formset=DocumentFormSet(prefix='documents')
     return render_to_response(
         'bulletin.html',{'form':form,'doc_formset':doc_formset},
@@ -246,7 +241,6 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
-    #        signals.post_save.connect(create_user_profile, sender=User)
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
             key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
@@ -294,10 +288,7 @@ def user_login(request):
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
-                if user.profile.author: 
-                    return HttpResponseRedirect('/profile')
-                else:
-                    return HttpResponseRedirect('/frontpage')
+                return HttpResponseRedirect('/profile')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
@@ -326,10 +317,15 @@ def search(request):
         search_type = request.POST['type']
         granted=Permission.objects.filter(permitted__exact=request.user)
         granted=[i.owner for i in granted]
-        
+
         #Keyword Search Option
         if search_type == 'all':
-            q1 = Bulletin.objects.filter(title__icontains=search_text)
+
+            q1 = Bulletin.objects.filter(
+    Q(title__icontains=search_text) |
+    Q(text_description__icontains=search_text))
+
+
             query = q1.order_by('date_created', 'title')
 
         # Title Search Option
@@ -392,9 +388,11 @@ def profile(request):
         return render_to_response('profile.html', {'bulletins':bulletins}, context)
     else:
         q1 = Bulletin.objects.filter(author__exact=author)
+        q2 = Folder.objects.filter(owner__exact=author)
 
         bulletins = [b for b in q1]
-        return render_to_response('profile.html', {'bulletins':bulletins}, context)
+        folders = [f for f in q2]
+        return render_to_response('profile.html', {'bulletins':bulletins, 'folders':folders}, context)
 
 
 
@@ -421,11 +419,10 @@ def bdisplay(request):
     context = RequestContext(request)
     if request.method == 'POST':
         bulletin_key = request.POST['button_id']
-
-
         q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
         q1.update(num_views=F('num_views') + 1)
         bulletin = [b for b in q1]
+
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
         print 'DOCUMENT LENGTH',
         print len(documents)
@@ -477,22 +474,40 @@ def edit(request):
         form = BulletinForm(request.POST)
         print form.is_valid()
         if form.is_valid():
-            # b_id = request.POST['submit']
-            # title = request.POST['title']
-            # desc = request.POST['text_description']
-            # # encrypt = request.POST['encrypt']
-            # folder = request.POST['folder']
-
-            # Bulletin.objects.filter(b_key=b_id).update(title=title)
-            # Bulletin.objects.filter(b_key=b_id).update(text_description=desc)
-            # # Bulletin.objects.filter(b_key=b_id, author_id__exact=author).update(encrypted=encrypt)
-            # Bulletin.objects.filter(b_key=b_id).update(folder_id=folder)
             lat,long=location_lookup(request.POST['location'])
             enc=1
-            if request.POST['encrypted']!='on':
+            try:
+                request.POST['encrypted']=='on'
+                enc=1
+            except:
                 enc=0
+                pass
             bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc, b_key=request.POST['submit'] )
             bulletin.save()
+
+        return HttpResponseRedirect('/profile')
+
+def f_edit(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    if request.method == 'GET':
+        f_id = request.GET['f_edit']
+        q1 = Folder.objects.filter(f_key=f_id, owner__exact=author)
+        folder = [f for f in q1]
+
+        form=FolderForm(initial={'name': folder[0].name})
+        return render_to_response(
+        'f_edit.html',{'f_id':f_id,'form':form},
+        context_instance=RequestContext(request)
+        )
+
+    else:
+        form = FolderForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            folder = Folder(owner=request.user,f_key=request.POST['submit'],name=request.POST['name'])
+            folder.save()
 
         return HttpResponseRedirect('/profile')
 
@@ -501,7 +516,8 @@ def edit(request):
 def copy(request):
     context = RequestContext(request)
     author = request.user.id
-    if author<0:
+    userid=auth_util(request)
+    if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
@@ -512,18 +528,22 @@ def copy(request):
             print request.user
             lat,long=location_lookup(request.POST['location'])
             enc=1
-            if request.POST['encrypted']!='on':
+            try:
+                request.POST['encrypted']=='on'
+                enc=1
+            except:
                 enc=0
-            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
-            print Bulletin
+                pass
+            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
                 print 'Saving a file'
                 cd=doc.cleaned_data
-                newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                newdoc.save()
+                if cd.get('docfile')!=None:
+                    newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
+                    newdoc.save(encrypted=enc)
         return HttpResponseRedirect('/profile')
     else:
         b_id = request.GET['copy']
@@ -539,6 +559,55 @@ def copy(request):
         'copy.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
         )
+
+def f_copy(request):
+    userid=auth_util(request)
+    if userid<0:
+        return render_to_response('login.html', {}, RequestContext(request))
+    BulFormSet=formset_factory(BulForm,extra=3)
+    if request.method == 'POST':
+        form =FolderForm(request.POST)
+        b1 = request.POST['test']
+        b2 = request.POST['test1']
+        b3 = request.POST['test2']
+
+        print form.is_valid()
+        if form.is_valid():
+            print 'Saving Folder'
+            print request.user
+            folder = Folder(owner=request.user,name=request.POST['name'])
+            folder.save()
+            f_id = folder.f_key
+
+        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+
+        return HttpResponseRedirect('/profile')
+    else:
+        f_id = request.GET['f_copy']
+        query = Folder.objects.filter(f_key=f_id)
+        folder = [f for f in query]
+
+        form=FolderForm(initial={'name': folder[0].name})
+
+        q1 = Bulletin.objects.filter(author__exact=userid)
+        bulletins = [b for b in q1]
+        return render_to_response(
+            'folder.html',{'form':form, 'bulletins':bulletins},
+            context_instance=RequestContext(request)
+        )
+
+def deletefolder(request):
+    context = RequestContext(request)
+    author = request.user.id
+
+    f_id = request.POST['delete']
+    Folder.objects.filter(f_key=f_id).delete()
+    Bulletin.objects.filter(folder_id=f_id).delete()
+
+    return HttpResponseRedirect('/profile')
+
 def frontpage(request):
     context = RequestContext(request)
 
@@ -579,21 +648,13 @@ def frontpage(request):
         q2 = Bulletin.objects.all()
         query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
-        i = 0
-        display_number = 10
+
         for b1 in query1:
-            recent_bulletins.append(b1)
-            i += 1
-            if i == display_number:
-                i = 0
-                break
+                recent_bulletins.append(b1)
+
         most_viewed_bulletins=[]
         for b2 in query2:
-            most_viewed_bulletins.append(b2)
-            i += 1
-            if i == display_number:
-                i = 0
-                break
+                most_viewed_bulletins.append(b2)
        # print string
         print "rec bulletins"
         print recent_bulletins
