@@ -237,7 +237,6 @@ random_gen = Random.new().read
 
 def register(request):
     context = RequestContext(request)
-    is_author = request.POST['author']
 
     #initially this is set to be false and is updated if the user is registered
     registered = False
@@ -245,12 +244,14 @@ def register(request):
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
 
+
         #If the form valid
         if user_form.is_valid():
             user = user_form.save()
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
+            is_author = user_form.author
             author = Author(user_id=user)
             author.save()
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
