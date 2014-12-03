@@ -432,7 +432,7 @@ def edit(request):
                 enc=0
                 pass
             bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=author,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc, b_key=request.POST['submit'] )
-            bulletin.save(update_fields=['folder_id', 'title', 'text_description', 'date_modified', 'encrypted'])
+            bulletin.save()
 
         return HttpResponseRedirect('/profile')
 
@@ -552,9 +552,7 @@ def deletefolder(request):
     author = request.user.id
 
     f_id = request.POST['delete']
-    Bulletin.objects.filter(b_key=delete).delete()
+    Folder.objects.filter(f_key=f_id).delete()
+    Bulletin.objects.filter(folder_id=f_id).delete()
 
-    q1 = Bulletin.objects.filter(author__exact=author)
-
-    bulletins = [b for b in q1]
-    return render_to_response('profile.html', {'bulletins':bulletins}, context)
+    return HttpResponseRedirect('/profile')
