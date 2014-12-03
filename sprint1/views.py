@@ -15,7 +15,7 @@ from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
 import datetime
-from django.db.models import F
+from django.db.models import F,Q
 from datetime import timedelta
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -350,7 +350,12 @@ def search(request):
 
         #Keyword Search Option
         if search_type == 'all':
-            q1 = Bulletin.objects.filter(title__icontains=search_text)
+
+            q1 = Bulletin.objects.filter(
+    Q(title__icontains=search_text) |
+    Q(text_description__icontains=search_text))
+
+
             query = q1.order_by('date_created', 'title')
 
         # Title Search Option

@@ -15,6 +15,24 @@ from django.contrib.auth.models import User
 ######  MODELS ######
 
 
+#extending User object
+
+# class UserProfile(models.Model):
+#     author = models.BooleanField(default=True)
+#     user = models.ForeignKey(User, unique=True, related_name='profile')
+
+
+# Folder Model
+#
+# #extending User object
+# class UserProfile(models.Model):
+#     author = models.BooleanField(default=True)
+#     user = models.ForeignKey(User, unique=True, related_name='profile')
+#
+# # Folder Model
+
+
+
 class Folder(models.Model):
     owner=models.ForeignKey(User)
     f_key = models.AutoField(primary_key=True)
@@ -25,6 +43,7 @@ class Folder(models.Model):
         super(Folder, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.name
+
 
 
 class Author(models.Model):
