@@ -80,7 +80,7 @@ class AccountForm(forms.Form):
     
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
-    author = forms.ChoiceField(choices={'Author','Reader'}) 
+    Type = forms.ChoiceField(choices=('Author',1)('Reader',0)) 
 
     #nested Meta class
     class Meta:
