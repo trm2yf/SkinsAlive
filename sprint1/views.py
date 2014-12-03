@@ -65,9 +65,8 @@ def connect(request):
             bulletin.save(update_fields=['folder'])
         return HttpResponseRedirect(reverse('sprint1.views.addbul'))
     else:
-    return render_to_response(
-        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
-    )
+       return HttpResponseRedirect(reverse('sprint1.views.addbul'))
+    
 
 
 def location_lookup(citystring):
