@@ -11,6 +11,8 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from Crypto.Cipher import PKCS1_OAEP
+from django.db.models import signals
+from sprint1.models import UserProfile
 from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
