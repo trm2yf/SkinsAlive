@@ -452,15 +452,18 @@ def bdisplay(request):
     context = RequestContext(request)
     if request.method == 'POST':
         bulletin_key = request.POST['button_id']
-        q1 = Bulletin.objects.filter(b_key__exact=bulletin_key)
+        q1 = Bulletin.objects.filter(b_key__exact=bulletin_key, encrypted=1)
+        q2 = Bulletin.objects.filter(b_key__exact=bulletin_key, encrypted=0)
         q1.update(num_views=F('num_views') + 1)
-        bulletin = [b for b in q1]
+        q2.update(num_views=F('num_views') + 1)
 
+        bulletin_enc = [b for b in q1]
+        bulletin_not = [c for c in q2]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
         print 'DOCUMENT LENGTH',
         print len(documents)
 
-        return render_to_response('bdisplay.html', {'bulletin':bulletin,'documents': documents}, context)
+        return render_to_response('bdisplay.html', {'bulletin_enc':bulletin_enc, 'bulletin_not':bulletin_not,'documents': documents}, context)
 
     else:
         return HttpResponseRedirect('/search')
