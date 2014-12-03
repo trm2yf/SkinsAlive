@@ -138,7 +138,7 @@ def bulletin(request):
     form =BulletinForm(request.user)
 
     if request.method == 'POST':
-        form = BulletinForm(request.POST, user=request.user)
+        form = BulletinForm(request.user, request.POST)
         print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
@@ -371,9 +371,9 @@ def search(request):
         for b in query:
             if b.author in granted:
                 bulletins.append(b)
-       # print string
-        print "bulletins"
-        print bulletins
+       # # print string
+       #  print "bulletins"
+       #  print bulletins
         return render_to_response('search.html', {'bulletins':bulletins}, context)
 
     else:
@@ -485,7 +485,7 @@ def edit(request):
         )
 
     else:
-        form = BulletinForm(request.POST)
+        form = BulletinForm(request.user,request.POST)
         print form.is_valid()
         if form.is_valid():
             lat,long=location_lookup(request.POST['location'])
@@ -542,7 +542,7 @@ def copy(request):
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
-        form =BulletinForm(request.POST)
+        form =BulletinForm(request.user, request.POST)
         print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
@@ -571,7 +571,7 @@ def copy(request):
         query = Bulletin.objects.filter(b_key=b_id)
         bulletin = [b for b in query]
 
-        form=BulletinForm(initial={'title': bulletin[0].title,
+        form=BulletinForm(request.user, initial={'title': bulletin[0].title,
                                    'text_description': bulletin[0].text_description,
                                    'encrypted': bulletin[0].encrypted,
                                    'folder': bulletin[0].folder})

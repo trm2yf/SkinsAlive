@@ -37,7 +37,7 @@ class Bulletin(models.Model):
     folder = models.ForeignKey(Folder)
     title = models.CharField(max_length=255)
     text_description = models.TextField(max_length=1024)
-    date_created = models.DateTimeField(editable=False, auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     num_views = models.IntegerField(default=0)
     author= models.ForeignKey(User)
@@ -153,12 +153,12 @@ class Document(models.Model):
     posted_bulletin=models.ForeignKey(Bulletin)
     docfile = models.FileField(upload_to=filepath_handler)
     d_key = models.AutoField(primary_key=True)
-    def save(self, *args, **kwargs):
-        super(Document, self).save(*args, **kwargs)
-        #print self.docfile.name
-        snake=path.join(getcwd(),'media',self.docfile.name)
-        # encrypt_file(snake,None)
-        encrypt_file(snake,None)
+    # def save(self, *args, **kwargs):
+    #     super(Document, self).save(*args, **kwargs)
+    #     #print self.docfile.name
+    #     snake=path.join(getcwd(),'media',self.docfile.name)
+    #     # encrypt_file(snake,None)
+    #     encrypt_file(snake,None)
 
     def save(self, encrypted=1,*args, **kwargs):
         super(Document, self).save(*args, **kwargs)
