@@ -283,12 +283,16 @@ def user_login(request):
 
         #If the password/username combination is valid, an User Object will be returned
         user = authenticate(username=username, password=password)
+        profile = request.user.get_profile()
 
         if user:
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
+               # if profile.author: 
                 return HttpResponseRedirect('/profile')
+              #  else:
+                #    return HttpResponseRedirect('/index')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
