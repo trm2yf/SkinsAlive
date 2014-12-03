@@ -406,23 +406,26 @@ def user_logout(request):
 def profile(request):
     context = RequestContext(request)
     author = request.user.id
+    if is_author(author):
 
-    if request.method == 'POST':
-        delete = request.POST['delete']
-        Bulletin.objects.filter(b_key=delete).delete()
+        if request.method == 'POST':
+            delete = request.POST['delete']
+            Bulletin.objects.filter(b_key=delete).delete()
 
-        q1 = Bulletin.objects.filter(author__exact=author)
+            q1 = Bulletin.objects.filter(author__exact=author)
 
-        bulletins = [b for b in q1]
-        return render_to_response('profile.html', {'bulletins':bulletins}, context)
+            bulletins = [b for b in q1]
+            return render_to_response('profile.html', {'bulletins':bulletins}, context)
+        else:
+            q1 = Bulletin.objects.filter(author__exact=author)
+            q2 = Folder.objects.filter(owner__exact=author)
+
+            bulletins = [b for b in q1]
+            folders = [f for f in q2]
+            return render_to_response('profile.html', {'bulletins':bulletins, 'folders':folders}, context)
+
     else:
-        q1 = Bulletin.objects.filter(author__exact=author)
-        q2 = Folder.objects.filter(owner__exact=author)
-
-        bulletins = [b for b in q1]
-        folders = [f for f in q2]
-        return render_to_response('profile.html', {'bulletins':bulletins, 'folders':folders}, context)
-
+        return HttpResponseRedirect('/frontpage')
 
 
 def readerprofile(request):
