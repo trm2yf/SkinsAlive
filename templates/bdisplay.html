@@ -5,8 +5,8 @@
 
     <h2>Bulletin Details</h2>
     <br>
-    {% if bulletin %}
-        {% for b in bulletin %}
+    {% if bulletin_enc %}
+        {% for b in bulletin_enc %}
             <p>{{ type }}</p>
             <h4><b>{{ b.title }}</b></h4>
             <p> Author: {{ b.author }}</p>
@@ -38,7 +38,40 @@
     {% endif %}
         {% endfor %}
     {% else %}
-        <p>No results found.</p>
+    {% endif %}
+
+    {% if bulletin_not %}
+        {% for c in bulletin_not %}
+            <p>{{ type }}</p>
+            <h4><b>{{ c.title }}</b></h4>
+            <p> Author: {{ c.author }}</p>
+            <p> Description: {{ c.text_description }}</p>
+            <p> Coordinates: {{ c.lat }}, {{ c.long }}</p>
+            <p> Created on: {{ c.date_created }}</p>
+            <p> Modified on: {{ c.date_modified }}</p>
+            <p> Bulletin ID: {{ c.b_key }}</p>
+            <p> Encryption: {{ c.encrypted }}</p>
+            <p> Folder: {{ c.folder }}</p>
+            <p> Number of Views: {{ c.num_views }}</p>
+
+              <!-- List of uploaded documents -->
+    {% if documents %}
+        <br>
+        <h4>Documents:</h4>
+        <ul>
+        {% for document in documents %}
+            <li>
+
+            {{ document.docfile.url }}
+
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No documents.</p>
+    {% endif %}
+        {% endfor %}
+    {% else %}
     {% endif %}
 </div>
 {% endblock %}
