@@ -137,7 +137,6 @@ def bulletin(request):
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     form =BulletinForm(request.user)
 
-    form =BulletinForm()
     if request.method == 'POST':
         form =BulletinForm(request.POST)
         print form.is_valid()
