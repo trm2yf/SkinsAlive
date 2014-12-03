@@ -138,7 +138,7 @@ def bulletin(request):
     form =BulletinForm(request.user)
 
     if request.method == 'POST':
-        form =BulletinForm(request.POST)
+        form = BulletinForm(request.POST, user=request.user)
         print form.is_valid()
         if form.is_valid():
             print 'Saving Bulletin'
@@ -683,3 +683,16 @@ def frontpage(request):
         print "viewed bulletins"
         print most_viewed_bulletins
         return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
+
+def viewfolder(request):
+    context = RequestContext(request)
+    if request.method == 'POST':
+        f_id = request.POST['f_id']
+        q1 = Bulletin.objects.filter(folder_id__exact=f_id)
+
+        bulletin = [b for b in q1]
+
+        return render_to_response('viewfolder.html', {'bulletin':bulletin}, context)
+
+    else:
+        return HttpResponseRedirect('/profile')

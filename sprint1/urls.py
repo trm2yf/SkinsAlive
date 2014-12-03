@@ -24,7 +24,8 @@ urlpatterns = patterns('sprint1.views',
     url(r'^f_edit', 'f_edit', name='f_edit'),
     url(r'^f_copy', 'f_copy', name='f_copy'),
     url(r'^deletefolder', 'deletefolder', name='deletefolder'),
-    url(r'^frontpage', 'frontpage', name='frontpage')
+    url(r'^frontpage', 'frontpage', name='frontpage'),
+    url(r'^viewfolder', 'viewfolder', name='viewfolder')
 
 #    url(r'^admin', 'admin', name='admin')
     )
