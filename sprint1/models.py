@@ -27,6 +27,11 @@ class Folder(models.Model):
     def __str__(self):              # __unicode__ on Python 2
         return self.name
 
+class UserProfile(models.Model):
+    user = models.OneToOneField('auth.User')
+    author = models.BooleanField(default=True)
+
+
 # Bulletin Model
 class Bulletin(models.Model):
     folder = models.ForeignKey(Folder)

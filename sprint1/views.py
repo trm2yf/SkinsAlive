@@ -11,6 +11,8 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
 from Crypto.Cipher import PKCS1_OAEP
+from django.db.models import signals
+from sprint1.models import UserProfile
 from Crypto.PublicKey.RSA import construct
 from django.contrib.auth.decorators import login_required
 import random
@@ -118,6 +120,10 @@ def folder(request):
         'folder.html',{'form':form,'bul_formset':bul_formset},
         context_instance=RequestContext(request)
     )
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
 
 
 def bulletin(request):
@@ -240,6 +246,7 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
+            signals.post_save.connect(create_user_profile, sender=User)
             pubkey=RSA.generate(KEY_LENGTH,random_gen)
             key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             key.save()
@@ -287,7 +294,10 @@ def user_login(request):
             #check if the account is active and then redirect back to main page
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/profile')
+                if user.profile.author: 
+                    return HttpResponseRedirect('/profile')
+                else:
+                    return HttpResponseRedirect('/frontpage')
             else:
                 #otherwise account is inactive
                 return HttpResponse("Account is not active")
