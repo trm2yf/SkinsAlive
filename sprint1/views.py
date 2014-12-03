@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Bulletin,Folder,Key,Permission
+from sprint1.models import Document,Bulletin,Folder,Key,Permission,Author
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm,PermissionForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
@@ -287,7 +287,7 @@ def register(request):
         
 #function to check if user is author
 def is_author(userid):
-    if Authors.objects.filter(user_id=userid).count():
+    if Author.objects.filter(user_id=userid).count():
         return True
 
     return False
