@@ -588,7 +588,7 @@ def copy(request):
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
             for doc in doc_formset:
-                print 'Saving a file'
+                #print 'Saving a file'
                 cd=doc.cleaned_data
                 if cd.get('docfile')!=None:
                     newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
