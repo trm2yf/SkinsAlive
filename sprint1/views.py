@@ -316,7 +316,7 @@ def user_login(request):
                 if is_author(user):
                     return HttpResponseRedirect('/profile')
                 else:
-                    return HttpResponseRedirect('/search')
+                    return HttpResponseRedirect('/frontpage')
               #  else:
                 #    return HttpResponseRedirect('/index')
             else:
@@ -391,7 +391,7 @@ def search(request):
 
         bulletins=[]
         for b in query:
-            if b.author in granted:
+           # if b.author in granted:
                 bulletins.append(b)
        # # print string
        #  print "bulletins"
