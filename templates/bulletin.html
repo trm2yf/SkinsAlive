@@ -12,6 +12,7 @@
     {%  load bootstrap %}
         <!-- Upload form. Note enctype attribute! -->
         <h1>Create a New Bulletin</h1>
+        <p>*All fields must be filled.</p>
     {{ form.errors }}
     {{ form.non_field_errors }}
         <form action="bulletin" method="post" enctype="multipart/form-data">
