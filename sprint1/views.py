@@ -391,7 +391,7 @@ def search(request):
 
         bulletins=[]
         for b in query:
-            if b.author in granted:
+           # if b.author in granted:
                 bulletins.append(b)
        # # print string
        #  print "bulletins"
