@@ -262,7 +262,7 @@ def register(request):
             key.save()
             pkey=pubkey.exportKey('PEM')
 
-            if is_author(user):
+            if 'author' in request.POST:
                 from django.core.mail import send_mail,EmailMessage
                 mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
                 mail.attach('private.pem',pkey)
