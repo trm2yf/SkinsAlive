@@ -62,7 +62,7 @@
         {% for document in documents %}
             <li>
 
-            {{ document.docfile.url }}
+            <a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a>
 
             </li>
         {% endfor %}
