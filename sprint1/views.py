@@ -262,15 +262,15 @@ def register(request):
             key.save()
             pkey=pubkey.exportKey('PEM')
 
-
-            from django.core.mail import send_mail,EmailMessage
-            mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
-            mail.attach('private.pem',pkey)
-            mail.send()
+            if is_author(user):
+                from django.core.mail import send_mail,EmailMessage
+                mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
+                mail.attach('private.pem',pkey)
+                mail.send()
             # except Exception as e:
             #     print e
-            perm=Permission(owner=user,permitted=user)
-            perm.save()
+                perm=Permission(owner=user,permitted=user)
+                perm.save()
             folder=Folder(owner=user,name='Default')
             folder.save()
             #update the registered variable to be true
