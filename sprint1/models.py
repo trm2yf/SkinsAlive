@@ -185,6 +185,16 @@ class Document(models.Model):
         snake=path.join(getcwd(),'media',self.docfile.name)
         if encrypted==1:
             encrypt_file(snake,keylookup(self.posted_bulletin.author))
+        elif encrypted!=self.posted_bulletin.encrypted:
+            if encrypted: #want to be encrypted, wasn't before
+                print 'encrypting previously unencrypted'
+                encrypt_file(snake,keylookup(self.posted_bulletin.author))
+            else:
+                print 'decrypted previously encrypted'
+                guts=decrypt_file(snake,keylookup(self.posted_bulletin.author))
+                filewrit=open(snake,'wb')
+                filewrit.write(guts)
+                filewrit.close()
         #self.docfile=ContentFile.open(ContentFile(self.docfile),)
 
         # print 'save called'

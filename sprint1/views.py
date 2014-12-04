@@ -533,6 +533,10 @@ def edit(request):
             bulletin.text_description=request.POST['text_description']
             bulletin.encrypted=enc
             bulletin.save()
+            docs=Document.objects.filter(posted_bulletin=bulletin)
+            for doc in docs:
+                doc.save(encrypted=enc)
+
 
         return HttpResponseRedirect('/profile')
 
