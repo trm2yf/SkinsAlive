@@ -5,8 +5,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Bulletin,Folder,Key,Permission,Author
-from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm,PermissionForm
+from sprint1.models import Document,Bulletin,Folder,Key,Author
+from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -170,37 +170,37 @@ def bulletin(request):
         context_instance=RequestContext(request)
     )
 
-def grant(request):
-    userid=auth_util(request)
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
-    context = RequestContext(request)
-    completed=None
-    if request.method=='POST':
-        form=PermissionForm(request.POST,request.FILES)
+# def grant(request):
+#     userid=auth_util(request)
+#     if userid<0:
+#         return render_to_response('login.html', {}, RequestContext(request))
+#     context = RequestContext(request)
+#     completed=None
+#     if request.method=='POST':
+#         form=PermissionForm(request.POST,request.FILES)
 
-        if form.is_valid():
-            grantee=[i for i in User.objects.filter(id__exact=request.POST['permitted'])][0]
-            owner=[i for i in User.objects.filter(id__exact=request.user.id)][0]
-            perm=Permission(owner=owner,permitted=grantee)
-            perm.save()
-            completed=True
-            file=request.FILES['private']
-            for pub in Key.objects.filter(owner__exact=request.user):
-                load=pub.public
-                # key=RSA.importKey(load,None)
-                # cipher = PKCS1_OAEP.new(key)
-                # pkey=construct((cipher._key.n,cipher._key.e,long(random.randint(1,10))))
+#         if form.is_valid():
+#             grantee=[i for i in User.objects.filter(id__exact=request.POST['permitted'])][0]
+#             owner=[i for i in User.objects.filter(id__exact=request.user.id)][0]
+#             perm=Permission(owner=owner,permitted=grantee)
+#             perm.save()
+#             completed=True
+#             file=request.FILES['private']
+#             for pub in Key.objects.filter(owner__exact=request.user):
+#                 load=pub.public
+#                 # key=RSA.importKey(load,None)
+#                 # cipher = PKCS1_OAEP.new(key)
+#                 # pkey=construct((cipher._key.n,cipher._key.e,long(random.randint(1,10))))
 
 
-                from django.core.mail import send_mail,EmailMessage
-                print 'sending email?'
-                mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply. Access to '+request.user.username+'\'s encrypted bulletins', ('Secure Witness','3240project@gmail.com'), (grantee.username,grantee.email))
-                mail.attach('private.pem',file.read())
-                mail.send()
-    else:
-        form = PermissionForm()
-    return render_to_response('permission.html',{'form':form,'completed':completed},context)
+#                 from django.core.mail import send_mail,EmailMessage
+#                 print 'sending email?'
+#                 mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply. Access to '+request.user.username+'\'s encrypted bulletins', ('Secure Witness','3240project@gmail.com'), (grantee.username,grantee.email))
+#                 mail.attach('private.pem',file.read())
+#                 mail.send()
+#     else:
+#         form = PermissionForm()
+#     return render_to_response('permission.html',{'form':form,'completed':completed},context)
 
 def list(request):
     # Handle file upload
@@ -252,25 +252,25 @@ def register(request):
             #the set_password method will hash the password
             user.set_password(user.password) #Django does this to password fields by default.
             user.save()
-            #is_author = request.POST['author']
-            #if is_author != u'on' :
-            if 'author' in request.POST:
-                author = Author(user_id=user)
-                author.save()
-            pubkey=RSA.generate(KEY_LENGTH,random_gen)
-            key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
-            key.save()
-            pkey=pubkey.exportKey('PEM')
+            # #is_author = request.POST['author']
+            # #if is_author != u'on' :
+            # if 'author' in request.POST:
+            #     author = Author(user_id=user)
+            #     author.save()
+            # pubkey=RSA.generate(KEY_LENGTH,random_gen)
+            # key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
+            # key.save()
+            # pkey=pubkey.exportKey('PEM')
 
-            if 'author' in request.POST:
-                from django.core.mail import send_mail,EmailMessage
-                mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
-                mail.attach('private.pem',pkey)
-                mail.send()
-            # except Exception as e:
-            #     print e
-                perm=Permission(owner=user,permitted=user)
-                perm.save()
+            # # if 'author' in request.POST:
+            #     from django.core.mail import send_mail,EmailMessage
+            #     mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
+            #     mail.attach('private.pem',pkey)
+            #     mail.send()
+            # # except Exception as e:
+            # #     print e
+            #     perm=Permission(owner=user,permitted=user)
+            #     perm.save()
             folder=Folder(owner=user,name='Default')
             folder.save()
             #update the registered variable to be true

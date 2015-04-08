@@ -153,10 +153,10 @@ def filepath_handler(instance,name):
     return path.normpath(path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name))
 
 
-class Permission(models.Model):
-    p_key=models.AutoField(primary_key=True)
-    owner=models.ForeignKey(User,related_name='granter')
-    permitted=models.ForeignKey(User,related_name='granted')
+# class Permission(models.Model):
+#     p_key=models.AutoField(primary_key=True)
+#     owner=models.ForeignKey(User,related_name='granter')
+#     permitted=models.ForeignKey(User,related_name='granted')
 
 class Key(models.Model):
     k_key=models.AutoField(primary_key=True)

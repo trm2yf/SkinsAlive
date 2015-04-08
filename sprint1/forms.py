@@ -1,6 +1,6 @@
 __author__ = 'Zachary'
 from django import forms
-from models import Bulletin,Document,Folder,Permission
+from models import Bulletin,Document,Folder
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
 
@@ -26,13 +26,13 @@ class AddBulForm(forms.ModelForm):
     class Meta:
         model=Bulletin
         fields=['folder','bulletin']
-class PermissionForm(forms.ModelForm):
-    private= forms.FileField(
-        label='Share your private key'
-    )
-    class Meta:
-        model=Permission
-        fields=['permitted','private']
+# class PermissionForm(forms.ModelForm):
+#     private= forms.FileField(
+#         label='Share your private key'
+#     )
+#     class Meta:
+#         model=Permission
+#         fields=['permitted','private']
 
 class FolderForm(forms.ModelForm):
     # title=forms.CharField(label='Bulletin Title')
@@ -89,4 +89,4 @@ class UserForm(forms.ModelForm):
     #nested Meta class
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'password')
