@@ -12,9 +12,9 @@ class DocumentForm(forms.ModelForm):
         model=Document
         fields=['docfile']
         
-class BulForm(forms.ModelForm):
+class SForm(forms.ModelForm):
     bulfile = forms.FileField(
-        label='Select a bulletin'
+        label='Select a skin'
     )
     class Meta:
         model=Skin
@@ -22,7 +22,7 @@ class BulForm(forms.ModelForm):
         
 class AddBulForm(forms.ModelForm):
     folder = forms.CharField(label='Enter a folder', max_length=100)
-    bulletin = forms.CharField(label='Enter a bulletin', max_length=100)
+    bulletin = forms.CharField(label='Enter a skin', max_length=100)
     class Meta:
         model=Skin
         fields=['folder','bulletin']
@@ -44,7 +44,7 @@ class FolderForm(forms.ModelForm):
       #       self.fields['folder'].initial=1
 
 
-class BulletinForm(forms.ModelForm):
+class SkinForm(forms.ModelForm):
     # title=forms.CharField(label='Skin Title')
     # text_description=forms.CharField(label='Text Description')
     location=forms.CharField(label='City of Interest')
@@ -52,7 +52,7 @@ class BulletinForm(forms.ModelForm):
 
     class Meta:
         model=Skin
-        fields=['title','text_description','encrypted','folder']
+        fields=['title','text_description','folder']
     def __init__(self, user,*args, **kwargs):
         forms.ModelForm.__init__(self,*args, **kwargs)
         try:

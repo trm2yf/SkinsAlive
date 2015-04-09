@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from sprint1.models import Document,Skin,Folder,Key,Author
-from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm
+from sprint1.forms import DocumentForm,AccountForm,SkinForm,UserForm,FolderForm,SForm,AddBulForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -135,10 +135,10 @@ def bulletin(request):
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
-    form =BulletinForm(request.user)
+    form =SkinForm(request.user)
 
     if request.method == 'POST':
-        form = BulletinForm(request.user, request.POST)
+        form = SkinForm(request.user, request.POST)
 
         print form.is_valid()
         if form.is_valid():
@@ -152,7 +152,7 @@ def bulletin(request):
             except:
                 enc=0
                 pass
-            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],text_description=request.POST['text_description'])
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
@@ -161,7 +161,7 @@ def bulletin(request):
                 cd=doc.cleaned_data
                 if cd.get('docfile')!=None:
                     newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                    newdoc.save(encrypted=enc)
+                    newdoc.save()
         return HttpResponseRedirect('/profile')
     else:
         doc_formset=DocumentFormSet(prefix='documents')
@@ -254,9 +254,9 @@ def register(request):
             user.save()
             # #is_author = request.POST['author']
             # #if is_author != u'on' :
-            # if 'author' in request.POST:
-            #     author = Author(user_id=user)
-            #     author.save()
+            if 'author' in request.POST:
+                 author = Author(user_id=user)
+                 author.save()
             # pubkey=RSA.generate(KEY_LENGTH,random_gen)
             # key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             # key.save()
@@ -382,11 +382,11 @@ def search(request):
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
-        if search_type =='location':
-            lat,long=location_lookup(search_text)
-            rough_distance = units.degrees(arcminutes=units.nautical(miles=50))
-            q1=Skin.objects.filter(Q(lat__range=(lat-rough_distance,lat+rough_distance))|Q(long__range=(long-rough_distance,long+rough_distance)))
-            query=q1.order_by('date_created','title')
+        #if search_type =='location':
+        #    lat,long=location_lookup(search_text)
+        #    rough_distance = units.degrees(arcminutes=units.nautical(miles=50))
+        #    q1=Skin.objects.filter(Q(lat__range=(lat-rough_distance,lat+rough_distance))|Q(long__range=(long-rough_distance,long+rough_distance)))
+        #    query=q1.order_by('date_created','title')
 
 
         bulletins=[]
@@ -457,18 +457,18 @@ def bdisplay(request):
     context = RequestContext(request)
     if request.method == 'POST':
         bulletin_key = request.POST['button_id']
-        q1 = Skin.objects.filter(b_key__exact=bulletin_key, encrypted=1)
-        q2 = Skin.objects.filter(b_key__exact=bulletin_key, encrypted=0)
+        q1 = Skin.objects.filter(b_key__exact=bulletin_key)
+      #  q2 = Skin.objects.filter(b_key__exact=bulletin_key)
         q1.update(num_views=F('num_views') + 1)
-        q2.update(num_views=F('num_views') + 1)
+      #  q2.update(num_views=F('num_views') + 1)
 
         bulletin_enc = [b for b in q1]
-        bulletin_not = [c for c in q2]
+       # bulletin_not = [c for c in q2]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
         print 'DOCUMENT LENGTH',
         print len(documents)
 
-        return render_to_response('bdisplay.html', {'bulletin_enc':bulletin_enc, 'bulletin_not':bulletin_not,'documents': documents}, context)
+        return render_to_response('bdisplay.html', {'bulletin_enc':bulletin_enc,'documents': documents}, context)
 
     else:
         return HttpResponseRedirect('/search')
@@ -495,16 +495,16 @@ def decrypt(request):
 def edit(request):
     context = RequestContext(request)
     author = request.user.id
-    form =BulletinForm(request.user)
+    form =SkinForm(request.user)
 
     if request.method == 'GET':
         b_id = request.GET['edit']
         q1 = Skin.objects.filter(b_key=b_id, author__exact=author)
         bulletin = [b for b in q1]
 
-        form=BulletinForm(request.user, initial={'title': bulletin[0].title,
+        form=SkinForm(request.user, initial={'title': bulletin[0].title,
                                    'text_description': bulletin[0].text_description,
-                                   'encrypted': bulletin[0].encrypted,
+
                                    'folder': bulletin[0].folder})
         return render_to_response(
 
@@ -513,7 +513,7 @@ def edit(request):
         )
 
     else:
-        form = BulletinForm(request.user,request.POST)
+        form = SkinForm(request.user,request.POST)
         print form.is_valid()
         if form.is_valid():
             lat,long=location_lookup(request.POST['location'])
@@ -528,14 +528,11 @@ def edit(request):
             bulletin.folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0]
             bulletin.author=request.user
             bulletin.title=request.POST['title']
-            bulletin.lat=lat
-            bulletin.long=long
             bulletin.text_description=request.POST['text_description']
-            bulletin.encrypted=enc
             bulletin.save()
             docs=Document.objects.filter(posted_bulletin=bulletin)
             for doc in docs:
-                doc.save(encrypted=enc)
+                doc.save()
 
 
         return HttpResponseRedirect('/profile')
@@ -574,7 +571,7 @@ def copy(request):
         return render_to_response('login.html', {}, RequestContext(request))
     DocumentFormSet=formset_factory(DocumentForm,extra=2)
     if request.method == 'POST':
-        form =BulletinForm(request.user, request.POST)
+        form =SkinForm(request.user, request.POST)
         print form.is_valid()
         if form.is_valid():
             print 'Saving Skin'
@@ -587,7 +584,7 @@ def copy(request):
             except:
                 enc=0
                 pass
-            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],text_description=request.POST['text_description'], encrypted=enc )
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
@@ -596,16 +593,15 @@ def copy(request):
                 cd=doc.cleaned_data
                 if cd.get('docfile')!=None:
                     newdoc = Document(docfile=cd.get('docfile'),posted_bulletin=bulletin)
-                    newdoc.save(encrypted=enc)
+                    newdoc.save()
         return HttpResponseRedirect('/profile')
     else:
         b_id = request.GET['copy']
         query = Skin.objects.filter(b_key=b_id)
         bulletin = [b for b in query]
 
-        form=BulletinForm(request.user, initial={'title': bulletin[0].title,
+        form=SkinForm(request.user, initial={'title': bulletin[0].title,
                                    'text_description': bulletin[0].text_description,
-                                   'encrypted': bulletin[0].encrypted,
                                    'folder': bulletin[0].folder})
         doc_formset=DocumentFormSet(prefix='documents')
         return render_to_response(
@@ -617,7 +613,7 @@ def f_copy(request):
     userid=auth_util(request)
     if userid<0:
         return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(BulForm,extra=3)
+    BulFormSet=formset_factory(SForm,extra=3)
     if request.method == 'POST':
         form =FolderForm(request.POST)
         b1 = request.POST['test']
