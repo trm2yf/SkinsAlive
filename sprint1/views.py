@@ -5,8 +5,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Bulletin,Folder,Key,Author
-from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm
+from sprint1.models import Document,Bulletin,Folder,Key,Author,Request
+from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm,RequestForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -128,6 +128,24 @@ def folder(request):
             context_instance=RequestContext(request)
         )
 
+def requestskin(request):
+	userid=auth_util(request)
+
+	if userid<0:
+		return render_to_response('login.html', {}, RequestContext(request))	
+	form=RequestForm()
+	if request.method=='POST':
+		form = RequestForm(request.POST, request.FILES)
+		if form.is_valid():
+			print form.is_valid()
+			req = Request(owner=request.user,text_description=request.POST['text_description'])
+			if request.FILES:
+				req.imgfile=request.FILES['imgfile']
+			else:
+				req.imgfile=NULL
+			req.save()
+		return HttpResponseRedirect('/profile')
+	return render_to_response('request.html', {'form':form},context_instance=RequestContext(request))
 
 def bulletin(request):
     userid=auth_util(request)
@@ -254,9 +272,9 @@ def register(request):
             user.save()
             # #is_author = request.POST['author']
             # #if is_author != u'on' :
-            # if 'author' in request.POST:
-            #     author = Author(user_id=user)
-            #     author.save()
+            if 'author' in request.POST:
+                author = Author(user_id=user)
+                author.save()
             # pubkey=RSA.generate(KEY_LENGTH,random_gen)
             # key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
             # key.save()
