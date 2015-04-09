@@ -1,6 +1,8 @@
 __author__ = 'Zachary'
 from django import forms
-from models import Skin,Document,Folder
+
+from models import Skin,Document,Folder,Request
+
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
 
@@ -11,7 +13,11 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model=Document
         fields=['docfile']
-        
+
+class RequestForm(forms.Form):
+    text_description = forms.CharField(label="Description Summary",widget=forms.Textarea)
+    imgfile = forms.FileField(label="Submit a sketch?")
+
 class SForm(forms.ModelForm):
     bulfile = forms.FileField(
         label='Select a skin'

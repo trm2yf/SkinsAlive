@@ -62,6 +62,12 @@ class Key(models.Model):
     owner=models.ForeignKey(User)
     public=models.CharField(max_length=2048)
 
+class Request(models.Model):
+    owner = models.ForeignKey(User)
+    text_description = models.TextField()
+    imgfile = models.FileField(upload_to="images")
+
+
 # Document Model
 def keylookup(userobject):
     results=Key.objects.filter(owner__exact=userobject)
