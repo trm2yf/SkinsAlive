@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from sprint1.models import Document,Bulletin,Folder,Key,Author
+from sprint1.models import Document,Skin,Folder,Key,Author
 from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
@@ -42,7 +42,7 @@ def addbul(request):
     if request.method == 'POST':
 
         # retrieves all bulletins of the current viewer
-        q1 = Bulletin.objects.filter(author__exact=author)
+        q1 = Skin.objects.filter(author__exact=author)
         bulletins = [b for b in q1]
 
         # retrieves all folders of the current viewer
@@ -52,7 +52,7 @@ def addbul(request):
         return render_to_response('addbul.html',{'folder':folders,'bulletin':bulletins}, context)
     else:
         # retrieves all bulletins of the current viewer
-        q1 = Bulletin.objects.filter(author__exact=author)
+        q1 = Skin.objects.filter(author__exact=author)
         bulletins = [b for b in q1]
 
         # retrieves all folders of the current viewer
@@ -114,14 +114,14 @@ def folder(request):
             folder.save()
             f_id = folder.f_key
 
-        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
-        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
-        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+        Skin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Skin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Skin.objects.filter(b_key=b3).update(folder_id=f_id)
 
         return HttpResponseRedirect('/profile')
     else:
         form=FolderForm()
-        q1 = Bulletin.objects.filter(author__exact=userid)
+        q1 = Skin.objects.filter(author__exact=userid)
         bulletins = [b for b in q1]
         return render_to_response(
             'folder.html',{'form':form, 'bulletins':bulletins},
@@ -142,7 +142,7 @@ def bulletin(request):
 
         print form.is_valid()
         if form.is_valid():
-            print 'Saving Bulletin'
+            print 'Saving Skin'
             print request.user
             lat,long=location_lookup(request.POST['location'])
             enc=1
@@ -152,7 +152,7 @@ def bulletin(request):
             except:
                 enc=0
                 pass
-            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
@@ -351,7 +351,7 @@ def search(request):
         #Keyword Search Option
         if search_type == 'all':
 
-            q1 = Bulletin.objects.filter(
+            q1 = Skin.objects.filter(
     Q(title__icontains=search_text) |
     Q(text_description__icontains=search_text))
 
@@ -361,7 +361,7 @@ def search(request):
         # Title Search Option
         if search_type == 'title':
             # if text is contained within title
-            q1 = Bulletin.objects.filter(title__icontains=search_text)
+            q1 = Skin.objects.filter(title__icontains=search_text)
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
@@ -372,20 +372,20 @@ def search(request):
 
             id = author.id
             # query db to find all bulletins with given id
-            q1 = Bulletin.objects.filter(author_id__exact=id)
+            q1 = Skin.objects.filter(author_id__exact=id)
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
         if search_type == 'date':
             # if text is contained within title
-            q1 = Bulletin.objects.filter(date_created=search_text)
+            q1 = Skin.objects.filter(date_created=search_text)
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
         if search_type =='location':
             lat,long=location_lookup(search_text)
             rough_distance = units.degrees(arcminutes=units.nautical(miles=50))
-            q1=Bulletin.objects.filter(Q(lat__range=(lat-rough_distance,lat+rough_distance))|Q(long__range=(long-rough_distance,long+rough_distance)))
+            q1=Skin.objects.filter(Q(lat__range=(lat-rough_distance,lat+rough_distance))|Q(long__range=(long-rough_distance,long+rough_distance)))
             query=q1.order_by('date_created','title')
 
 
@@ -416,14 +416,14 @@ def profile(request):
 
         if request.method == 'POST':
             delete = request.POST['delete']
-            Bulletin.objects.filter(b_key=delete).delete()
+            Skin.objects.filter(b_key=delete).delete()
 
-            q1 = Bulletin.objects.filter(author__exact=author)
+            q1 = Skin.objects.filter(author__exact=author)
 
             bulletins = [b for b in q1]
             return render_to_response('profile.html', {'bulletins':bulletins}, context)
         else:
-            q1 = Bulletin.objects.filter(author__exact=author)
+            q1 = Skin.objects.filter(author__exact=author)
             q2 = Folder.objects.filter(owner__exact=author)
 
             bulletins = [b for b in q1]
@@ -440,13 +440,13 @@ def readerprofile(request):
 
     if request.method == 'POST':
 
-        q1 = Bulletin.objects.filter(author__exact=author)
+        q1 = Skin.objects.filter(author__exact=author)
 
         bulletins = [b for b in q1]
         return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
 
     else:
-        q1 = Bulletin.objects.filter(author__exact=author)
+        q1 = Skin.objects.filter(author__exact=author)
 
         bulletins = [b for b in q1]
         return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
@@ -457,8 +457,8 @@ def bdisplay(request):
     context = RequestContext(request)
     if request.method == 'POST':
         bulletin_key = request.POST['button_id']
-        q1 = Bulletin.objects.filter(b_key__exact=bulletin_key, encrypted=1)
-        q2 = Bulletin.objects.filter(b_key__exact=bulletin_key, encrypted=0)
+        q1 = Skin.objects.filter(b_key__exact=bulletin_key, encrypted=1)
+        q2 = Skin.objects.filter(b_key__exact=bulletin_key, encrypted=0)
         q1.update(num_views=F('num_views') + 1)
         q2.update(num_views=F('num_views') + 1)
 
@@ -499,7 +499,7 @@ def edit(request):
 
     if request.method == 'GET':
         b_id = request.GET['edit']
-        q1 = Bulletin.objects.filter(b_key=b_id, author__exact=author)
+        q1 = Skin.objects.filter(b_key=b_id, author__exact=author)
         bulletin = [b for b in q1]
 
         form=BulletinForm(request.user, initial={'title': bulletin[0].title,
@@ -524,7 +524,7 @@ def edit(request):
             except:
                 enc=0
                 pass
-            bulletin=Bulletin.objects.filter(b_key__exact=request.POST['submit'])[0]
+            bulletin=Skin.objects.filter(b_key__exact=request.POST['submit'])[0]
             bulletin.folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0]
             bulletin.author=request.user
             bulletin.title=request.POST['title']
@@ -577,7 +577,7 @@ def copy(request):
         form =BulletinForm(request.user, request.POST)
         print form.is_valid()
         if form.is_valid():
-            print 'Saving Bulletin'
+            print 'Saving Skin'
             print request.user
             lat,long=location_lookup(request.POST['location'])
             enc=1
@@ -587,7 +587,7 @@ def copy(request):
             except:
                 enc=0
                 pass
-            bulletin = Bulletin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
+            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],lat=lat,long=long,text_description=request.POST['text_description'], encrypted=enc )
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
@@ -600,7 +600,7 @@ def copy(request):
         return HttpResponseRedirect('/profile')
     else:
         b_id = request.GET['copy']
-        query = Bulletin.objects.filter(b_key=b_id)
+        query = Skin.objects.filter(b_key=b_id)
         bulletin = [b for b in query]
 
         form=BulletinForm(request.user, initial={'title': bulletin[0].title,
@@ -632,9 +632,9 @@ def f_copy(request):
             folder.save()
             f_id = folder.f_key
 
-        Bulletin.objects.filter(b_key=b1).update(folder_id=f_id)
-        Bulletin.objects.filter(b_key=b2).update(folder_id=f_id)
-        Bulletin.objects.filter(b_key=b3).update(folder_id=f_id)
+        Skin.objects.filter(b_key=b1).update(folder_id=f_id)
+        Skin.objects.filter(b_key=b2).update(folder_id=f_id)
+        Skin.objects.filter(b_key=b3).update(folder_id=f_id)
 
         return HttpResponseRedirect('/profile')
     else:
@@ -644,7 +644,7 @@ def f_copy(request):
 
         form=FolderForm(initial={'name': folder[0].name})
 
-        q1 = Bulletin.objects.filter(author__exact=userid)
+        q1 = Skin.objects.filter(author__exact=userid)
         bulletins = [b for b in q1]
         return render_to_response(
             'folder.html',{'form':form, 'bulletins':bulletins},
@@ -657,7 +657,7 @@ def deletefolder(request):
 
     f_id = request.POST['delete']
     Folder.objects.filter(f_key=f_id).delete()
-    Bulletin.objects.filter(folder_id=f_id).delete()
+    Skin.objects.filter(folder_id=f_id).delete()
 
     return HttpResponseRedirect('/profile')
 
@@ -670,11 +670,11 @@ def frontpage(request):
         #granted=Permission.objects.filter(permitted__exact=request.user)
         #granted=[i.owner for i in granted]
         today = datetime.date.today()
-        q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
+        q1 = Skin.objects.filter(date_created__gte=today - timedelta(days=7))
             # order by publication date, then headline
         query1 =q1.order_by('-date_created', 'title')
 
-        q2 = Bulletin.objects.all()
+        q2 = Skin.objects.all()
         query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
 
@@ -694,11 +694,11 @@ def frontpage(request):
 
     else:
         today = datetime.date.today()
-        q1 = Bulletin.objects.filter(date_created__gte=today - timedelta(days=7))
+        q1 = Skin.objects.filter(date_created__gte=today - timedelta(days=7))
             # order by publication date, then headline
         query1 =q1.order_by('-date_created', 'title')
 
-        q2 = Bulletin.objects.all()
+        q2 = Skin.objects.all()
         query2 = q2.order_by('-num_views', 'title')
         recent_bulletins=[]
 
@@ -720,7 +720,7 @@ def viewfolder(request):
     context = RequestContext(request)
     if request.method == 'POST':
         f_id = request.POST['f_id']
-        q1 = Bulletin.objects.filter(folder_id__exact=f_id)
+        q1 = Skin.objects.filter(folder_id__exact=f_id)
 
         bulletin = [b for b in q1]
 
