@@ -7,11 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
 from sprint1.models import Document,Skin,Folder,Key,Author,Request
-
 from sprint1.forms import DocumentForm,AccountForm,SkinForm,UserForm,FolderForm,SForm,AddBulForm
-
-from sprint1.forms import DocumentForm,AccountForm,BulletinForm,UserForm,FolderForm,BulForm,AddBulForm
-
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
@@ -133,17 +129,17 @@ def folder(request):
             context_instance=RequestContext(request)
         )
 
-def requestskin(request):
+def skin(request):
 	userid=auth_util(request)
 
 	if userid<0:
 		return render_to_response('login.html', {}, RequestContext(request))	
-	form=RequestForm()
+	form=SkinForm(request.user)
 	if request.method=='POST':
-		form = RequestForm(request.POST, request.FILES)
+		form = SkinForm(request.POST, request.FILES)
 		if form.is_valid():
 			print form.is_valid()
-			req = Request(owner=request.user,text_description=request.POST['text_description'])
+			req = Skin(owner=request.user,text_description=request.POST['text_description'])
 			if request.FILES:
 				req.imgfile=request.FILES['imgfile']
 			else:
@@ -175,7 +171,7 @@ def bulletin(request):
             except:
                 enc=0
                 pass
-            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],text_description=request.POST['text_description'])
+            bulletin = Skin(author_id=userid,title=request.POST['title'],text_description=request.POST['text_description'])
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():

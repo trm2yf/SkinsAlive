@@ -1,7 +1,7 @@
 __author__ = 'Zachary'
 from django import forms
 
-from models import Skin,Document,Folder,Request
+from models import Skin,Document,Folder
 
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
@@ -58,14 +58,14 @@ class SkinForm(forms.ModelForm):
 
     class Meta:
         model=Skin
-        fields=['title','text_description','folder']
+        fields=['title','text_description']
     def __init__(self, user,*args, **kwargs):
         forms.ModelForm.__init__(self,*args, **kwargs)
-        try:
-            self.fields['folder'].queryset = Folder.objects.filter(owner=user)
-        except Exception as e:
-            print e
-            pass
+        # try:
+        #     self.fields['folder'].queryset = Folder.objects.filter(owner=user)
+        # except Exception as e:
+        #     print e
+        #     pass
      #   self.fields['encrypted'].initial= True
       #       self.fields['folder'].initial=1
     """

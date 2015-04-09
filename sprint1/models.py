@@ -33,7 +33,7 @@ class Author(models.Model):
 
 # Skin Model
 class Skin(models.Model):
-    folder = models.ForeignKey(Folder)
+    #folder = models.ForeignKey(Folder)
     title = models.CharField(max_length=255)
     text_description = models.TextField(max_length=1024)
     date_created = models.DateTimeField(editable=False, auto_now_add=True)
