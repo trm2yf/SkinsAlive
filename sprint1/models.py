@@ -51,8 +51,8 @@ class Author(models.Model):
     user_id=models.ForeignKey(User, unique=True)
 
 
-# Bulletin Model
-class Bulletin(models.Model):
+# Skin Model
+class Skin(models.Model):
     folder = models.ForeignKey(Folder)
     title = models.CharField(max_length=255)
     text_description = models.TextField(max_length=1024)
@@ -69,7 +69,7 @@ class Bulletin(models.Model):
         if not self.date_created:
             self.date_created = datetime.datetime.now()
         # self.date_modified = datetime.datetime.now()
-        super(Bulletin, self).save()
+        super(Skin, self).save()
     def __str__(self):              # __unicode__ on Python 2
         return self.title
 
@@ -81,7 +81,7 @@ from Crypto.PublicKey import RSA
 def pad(s):
     return s + b"\0" * (AES.block_size - len(s) % AES.block_size)
 
-def encrypt(message, key, key_size=256):
+"""def encrypt(message, key, key_size=256):
     if key is None:
         key = Random.new().read(key_size // 8)
     # message = pad(message)
@@ -148,7 +148,7 @@ def decrypt_file(file_name, key):
         dec+=decrypt(ciphertext, key)
     #print dec
     return dec
-
+"""
 def filepath_handler(instance,name):
     return path.normpath(path.join('user_%d'%instance.posted_bulletin.author.id,'bulletin_%d'%instance.posted_bulletin.b_key,name))
 
@@ -175,7 +175,7 @@ def keylookup(userobject):
     for p in results:
         return p.public
 class Document(models.Model):
-    posted_bulletin=models.ForeignKey(Bulletin)
+    posted_bulletin=models.ForeignKey(Skin)
     docfile = models.FileField(upload_to=filepath_handler)
     d_key = models.AutoField(primary_key=True)
     # def save(self, *args, **kwargs):

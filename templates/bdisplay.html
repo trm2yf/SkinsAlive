@@ -3,7 +3,7 @@
 {% block content %}
 <div class="col-md-10 col-md-offset-1">
 
-    <h2>Bulletin Details</h2>
+    <h2>Skin Details</h2>
     <br>
     {% if bulletin_enc %}
         {% for b in bulletin_enc %}
@@ -11,11 +11,9 @@
             <h4><b>{{ b.title }}</b></h4>
             <p> Author: {{ b.author }}</p>
             <p> Description: {{ b.text_description }}</p>
-            <p> Coordinates: {{ b.lat }}, {{ b.long }}</p>
             <p> Created on: {{ b.date_created }}</p>
             <p> Modified on: {{ b.date_modified }}</p>
-            <p> Bulletin ID: {{ b.b_key }}</p>
-            <p> Encryption: {{ b.encrypted }}</p>
+            <p> Skin ID: {{ b.b_key }}</p>
             <p> Folder: {{ b.folder }}</p>
             <p> Number of Views: {{ b.num_views }}</p>
 
@@ -46,11 +44,9 @@
             <h4><b>{{ c.title }}</b></h4>
             <p> Author: {{ c.author }}</p>
             <p> Description: {{ c.text_description }}</p>
-            <p> Coordinates: {{ c.lat }}, {{ c.long }}</p>
             <p> Created on: {{ c.date_created }}</p>
             <p> Modified on: {{ c.date_modified }}</p>
-            <p> Bulletin ID: {{ c.b_key }}</p>
-            <p> Encryption: {{ c.encrypted }}</p>
+            <p> Skin ID: {{ c.b_key }}</p>
             <p> Folder: {{ c.folder }}</p>
             <p> Number of Views: {{ c.num_views }}</p>
 

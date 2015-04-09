@@ -1,6 +1,10 @@
 __author__ = 'Zachary'
 from django import forms
+<<<<<<< HEAD
 from models import Bulletin,Document,Folder, Request
+=======
+from models import Skin,Document,Folder
+>>>>>>> feb6d15aee02837dab8ee2483cb757249bcc6038
 from django.contrib.auth.models import User
 from django.forms.models import modelformset_factory
 
@@ -21,14 +25,14 @@ class BulForm(forms.ModelForm):
         label='Select a bulletin'
     )
     class Meta:
-        model=Bulletin
+        model=Skin
         fields=['bulfile']
         
 class AddBulForm(forms.ModelForm):
     folder = forms.CharField(label='Enter a folder', max_length=100)
     bulletin = forms.CharField(label='Enter a bulletin', max_length=100)
     class Meta:
-        model=Bulletin
+        model=Skin
         fields=['folder','bulletin']
 # class PermissionForm(forms.ModelForm):
 #     private= forms.FileField(
@@ -39,7 +43,7 @@ class AddBulForm(forms.ModelForm):
 #         fields=['permitted','private']
 
 class FolderForm(forms.ModelForm):
-    # title=forms.CharField(label='Bulletin Title')
+    # title=forms.CharField(label='Skin Title')
     # text_description=forms.CharField(label='Text Description')
     class Meta:
         model=Folder
@@ -49,13 +53,13 @@ class FolderForm(forms.ModelForm):
 
 
 class BulletinForm(forms.ModelForm):
-    # title=forms.CharField(label='Bulletin Title')
+    # title=forms.CharField(label='Skin Title')
     # text_description=forms.CharField(label='Text Description')
     location=forms.CharField(label='City of Interest')
     # encrypted = forms.BooleanField()
 
     class Meta:
-        model=Bulletin
+        model=Skin
         fields=['title','text_description','encrypted','folder']
     def __init__(self, user,*args, **kwargs):
         forms.ModelForm.__init__(self,*args, **kwargs)
