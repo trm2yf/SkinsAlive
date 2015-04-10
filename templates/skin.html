@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-1">
+    {%  load bootstrap %}
+        <!-- Upload form. Note enctype attribute! -->
+        <h1>Create a New Skin Idea</h1>
+        <p>*All fields must be filled.</p>
+    {{ form.errors }}
+    {{ form.non_field_errors }}
+        <form action="bulletin" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|bootstrap }}
+            {{ doc_formset.management_form }}
+{#            {{ doc_formset.as_table }}#}
+
+            <div id="form_set">
+    {% for form in doc_formset.forms %}
+        <table class='no_error'>
+            {{ form.as_table }}
+        </table>
+    {% endfor %}
+            </div>
+            <div id="empty_form" style="display:none">
+            <table class='no_error'>
+                {{ doc_formset.empty_form.as_table }}
+            </table>
+            </div>
+            <br>
+
+            <button class="btn btn-default" id="add-another" type="button">Add another document</button>
+            <br><br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+    </div>
+</div>
+<div class="row">
+    <br>
+    <br>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $('#add-another').click(function() {
+        var form_idx = $('#id_form-TOTAL_FORMS').val();
+        $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+</script>
+
+
+{% else %}
+	<h2> Please <a href="login">log in.</a> </h2>
+{% endif %}
+
+
+{% endblock %}

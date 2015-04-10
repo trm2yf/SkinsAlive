@@ -50,7 +50,7 @@ def addbul(request):
         q2 = Folder.objects.filter(owner__exact=author)
 
         folders = [f for f in q2]
-        return render_to_response('addbul.html',{'folder':folders,'bulletin':bulletins}, context)
+        return render_to_response('addSkin.html',{'folder':folders,'bulletin':bulletins}, context)
     else:
         # retrieves all bulletins of the current viewer
         q1 = Skin.objects.filter(author__exact=author)
@@ -59,7 +59,7 @@ def addbul(request):
         # retrieves all folders of the current viewer
         q2 = Folder.objects.filter(owner__exact=author)
 
-        return render_to_response('addbul.html',{'folder':folders, 'bulletin':bulletins}, context)
+        return render_to_response('addSkin.html',{'folder':folders, 'bulletin':bulletins}, context)
 
 #Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
 def connect(request):
@@ -185,41 +185,9 @@ def bulletin(request):
     else:
         doc_formset=DocumentFormSet(prefix='documents')
     return render_to_response(
-        'bulletin.html',{'form':form,'doc_formset':doc_formset},
+        'skin.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
     )
-
-# def grant(request):
-#     userid=auth_util(request)
-#     if userid<0:
-#         return render_to_response('login.html', {}, RequestContext(request))
-#     context = RequestContext(request)
-#     completed=None
-#     if request.method=='POST':
-#         form=PermissionForm(request.POST,request.FILES)
-
-#         if form.is_valid():
-#             grantee=[i for i in User.objects.filter(id__exact=request.POST['permitted'])][0]
-#             owner=[i for i in User.objects.filter(id__exact=request.user.id)][0]
-#             perm=Permission(owner=owner,permitted=grantee)
-#             perm.save()
-#             completed=True
-#             file=request.FILES['private']
-#             for pub in Key.objects.filter(owner__exact=request.user):
-#                 load=pub.public
-#                 # key=RSA.importKey(load,None)
-#                 # cipher = PKCS1_OAEP.new(key)
-#                 # pkey=construct((cipher._key.n,cipher._key.e,long(random.randint(1,10))))
-
-
-#                 from django.core.mail import send_mail,EmailMessage
-#                 print 'sending email?'
-#                 mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply. Access to '+request.user.username+'\'s encrypted bulletins', ('Secure Witness','3240project@gmail.com'), (grantee.username,grantee.email))
-#                 mail.attach('private.pem',file.read())
-#                 mail.send()
-#     else:
-#         form = PermissionForm()
-#     return render_to_response('permission.html',{'form':form,'completed':completed},context)
 
 def list(request):
     # Handle file upload
@@ -452,13 +420,13 @@ def readerprofile(request):
         q1 = Skin.objects.filter(author__exact=author)
 
         bulletins = [b for b in q1]
-        return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
+        return render_to_response('viewerprofile.html', {'bulletins':bulletins}, context)
 
     else:
         q1 = Skin.objects.filter(author__exact=author)
 
         bulletins = [b for b in q1]
-        return render_to_response('readerprofile.html', {'bulletins':bulletins}, context)
+        return render_to_response('viewerprofile.html', {'bulletins':bulletins}, context)
 
 
 def bdisplay(request):
@@ -477,28 +445,11 @@ def bdisplay(request):
         print 'DOCUMENT LENGTH',
         print len(documents)
 
-        return render_to_response('bdisplay.html', {'bulletin_enc':bulletin_enc,'documents': documents}, context)
+        return render_to_response('skinDisplay.html', {'bulletin_enc':bulletin_enc,'documents': documents}, context)
 
     else:
         return HttpResponseRedirect('/search')
 
-def decrypt(request):
-    reqdoc=request.POST['document']
-    context=RequestContext(request)
-    try:
-        pkey=request.FILES['private']
-        print 'uploaded'
-        from models import decrypt_file
-        bcontents=decrypt_file(reqdoc,pkey.read())
-        response=HttpResponse(content_type='multipart/encrypted')
-        response['Content-Disposition'] = 'attachment; filename='+reqdoc.split('/')[-1]
-        response.write(bcontents)
-        return response
-    except Exception as e:
-        print e
-        print 'empty'
-        return render_to_response('decrypt.html',{'document':reqdoc}, context)
-        # return HttpResponseRedirect('/search')
 
 
 def edit(request):
@@ -545,32 +496,6 @@ def edit(request):
 
 
         return HttpResponseRedirect('/profile')
-
-def f_edit(request):
-    context = RequestContext(request)
-    author = request.user.id
-
-    if request.method == 'GET':
-        f_id = request.GET['f_edit']
-        q1 = Folder.objects.filter(f_key=f_id, owner__exact=author)
-        folder = [f for f in q1]
-
-        form=FolderForm(initial={'name': folder[0].name})
-        return render_to_response(
-        'f_edit.html',{'f_id':f_id,'form':form},
-        context_instance=RequestContext(request)
-        )
-
-    else:
-        form = FolderForm(request.POST)
-        print form.is_valid()
-        if form.is_valid():
-            folder = Folder(owner=request.user,f_key=request.POST['submit'],name=request.POST['name'])
-            folder.save()
-
-        return HttpResponseRedirect('/profile')
-
-
 
 def copy(request):
     context = RequestContext(request)
@@ -720,17 +645,4 @@ def frontpage(request):
         print "viewed bulletins"
         print most_viewed_bulletins
         return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
-
-def viewfolder(request):
-    context = RequestContext(request)
-    if request.method == 'POST':
-        f_id = request.POST['f_id']
-        q1 = Skin.objects.filter(folder_id__exact=f_id)
-
-        bulletin = [b for b in q1]
-
-        return render_to_response('viewfolder.html', {'bulletin':bulletin}, context)
-
-    else:
-        return HttpResponseRedirect('/profile')
 
