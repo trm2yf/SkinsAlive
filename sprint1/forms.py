@@ -89,7 +89,7 @@ class AccountForm(forms.Form):
     
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())
-    author = forms.BooleanField(required=False)
+    author = forms.BooleanField(required=False,label='Skin Designer')
     #Type = forms.ChoiceField(choices=('Author','Reader')) 
 
     #nested Meta class

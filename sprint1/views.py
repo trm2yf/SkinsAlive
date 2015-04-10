@@ -365,8 +365,6 @@ def search(request):
     if request.method == 'POST':
         search_text = request.POST['search_text']
         search_type = request.POST['type']
-        granted=Permission.objects.filter(permitted__exact=request.user)
-        granted=[i.owner for i in granted]
 
         #Keyword Search Option
         if search_type == 'all':
@@ -402,20 +400,11 @@ def search(request):
             # order by publication date, then headline
             query =q1.order_by('date_created', 'title')
 
-        #if search_type =='location':
-        #    lat,long=location_lookup(search_text)
-        #    rough_distance = units.degrees(arcminutes=units.nautical(miles=50))
-        #    q1=Skin.objects.filter(Q(lat__range=(lat-rough_distance,lat+rough_distance))|Q(long__range=(long-rough_distance,long+rough_distance)))
-        #    query=q1.order_by('date_created','title')
-
-
         bulletins=[]
         for b in query:
-           # if b.author in granted:
+
                 bulletins.append(b)
-       # # print string
-       #  print "bulletins"
-       #  print bulletins
+
         return render_to_response('search.html', {'bulletins':bulletins}, context)
 
     else:
