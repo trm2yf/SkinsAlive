@@ -49,9 +49,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'cs3240project.urls'
+ROOT_URLCONF = 'cs4753project.urls'
 
-WSGI_APPLICATION = 'cs3240project.wsgi.application'
+WSGI_APPLICATION = 'cs4753project.wsgi.application'
 
 #Mapping UserObject to User 
 AUTH_PROFILE_MODULE = 'sprint1.UserProfile'
@@ -68,7 +68,7 @@ DATABASES = {
 }
 from os import getcwd,path
 
-MEDIA_ROOT = path.join(getcwd(),'media')#'C:/Users/Zachary/Desktop/Fall 2014/Advanced Software/cs3240project/media/'
+MEDIA_ROOT = path.join(getcwd(),'media')
 MEDIA_URL = '/media/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -88,9 +88,6 @@ USE_TZ = True
 STATICFILES_DIRS = (
     "/cs3240-f14-team02/static/dist/",
 
-  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/js/",
-  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/css/",
-  #  "C:/Users/student/Documents/GitHub/sw/cs3240-f14-team02/dist/fonts/",
 
 
 
@@ -112,5 +109,5 @@ TEMPLATE_DIRS = (
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'christine.suzanne28@gmail.com'
-EMAIL_HOST_PASSWORD = 'cs3240group'
+EMAIL_HOST_USER = 'trm2yf@gmail.com'
+EMAIL_HOST_PASSWORD = 'cs4753group'

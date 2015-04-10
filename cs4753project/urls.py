@@ -18,7 +18,7 @@ urlpatterns += staticfiles_urlpatterns()
 #
 # urlpatterns = patterns('',
 #     # Examples:
-#     #url(r'^$', 'cs3240project.views.home', name='home'),
+#     #url(r'^$', 'cs4753project.views.home', name='home'),
 #     # url(r'^blog/', include('blog.urls')),
 #     (r'^', include('sprint1.urls')),
 #     url(r'^admin/', include(admin.site.urls)),
