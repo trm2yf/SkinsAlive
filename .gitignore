@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -107,5 +106,4 @@ coverage.xml
 docs/_build/
 
 # PyBuilder
->>>>>>> 12c108c6ff185a019e9013f3dc58465b7769c9ef
 target/
