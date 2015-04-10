@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
 
-        <a href="search"><button type="button" class="btn btn-success btn-lg"> <i class="fa fa-search"></i> Search</button></a>
+        <a href="createIdea"><button type="button" class="btn btn-success btn-lg"> <i class="fa fa-search"></i> Submit Idea</button></a>
         <br><br>
         <br><br>
 
@@ -38,20 +38,33 @@
                 <td>{{ bulletin.text_description }}</td>
                 <td>{{ bulletin.date_modified }}</td>
                 <td>{{ bulletin.num_views }}</td>
-                <td>{{ bulletin.encrypted }}</td>
+
                 <td>
 {#                    <div class="col-md-2">#}
                     <form action="profile" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                         <button class="btn btn-danger btn-sm" name="delete" value="{{ bulletin.b_key }}"><i class="fa fa-minus-circle"></i></button>
                     </form>
+                </td>
+                   <td>
+{#                    <div class="col-md-2">#}
+                    <form action="edit" method="get" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-info btn-sm" name="edit" value="{{ bulletin.b_key }}"><i class="fa fa-pencil"></i></button>
+                    </form>
+{#                    </div>#}
+                </td>
+                <td>
+{#                    <div class="col-md-2">#}
+                    <form action="copy" method="get" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <button class="btn btn-warning btn-sm" name="copy" value="{{ bulletin.b_key }}"><i class="fa fa-copy"></i></button>
+                    </form>
 {#                    </div>#}
                 </td>
               </tr>
            {% endfor %}
            {% else %}
-                <td>N/A</td>
-                <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>
                 <td>N/A</td>

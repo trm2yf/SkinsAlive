@@ -6,13 +6,12 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
-from sprint1.models import Document,Skin,Folder,Key,Author,Request
-from sprint1.forms import DocumentForm,AccountForm,SkinForm,UserForm,FolderForm,SForm,AddBulForm
+from sprint1.models import Document,Skin,Key,Author
+from sprint1.forms import DocumentForm,AccountForm,SkinForm,UserForm,SForm,AddBulForm
 from django.forms.formsets import formset_factory
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout
-from Crypto.Cipher import PKCS1_OAEP
-from Crypto.PublicKey.RSA import construct
+
 from django.contrib.auth.decorators import login_required
 import random
 import datetime
@@ -20,8 +19,7 @@ from django.db.models import F,Q
 from datetime import timedelta
 from django.db.models import Q
 from django.contrib.auth.models import User
-from geopy.geocoders import Nominatim,GoogleV3
-from geopy import units
+
 def home(request):
     if request.method == 'POST':
         form =AccountForm(request.POST)
@@ -35,60 +33,25 @@ def home(request):
         'index.html',{'form':form},
         context_instance=RequestContext(request)
     )
-#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
 def addbul(request):
     context = RequestContext(request)
     author = request.user.id
-    folders=None
+
     if request.method == 'POST':
 
         # retrieves all bulletins of the current viewer
         q1 = Skin.objects.filter(author__exact=author)
         bulletins = [b for b in q1]
 
-        # retrieves all folders of the current viewer
-        q2 = Folder.objects.filter(owner__exact=author)
 
-        folders = [f for f in q2]
-        return render_to_response('addSkin.html',{'folder':folders,'bulletin':bulletins}, context)
+        return render_to_response('addSkin.html',{'bulletin':bulletins}, context)
     else:
         # retrieves all bulletins of the current viewer
         q1 = Skin.objects.filter(author__exact=author)
         bulletins = [b for b in q1]
 
-        # retrieves all folders of the current viewer
-        q2 = Folder.objects.filter(owner__exact=author)
+        return render_to_response('addSkin.html',{'bulletin':bulletins}, context)
 
-        return render_to_response('addSkin.html',{'folder':folders, 'bulletin':bulletins}, context)
-
-#Goes with the AddBulForm form; this will associate the bulletin with the folder by updating the folder field of the bulletin to be that of the folder
-def connect(request):
-    userid=auth_util(request)
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
-    if request.method == 'POST':
-        print form.is_valid()
-        if form.is_valid():
-            print 'Adding bulletin to folder'
-            bulletin = request.POST['bulletinval']
-            bulletin.folder = models.ForeignKey(request.POST['folderval'])
-            bulletin.save(update_fields=['folder'])
-        return HttpResponseRedirect(reverse('sprint1.views.addbul'))
-    else:
-       return HttpResponseRedirect(reverse('sprint1.views.addbul'))
-
-
-
-def location_lookup(citystring):
-    try:
-
-        #geolocator = Nominatim()
-        geolocator=GoogleV3()
-        location = geolocator.geocode(citystring)
-        return(location.latitude, location.longitude)
-    except:
-    #'''Implement string lookup to latitude and longitude here'''
-        return (0,0)
 
 def auth_util(passedrequest):
 
@@ -97,58 +60,27 @@ def auth_util(passedrequest):
     else:
         return passedrequest.user.id
 
-def folder(request):
-    userid=auth_util(request)
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
-    if request.method == 'POST':
-        form =FolderForm(request.POST)
-        b1 = request.POST['test']
-        b2 = request.POST['test1']
-        b3 = request.POST['test2']
 
-        print form.is_valid()
-        if form.is_valid():
-            print 'Saving Folder'
-            print request.user
-            folder = Folder(owner=request.user,name=request.POST['name'])
-            folder.save()
-            f_id = folder.f_key
+# def requestskin(request):
+#     userid = auth_util(request)
+#
+#     if userid < 0:
+#         return render_to_response('login.html', {}, RequestContext(request))
+#     form = SkinForm(request.user)
+#     if request.method == 'POST':
+#         form = SkinForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             print form.is_valid()
+#             req = Skin(owner=request.user, text_description=request.POST['text_description'])
+#             if request.FILES:
+#                 req.imgfile = request.FILES['imgfile']
+#             else:
+#                 req.imgfile = NULL
+#             req.save()
+#         return HttpResponseRedirect('/profile')
+#     return render_to_response('skin.html', {'form': form}, context_instance=RequestContext(request))
 
-        Skin.objects.filter(b_key=b1).update(folder_id=f_id)
-        Skin.objects.filter(b_key=b2).update(folder_id=f_id)
-        Skin.objects.filter(b_key=b3).update(folder_id=f_id)
-
-        return HttpResponseRedirect('/profile')
-    else:
-        form=FolderForm()
-        q1 = Skin.objects.filter(author__exact=userid)
-        bulletins = [b for b in q1]
-        return render_to_response(
-            'folder.html',{'form':form, 'bulletins':bulletins},
-            context_instance=RequestContext(request)
-        )
-
-def skin(request):
-	userid=auth_util(request)
-
-	if userid<0:
-		return render_to_response('login.html', {}, RequestContext(request))	
-	form=SkinForm(request.user)
-	if request.method=='POST':
-		form = SkinForm(request.POST, request.FILES)
-		if form.is_valid():
-			print form.is_valid()
-			req = Skin(owner=request.user,text_description=request.POST['text_description'])
-			if request.FILES:
-				req.imgfile=request.FILES['imgfile']
-			else:
-				req.imgfile=NULL
-			req.save()
-		return HttpResponseRedirect('/profile')
-	return render_to_response('request.html', {'form':form},context_instance=RequestContext(request))
-
-def bulletin(request):
+def createIdea(request):
     userid=auth_util(request)
 
     if userid<0:
@@ -163,14 +95,7 @@ def bulletin(request):
         if form.is_valid():
             print 'Saving Skin'
             print request.user
-            lat,long=location_lookup(request.POST['location'])
-            enc=1
-            try:
-                request.POST['encrypted']=='on'
-                enc=1
-            except:
-                enc=0
-                pass
+
             bulletin = Skin(author_id=userid,title=request.POST['title'],text_description=request.POST['text_description'])
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
@@ -211,17 +136,6 @@ def list(request):
         {'documents': documents, 'form': form},
         context_instance=RequestContext(request)
     )
-# Create your views here.
-import Crypto
-from Crypto.PublicKey import RSA
-from Crypto import Random
-from Crypto.Hash import MD5
-
-# Use a larger key length in practice...
-KEY_LENGTH = 2048  # Key size (in bits)
-random_gen = Random.new().read
-
-# Generate RSA private/public key pairs for both parties...
 
 def register(request):
     context = RequestContext(request)
@@ -231,7 +145,6 @@ def register(request):
     pkey=None
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-
 
         #If the form valid
         if user_form.is_valid():
@@ -244,23 +157,6 @@ def register(request):
             if 'author' in request.POST:
                 author = Author(user_id=user)
                 author.save()
-
-            # pubkey=RSA.generate(KEY_LENGTH,random_gen)
-            # key = Key(owner=user,public=pubkey.publickey().exportKey('PEM'))
-            # key.save()
-            # pkey=pubkey.exportKey('PEM')
-
-            # # if 'author' in request.POST:
-            #     from django.core.mail import send_mail,EmailMessage
-            #     mail = EmailMessage('SecureWitness', 'Do not lose the enclosed file. Do not reply.', ('Secure Witness','3240project@gmail.com'), (user.username,user.email))
-            #     mail.attach('private.pem',pkey)
-            #     mail.send()
-            # # except Exception as e:
-            # #     print e
-            #     perm=Permission(owner=user,permitted=user)
-            #     perm.save()
-            folder=Folder(owner=user,name='Default')
-            folder.save()
             #update the registered variable to be true
             registered = True
 
@@ -401,17 +297,16 @@ def profile(request):
             return render_to_response('profile.html', {'bulletins':bulletins}, context)
         else:
             q1 = Skin.objects.filter(author__exact=author)
-            q2 = Folder.objects.filter(owner__exact=author)
 
             bulletins = [b for b in q1]
-            folders = [f for f in q2]
-            return render_to_response('profile.html', {'bulletins':bulletins, 'folders':folders}, context)
+
+            return render_to_response('profile.html', {'bulletins':bulletins, }, context)
 
     else:
-        return HttpResponseRedirect('/frontpage')
+        return HttpResponseRedirect('/viewerprofile')
 
 
-def readerprofile(request):
+def viewerprofile(request):
     context = RequestContext(request)
     author = request.user.id
 
@@ -440,7 +335,6 @@ def bdisplay(request):
       #  q2.update(num_views=F('num_views') + 1)
 
         bulletin_enc = [b for b in q1]
-       # bulletin_not = [c for c in q2]
         documents = Document.objects.filter(posted_bulletin_id__exact=bulletin_key)
         print 'DOCUMENT LENGTH',
         print len(documents)
@@ -463,9 +357,7 @@ def edit(request):
         bulletin = [b for b in q1]
 
         form=SkinForm(request.user, initial={'title': bulletin[0].title,
-                                   'text_description': bulletin[0].text_description,
-
-                                   'folder': bulletin[0].folder})
+                                   'text_description': bulletin[0].text_description})
         return render_to_response(
 
         'edit.html',{'b_id':b_id,'form':form},
@@ -476,16 +368,9 @@ def edit(request):
         form = SkinForm(request.user,request.POST)
         print form.is_valid()
         if form.is_valid():
-            lat,long=location_lookup(request.POST['location'])
-            enc=1
-            try:
-                request.POST['encrypted']=='on'
-                enc=1
-            except:
-                enc=0
-                pass
+
             bulletin=Skin.objects.filter(b_key__exact=request.POST['submit'])[0]
-            bulletin.folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0]
+
             bulletin.author=request.user
             bulletin.title=request.POST['title']
             bulletin.text_description=request.POST['text_description']
@@ -510,15 +395,8 @@ def copy(request):
         if form.is_valid():
             print 'Saving Skin'
             print request.user
-            lat,long=location_lookup(request.POST['location'])
-            enc=1
-            try:
-                request.POST['encrypted']=='on'
-                enc=1
-            except:
-                enc=0
-                pass
-            bulletin = Skin(folder=Folder.objects.filter(f_key__exact=request.POST['folder'])[0],author_id=userid,title=request.POST['title'],text_description=request.POST['text_description'], encrypted=enc )
+
+            bulletin = Skin(author_id=userid,title=request.POST['title'],text_description=request.POST['text_description'])
             bulletin.save()
         doc_formset=DocumentFormSet(request.POST,request.FILES,prefix='documents')
         if doc_formset.is_valid() and form.is_valid():
@@ -536,60 +414,13 @@ def copy(request):
 
         form=SkinForm(request.user, initial={'title': bulletin[0].title,
                                    'text_description': bulletin[0].text_description,
-                                   'folder': bulletin[0].folder})
+                                   })
         doc_formset=DocumentFormSet(prefix='documents')
         return render_to_response(
         'copy.html',{'form':form,'doc_formset':doc_formset},
         context_instance=RequestContext(request)
         )
 
-def f_copy(request):
-    userid=auth_util(request)
-    if userid<0:
-        return render_to_response('login.html', {}, RequestContext(request))
-    BulFormSet=formset_factory(SForm,extra=3)
-    if request.method == 'POST':
-        form =FolderForm(request.POST)
-        b1 = request.POST['test']
-        b2 = request.POST['test1']
-        b3 = request.POST['test2']
-
-        print form.is_valid()
-        if form.is_valid():
-            print 'Saving Folder'
-            print request.user
-            folder = Folder(owner=request.user,name=request.POST['name'])
-            folder.save()
-            f_id = folder.f_key
-
-        Skin.objects.filter(b_key=b1).update(folder_id=f_id)
-        Skin.objects.filter(b_key=b2).update(folder_id=f_id)
-        Skin.objects.filter(b_key=b3).update(folder_id=f_id)
-
-        return HttpResponseRedirect('/profile')
-    else:
-        f_id = request.GET['f_copy']
-        query = Folder.objects.filter(f_key=f_id)
-        folder = [f for f in query]
-
-        form=FolderForm(initial={'name': folder[0].name})
-
-        q1 = Skin.objects.filter(author__exact=userid)
-        bulletins = [b for b in q1]
-        return render_to_response(
-            'folder.html',{'form':form, 'bulletins':bulletins},
-            context_instance=RequestContext(request)
-        )
-
-def deletefolder(request):
-    context = RequestContext(request)
-    author = request.user.id
-
-    f_id = request.POST['delete']
-    Folder.objects.filter(f_key=f_id).delete()
-    Skin.objects.filter(folder_id=f_id).delete()
-
-    return HttpResponseRedirect('/profile')
 
 def frontpage(request):
     context = RequestContext(request)
@@ -615,10 +446,10 @@ def frontpage(request):
         for b2 in query2:
                 most_viewed_bulletins.append(b2)
        # print string
-        print "rec bulletins"
-        print recent_bulletins
-        print "viewed bulletins"
-        print most_viewed_bulletins
+      #  print "rec bulletins"
+       # print recent_bulletins
+        #print "viewed bulletins"
+        #print most_viewed_bulletins
 
         return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
 
@@ -638,11 +469,8 @@ def frontpage(request):
         most_viewed_bulletins=[]
         for b2 in query2:
                 most_viewed_bulletins.append(b2)
-       # print string
-        print "rec bulletins"
-        print recent_bulletins
 
-        print "viewed bulletins"
-        print most_viewed_bulletins
+      #  print recent_bulletins
+      #  print most_viewed_bulletins
         return render_to_response('frontpage.html', {'recent_bulletins':recent_bulletins,'most_viewed_bulletins':most_viewed_bulletins}, context)
 

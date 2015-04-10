@@ -11,21 +11,6 @@ import StringIO
 from django.contrib.auth.models import User
 
 
-
-
-class Folder(models.Model):
-    owner=models.ForeignKey(User)
-    f_key = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-  #  text_description = models.TextField(max_length=1024)
-  #   folder_contained=models.ForeignKey('self',blank=True,null=True,limit_choices_to={'owner_id': User})
-    def save(self):
-        super(Folder, self).save()
-    def __str__(self):              # __unicode__ on Python 2
-        return self.name
-
-
-
 class Author(models.Model):
     id=models.AutoField(primary_key=True)
     user_id=models.ForeignKey(User, unique=True)
@@ -33,7 +18,7 @@ class Author(models.Model):
 
 # Skin Model
 class Skin(models.Model):
-    #folder = models.ForeignKey(Folder)
+
     title = models.CharField(max_length=255)
     text_description = models.TextField(max_length=1024)
     date_created = models.DateTimeField(editable=False, auto_now_add=True)
