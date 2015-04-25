@@ -86,16 +86,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATICFILES_DIRS = (
-    "/cs3240-f14-team02/static/dist/",
-
-
-
-
     os.path.join(
         os.path.dirname(__file__),
         'static',
     ),
-
 )
 
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
