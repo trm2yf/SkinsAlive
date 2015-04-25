@@ -290,14 +290,15 @@ def profile(request):
         if request.method == 'POST':
             delete = request.POST['delete']
             Skin.objects.filter(b_key=delete).delete()
-
+            print delete
             q1 = Skin.objects.filter(author__exact=author)
-
+            print q1
             bulletins = [b for b in q1]
             return render_to_response('profile.html', {'bulletins':bulletins}, context)
         else:
             q1 = Skin.objects.filter(author__exact=author)
-
+            print "in else"
+            print q1
             bulletins = [b for b in q1]
 
             return render_to_response('profile.html', {'bulletins':bulletins, }, context)
@@ -311,9 +312,11 @@ def viewerprofile(request):
     author = request.user.id
 
     if request.method == 'POST':
-
+        delete = request.POST['delete']
+        Skin.objects.filter(b_key=delete).delete()
+        print delete
         q1 = Skin.objects.filter(author__exact=author)
-
+        print q1
         bulletins = [b for b in q1]
         return render_to_response('viewerprofile.html', {'bulletins':bulletins}, context)
 
