@@ -13,7 +13,6 @@ import os
 from os import getcwd,path
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -86,7 +85,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATICFILES_DIRS = (
-    "/cs3240-f14-team02/static/dist/",
+    "/cs4753project/static/dist/",
 
 
 
